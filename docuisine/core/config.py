@@ -1,6 +1,5 @@
 # config.py
 from functools import cached_property
-import os
 import subprocess
 
 
