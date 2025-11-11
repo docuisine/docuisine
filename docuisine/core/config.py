@@ -1,13 +1,13 @@
-# config.py
 from functools import cached_property
 import subprocess
+from typing import Union
 
 
 class Environment:
     """Lazy-loaded application info, cached for efficiency."""
 
     @cached_property
-    def git_commit_hash(self) -> str | None:
+    def git_commit_hash(self) -> Union[str, None]:
         try:
             return (
                 subprocess.check_output(
@@ -20,7 +20,7 @@ class Environment:
             return None
 
     @cached_property
-    def version(self) -> str:
+    def version(self) -> Union[str, None]:
         try:
             return (
                 subprocess.check_output(["uv", "version"], stderr=subprocess.DEVNULL)
@@ -28,7 +28,7 @@ class Environment:
                 .strip()
             )
         except (subprocess.CalledProcessError, FileNotFoundError):
-            return "unknown"
+            return None
 
 
 env = Environment()
