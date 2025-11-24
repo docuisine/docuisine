@@ -32,7 +32,6 @@ prod:
 docs:
 	uv run mkdocs serve -f docs/mkdocs.yml -a localhost:7002
 
-
 ## Run tests
 .PHONY: test
 test:
@@ -62,6 +61,14 @@ clean:
 precommit:
 	make format
 	make test
+
+## Bump project version with patch update
+.PHONY: patch
+patch:
+	@uv version --bump patch
+	@git add pyproject.toml
+	@git add uv.lock
+	@git commit -m "chore: bump patch version"
 
 
 ## Set up Python interpreter environment
