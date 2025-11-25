@@ -20,7 +20,7 @@ requirements:
 ## Run development server
 .PHONY: dev
 dev:
-	uv run fastapi dev docuisine/main.py --reload --host 0.0.0.0 --port 7000
+	docker compose -f scripts/dev/docker-compose.yml up --build
 
 ## Run production server
 .PHONY: prod
