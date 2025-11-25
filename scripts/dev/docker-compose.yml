@@ -1,7 +1,8 @@
 services:
   docuisine:
     build:
-      dockerfile: Dockerfile
+      dockerfile: ./scripts/dev/Dockerfile
+      context: ../..
     container_name: docuisine_app
     restart: always
     ports:
