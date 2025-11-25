@@ -14,7 +14,8 @@ PYTHON_INTERPRETER = python
 ## Install Python dependencies
 .PHONY: requirements
 requirements:
-	uv sync
+	@uv sync
+	@cp scripts/dev/.env.example scripts/dev/.env
 
 
 ## Run development server
