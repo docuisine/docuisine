@@ -4,7 +4,7 @@ build-backend = "flit_core.buildapi"
 
 [project]
 name = "docuisine"
-version = "0.0.1"
+version = "0.0.2"
 description = "Backend for the Docuisine application."
 authors = [
   { name = "Chris Irag", email = "irag.chrisandrei@mailbox.org"},
