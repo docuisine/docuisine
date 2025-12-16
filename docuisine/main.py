@@ -2,7 +2,8 @@ from typing import Union
 
 from fastapi import FastAPI
 
-from .schemas import HealthCheck
+from .core.config import env
+from .schemas import HealthCheck, Status
 
 app = FastAPI()
 
@@ -19,4 +20,8 @@ def read_item(item_id: int, q: Union[str, None] = None):
 
 @app.get("/health", response_model=HealthCheck)
 def health_check():
-    return HealthCheck(status="healthy")
+    return HealthCheck(
+        status=Status.HEALTHY,
+        commit_hash=env.COMMIT_HASH,
+        version=env.VERSION,
+    )

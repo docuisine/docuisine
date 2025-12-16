@@ -20,7 +20,7 @@ class Environment:
         return URL
 
     @cached_property
-    def git_commit_hash(self) -> Union[str, None]:
+    def COMMIT_HASH(self) -> Union[str, None]:
         try:
             return (
                 subprocess.check_output(
@@ -33,7 +33,7 @@ class Environment:
             return None
 
     @cached_property
-    def version(self) -> Union[str, None]:
+    def VERSION(self) -> Union[str, None]:
         try:
             return (
                 subprocess.check_output(["uv", "version", "--short"], stderr=subprocess.DEVNULL)
