@@ -64,12 +64,6 @@ clean:
 	find . -type d -name "__pycache__" -delete
 
 
-## Pre-commit checks
-.PHONY: precommit
-precommit:
-	make format
-	make test
-
 ## Bump project version with patch update
 .PHONY: patch
 patch:

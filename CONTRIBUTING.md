@@ -28,7 +28,6 @@ make docs               #  Run a local mkdocs server for documentation
 make lint               #  Lint the code
 make format             #  Format the code
 make tests              #  Run unit tests
-make precommit          #  Run both format and unit tests
 ```
 
 # Project Organization
