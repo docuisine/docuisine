@@ -36,7 +36,7 @@ class Environment:
     def version(self) -> Union[str, None]:
         try:
             return (
-                subprocess.check_output(["uv", "version"], stderr=subprocess.DEVNULL)
+                subprocess.check_output(["uv", "version", "--short"], stderr=subprocess.DEVNULL)
                 .decode()
                 .strip()
             )
