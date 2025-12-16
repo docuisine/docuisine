@@ -21,27 +21,21 @@ class Environment:
 
     @cached_property
     def COMMIT_HASH(self) -> Union[str, None]:
-        try:
-            return (
-                subprocess.check_output(
-                    ["git", "rev-parse", "--short", "HEAD"], stderr=subprocess.DEVNULL
-                )
-                .decode()
-                .strip()
+        return (
+            subprocess.check_output(
+                ["git", "rev-parse", "--short", "HEAD"], stderr=subprocess.DEVNULL
             )
-        except (subprocess.CalledProcessError, FileNotFoundError):
-            return None
+            .decode()
+            .strip()
+        )
 
     @cached_property
     def VERSION(self) -> Union[str, None]:
-        try:
-            return (
-                subprocess.check_output(["uv", "version", "--short"], stderr=subprocess.DEVNULL)
-                .decode()
-                .strip()
-            )
-        except (subprocess.CalledProcessError, FileNotFoundError):
-            return None
+        return (
+            subprocess.check_output(["uv", "version", "--short"], stderr=subprocess.DEVNULL)
+            .decode()
+            .strip()
+        )
 
 
 env = Environment()
