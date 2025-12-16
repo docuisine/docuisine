@@ -13,7 +13,7 @@ class Environment:
         load_dotenv()
 
     @property
-    def DB_URL(self) -> str:
+    def DATABASE_URL(self) -> str:
         URL = os.getenv("DATABASE_URL")
         if URL is None:
             raise EnvironmentError("DATABASE_URL environment variable is not set.")
