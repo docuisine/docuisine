@@ -22,7 +22,6 @@ make dev-down
 # Development
 
 ```bash
-make dev                #  Run a local development server
 make prod               #  Run a local production server
 make docs               #  Run a local mkdocs server for documentation
 make lint               #  Lint the code
