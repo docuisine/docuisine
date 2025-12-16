@@ -13,13 +13,13 @@ class HealthCheck(BaseModel):
     commit_hash: str = Field(..., example="a1b2c3d")
     version: str = Field(..., example="1.0.0")
 
-    @field_validator("commit_hash", mode="before")
+    @field_validator("commit_hash")
     def check_commit(cls, hash: str) -> str:
         if len(hash) != 7:
             raise ValueError("Commit hash must be exactly 7 characters long.")
         return hash
 
-    @field_validator("version", mode="before")
+    @field_validator("version")
     def check_version(cls, version: str) -> str:
         if version.count(".") != 2:
             raise ValueError("Version must be in the format 'X.Y.Z'.")
