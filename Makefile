@@ -21,7 +21,13 @@ requirements:
 ## Run development server
 .PHONY: dev
 dev:
-	docker compose -f scripts/dev/docker-compose.yml up --build
+	docker compose -f scripts/dev/docker-compose.yml down
+	docker compose -f scripts/dev/docker-compose.yml up --build -d
+
+# Stop development server
+.PHONY: dev-down
+dev-down:
+	docker compose -f scripts/dev/docker-compose.yml down
 
 ## Run production server
 .PHONY: prod
@@ -41,14 +47,14 @@ test:
 ## Lint using ruff (use `make format` to do formatting)
 .PHONY: lint
 lint:
-	uv run ruff format --check
-	uv run ruff check
+	ruff format --check
+	ruff check
 
 ## Format source code with ruff
 .PHONY: format
 format:
-	uv run ruff check --fix
-	uv run ruff format
+	ruff check --fix
+	ruff format
 
 ## Delete all compiled Python files
 .PHONY: clean
