@@ -3,6 +3,7 @@ services:
     build:
       dockerfile: ./scripts/dev/Dockerfile
       context: ../..
+    user: "${UID}:${GID}"
     container_name: docuisine_app
     restart: no
     ports:
