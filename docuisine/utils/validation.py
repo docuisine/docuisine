@@ -44,7 +44,8 @@ def has_only_digits(version: str) -> str:
     ValueError
         If any part of the version string is not numeric.
     """
-    if all(part.isdigit() for part in version.split(".")):
+    pattern = r"[^0-9.]"
+    if not re.search(pattern, version):
         return version
     raise ValueError("Version parts must be numeric.")
 
