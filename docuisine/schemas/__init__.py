@@ -1,3 +1,4 @@
+from .common import Role
 from .health import HealthCheck, Status
 from .response import Error, ErrorCode, Response
 
@@ -7,4 +8,5 @@ __all__ = [
     "ErrorCode",
     "HealthCheck",
     "Status",
+    "Role",
 ]

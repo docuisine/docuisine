@@ -1,11 +1,6 @@
-from enum import Enum
-
 from pydantic import BaseModel, Field
 
-
-class Role(str, Enum):
-    ADMIN = "admin"
-    USER = "user"
+from docuisine.schemas import Role
 
 
 class Email:
