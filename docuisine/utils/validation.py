@@ -1,7 +1,7 @@
 import re
 
 
-def has_two_dots(version: str) -> bool:
+def has_two_dots(version: str) -> str:
     """
     Validate that the version string has exactly two dots.
 
@@ -12,8 +12,8 @@ def has_two_dots(version: str) -> bool:
 
     Returns
     -------
-    bool
-        True if the version string is valid.
+    str
+        The version string if it is valid.
 
     Raises
     ------
@@ -21,11 +21,11 @@ def has_two_dots(version: str) -> bool:
         If the version string does not have exactly two dots.
     """
     if version.count(".") == 2:
-        return True
+        return version
     raise ValueError("Version must have two dots (e.g., '1.0.0').")
 
 
-def has_only_digits(version: str) -> bool:
+def has_only_digits(version: str) -> str:
     """
     Validate that all parts of the version string are numeric.
 
@@ -36,8 +36,8 @@ def has_only_digits(version: str) -> bool:
 
     Returns
     -------
-    bool
-        True if the version string is valid.
+    str
+        The version string if it is valid.
 
     Raises
     ------
@@ -45,7 +45,7 @@ def has_only_digits(version: str) -> bool:
         If any part of the version string is not numeric.
     """
     if all(part.isdigit() for part in version.split(".")):
-        return True
+        return version
     raise ValueError("Version parts must be numeric.")
 
 
@@ -96,7 +96,7 @@ def validate_version(version: str) -> str:
     return version
 
 
-def validate_pattern(password: str, pattern: str, error_message: str) -> bool:
+def validate_pattern(password: str, pattern: str, error_message: str) -> str:
     """
     Validate that the password matches a given regex pattern.
 
@@ -111,8 +111,8 @@ def validate_pattern(password: str, pattern: str, error_message: str) -> bool:
 
     Returns
     -------
-    bool
-        True if the password is valid.
+    str
+        The validated password string.
 
     Raises
     ------
@@ -121,7 +121,7 @@ def validate_pattern(password: str, pattern: str, error_message: str) -> bool:
     """
     compiled_pattern = re.compile(pattern)
     if compiled_pattern.search(password):
-        return True
+        return password
     raise ValueError(error_message)
 
 
