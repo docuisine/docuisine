@@ -26,3 +26,7 @@ class User(Base):
     password = Column(String, nullable=False)
     role = Column(String, nullable=False, default=Role.USER.value)
     created_at = Column(DateTime, nullable=False, default=datetime.now(timezone.utc))
+
+    def as_dict(self) -> dict:
+        """Convert the User instance to a dictionary representation."""
+        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
