@@ -1,30 +1,29 @@
 services:
 
   db:
-    hostname: ${POSTGRES_HOST:?err}
+    hostname: ${POSTGRES_HOST:-localhost}
     image: postgres:18.1
     container_name: docuisine_postgres
-    restart: no
+    restart: always
     ports:
-      - "${POSTGRES_PORT:?err}:5432"
+      - "${POSTGRES_PORT:-5432}:5432"
     environment:
-      POSTGRES_USER: ${POSTGRES_USER:?err}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?err}
-      POSTGRES_DB: ${POSTGRES_DB:?err}
+      POSTGRES_USER: ${POSTGRES_USER:-user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
+      POSTGRES_DB: ${POSTGRES_DB:-docuisine}
     volumes:
-      - ./init:/docker-entrypoint-initdb.d
-      - db_data:/var/lib/postgresql/MAJOR/data
+      - docuisine_db_data:/var/lib/postgresql/MAJOR/data
     healthcheck:
       test:
         [
           "CMD-SHELL",
           "pg_isready",
           "-U",
-          "${POSTGRES_USER}",
+          "${POSTGRES_USER:-user}",
           "-d",
-          "${POSTGRES_DB}",
+          "${POSTGRES_DB:-docuisine}",
           "-h",
-          "${POSTGRES_HOST}",
+          "${POSTGRES_HOST:-localhost}",
         ]
       interval: 5s
       timeout: 3s
@@ -32,4 +31,4 @@ services:
       start_period: 30s
 
 volumes:
-  db_data:
+  docuisine_db_data:
