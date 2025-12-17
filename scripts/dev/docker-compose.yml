@@ -12,6 +12,7 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
       POSTGRES_DB: ${POSTGRES_DB:-docuisine}
     volumes:
+      - ./init:/docker-entrypoint-initdb.d
       - docuisine_db_data:/var/lib/postgresql/MAJOR/data
     healthcheck:
       test:
