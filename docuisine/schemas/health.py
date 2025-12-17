@@ -1,6 +1,7 @@
 from pydantic import BaseModel, Field
 
-from .common import CommitHash, Status, Version
+from .common import CommitHash, Version
+from .enums import Status
 
 
 class HealthCheck(BaseModel):

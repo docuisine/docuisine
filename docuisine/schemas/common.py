@@ -1,4 +1,3 @@
-from enum import Enum
 from typing import Annotated
 
 from annotated_types import Len, MinLen
@@ -57,13 +56,3 @@ CommitHash = Annotated[str, Len(7, 7)]
 Version = Annotated[
     str, MinLen(5), AfterValidator(_has_two_dots), AfterValidator(_has_only_digits)
 ]
-
-
-class Status(str, Enum):
-    HEALTHY = "healthy"
-    UNHEALTHY = "unhealthy"
-
-
-class Role(str, Enum):
-    ADMIN = "admin"
-    USER = "user"

@@ -1,13 +1,8 @@
-from enum import Enum
 from typing import Any, List, Optional
 
 from pydantic import BaseModel
 
-
-class ErrorCode(Enum):
-    NOT_FOUND = "not_found"
-    VALIDATION_ERROR = "validation_error"
-    SERVER_ERROR = "server_error"
+from .enums import ErrorCode
 
 
 class Error(BaseModel):
