@@ -29,15 +29,6 @@ body:
     validations:
       required: true
 
-  - type: textarea
-    id: details
-    attributes:
-      label: "Details and Assumptions"
-      description: "Document what you know here."
-      placeholder: "e.g., Provide any context or assumptions relevant to the user story."
-    validations:
-      required: false
-
   - type: checkboxes
     id: terms
     attributes:
