@@ -1,6 +1,6 @@
 from pydantic import BaseModel, Field
 
-from .common import CommitHash, Version
+from .annotations import CommitHash, Version
 from .enums import Status
 
 
