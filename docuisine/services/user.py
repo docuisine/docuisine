@@ -1,6 +1,7 @@
 from typing import Optional
 
 from sqlalchemy.exc import IntegrityError
+from sqlalchemy.orm import Session
 
 from docuisine.db.models import User
 from docuisine.utils.errors import UserExistsError, UserNotFoundError
@@ -8,8 +9,8 @@ from docuisine.utils.hashing import hash_in_sha256
 
 
 class UserService:
-    def __init__(self, db_session):
-        self.db_session = db_session
+    def __init__(self, db_session: Session):
+        self.db_session: Session = db_session
 
     def create_user(self, username: str, password: str) -> User:
         """
