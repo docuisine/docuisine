@@ -2,6 +2,7 @@ from fastapi import APIRouter, HTTPException, status
 
 from docuisine.db.models import User
 from docuisine.schemas.annotations import DB_session
+from docuisine.schemas.common import Detail
 from docuisine.schemas.user import UserCreate, UserOut
 from docuisine.services import UserService
 from docuisine.utils import errors
@@ -16,7 +17,12 @@ def get_users(db: DB_session) -> list[UserOut]:
     return [UserOut.model_validate(user) for user in users]
 
 
-@router.get("/{user_id}", status_code=status.HTTP_200_OK, response_model=UserOut)
+@router.get(
+    "/{user_id}",
+    status_code=status.HTTP_200_OK,
+    response_model=UserOut,
+    responses={status.HTTP_404_NOT_FOUND: {"model": Detail}},
+)
 def get_user(user_id: int, db: DB_session) -> UserOut:
     user_service = UserService(db_session=db)
     try:
@@ -29,7 +35,12 @@ def get_user(user_id: int, db: DB_session) -> UserOut:
         )
 
 
-@router.post("/", status_code=status.HTTP_201_CREATED, response_model=UserOut)
+@router.post(
+    "/",
+    status_code=status.HTTP_201_CREATED,
+    response_model=UserOut,
+    responses={status.HTTP_409_CONFLICT: {"model": Detail}},
+)
 def create_user(user: UserCreate, db: DB_session) -> UserOut:
     user_service = UserService(db_session=db)
     try:
