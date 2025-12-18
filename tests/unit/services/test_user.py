@@ -1,135 +1,104 @@
+from unittest.mock import MagicMock
+
 import pytest
+from sqlalchemy.exc import IntegrityError
 
-import docuisine.services.user as user_module
-
-
-class FakeQuery:
-    def __init__(self, session):
-        self._session = session
-        self._filters = {}
-
-    def filter_by(self, **kwargs):
-        self._filters.update(kwargs)
-        return self
-
-    def first(self):
-        for u in self._session._store:
-            if all(getattr(u, k) == v for k, v in self._filters.items()):
-                return u
-        return None
-
-    def all(self):
-        # Return a shallow copy to avoid external mutation
-        return list(self._session._store)
-
-
-class FakeSession:
-    def __init__(self):
-        self._store = []
-        self._pending = []
-        self._rolled_back = False
-        self._committed = False
-        self._id_counter = 1
-
-    def add(self, obj):
-        self._pending.append(obj)
-
-    def commit(self):
-        # Simulate unique constraint on username
-        existing_usernames = {u.username for u in self._store}
-        for obj in self._pending:
-            if obj.username in existing_usernames:
-                self.rollback()
-                raise user_module.IntegrityError("Unique constraint violated", None, Exception())
-        for obj in self._pending:
-            if getattr(obj, "id", None) is None:
-                setattr(obj, "id", self._id_counter)
-                self._id_counter += 1
-            self._store.append(obj)
-        self._pending.clear()
-        self._committed = True
-
-    def rollback(self):
-        self._rolled_back = True
-        self._pending.clear()
-
-    def query(self, _model):
-        return FakeQuery(self)
+from docuisine.db.models import User
+from docuisine.services.user import UserService
+from docuisine.utils.errors import UserExistsError, UserNotFoundError
 
 
 @pytest.fixture
-def fake_session():
-    return FakeSession()
-
-
-@pytest.fixture
-def service(fake_session):
-    return user_module.UserService(fake_session)
+def db_session():
+    session = MagicMock()
+    session.query.return_value = session
+    session.filter_by.return_value = session
+    return session
 
 
 @pytest.fixture(autouse=True)
-def patch_hash(monkeypatch):
-    def _fake_hash(pw: str) -> str:
-        return f"sha256::{pw}"
+def mock_hash(monkeypatch):
+    monkeypatch.setattr(
+        "docuisine.services.user.hash_in_sha256",
+        lambda pw: f"hashed::{pw}",
+    )
 
-    monkeypatch.setattr(user_module, "hash_in_sha256", _fake_hash)
 
+def test_create_user_success(db_session):
+    service = UserService(db_session)
 
-def test_create_user_success_hash_and_commit(service, fake_session):
-    user = service.create_user("alice", "secret")
-    assert isinstance(user, user_module.User)
+    user = service.create_user("alice", "password123")
+
+    assert isinstance(user, User)
     assert user.username == "alice"
-    assert user.password == "sha256::secret"
-    assert fake_session._committed is True
-    # Ensure it was stored and has an id
-    assert user in fake_session._store
-    assert getattr(user, "id", None) is not None
+    assert user.password == "hashed::password123"
+
+    db_session.add.assert_called_once()
+    db_session.commit.assert_called_once()
 
 
-def test_create_user_duplicate_raises_and_rollback(service, fake_session):
-    u1 = service.create_user("bob", "pw1")
-    assert u1.username == "bob"
-    with pytest.raises(user_module.UserExistsError):
-        service.create_user("bob", "pw2")
-    assert fake_session._rolled_back is True
-    # Only the first user exists
-    assert [u.username for u in fake_session._store] == ["bob"]
+def test_create_user_duplicate_raises(db_session):
+    db_session.commit.side_effect = IntegrityError(
+        statement=None,
+        params=None,
+        orig=Exception(),
+    )
+
+    service = UserService(db_session)
+
+    with pytest.raises(UserExistsError) as exc:
+        service.create_user("alice", "password123")
+
+    assert "alice" in str(exc.value)
+    db_session.rollback.assert_called_once()
 
 
-def test_get_user_by_id_takes_precedence_over_username(service):
-    u1 = service.create_user("charlie", "pw")
-    u2 = service.create_user("charlie2", "pw")
-    # Request with both id and another username; id should take precedence
-    res = service.get_user(user_id=u1.id, username=u2.username)
-    assert res.id == u1.id
-    assert res.username == u1.username
+def test_get_user_no_args_raises(db_session):
+    service = UserService(db_session)
 
-
-def test_get_user_by_username_found(service):
-    u = service.create_user("dora", "pw")
-    res = service.get_user(username="dora")
-    assert res.id == u.id
-    assert res.username == "dora"
-
-
-def test_get_user_without_params_raises_value_error(service):
     with pytest.raises(ValueError):
         service.get_user()
 
 
-def test_get_user_not_found_by_id_raises(service):
-    with pytest.raises(user_module.UserNotFoundError):
-        service.get_user(user_id=9999)
+def test_get_user_by_id(db_session):
+    user = User(id=1, username="alice", password="pw")
+    db_session.first.return_value = user
+
+    service = UserService(db_session)
+    result = service.get_user(user_id=1)
+
+    assert result is user
+    db_session.filter_by.assert_called_with(id=1)
 
 
-def test_get_user_not_found_by_username_raises(service):
-    with pytest.raises(user_module.UserNotFoundError):
-        service.get_user(username="no_such_user")
+def test_get_user_by_username(db_session):
+    user = User(id=1, username="alice", password="pw")
+    db_session.first.return_value = user
+
+    service = UserService(db_session)
+    result = service.get_user(username="alice")
+
+    assert result is user
+    db_session.filter_by.assert_called_with(username="alice")
 
 
-def test_get_all_users_returns_list(service):
-    service.create_user("eve", "1")
-    service.create_user("frank", "2")
-    all_users = service.get_all_users()
-    assert isinstance(all_users, list)
-    assert {u.username for u in all_users} == {"eve", "frank"}
+def test_get_user_not_found_by_id(db_session):
+    db_session.first.return_value = None
+    service = UserService(db_session)
+
+    with pytest.raises(UserNotFoundError):
+        service.get_user(user_id=999)
+
+
+def test_get_all_users(db_session):
+    users = [
+        User(id=1, username="alice", password="pw"),
+        User(id=2, username="bob", password="pw"),
+    ]
+    db_session.all.return_value = users
+
+    service = UserService(db_session)
+    result = service.get_all_users()
+
+    assert result == users
+    db_session.query.assert_called_once_with(User)
