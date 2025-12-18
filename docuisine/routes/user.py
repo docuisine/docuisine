@@ -11,7 +11,7 @@ router = APIRouter(prefix="/users", tags=["Users"])
 
 
 @router.get("/", status_code=status.HTTP_200_OK, response_model=list[UserOut])
-def get_users(db: DB_session) -> list[UserOut]:
+async def get_users(db: DB_session) -> list[UserOut]:
     user_service = UserService(db_session=db)
     users: list[User] = user_service.get_all_users()
     return [UserOut.model_validate(user) for user in users]
@@ -23,7 +23,7 @@ def get_users(db: DB_session) -> list[UserOut]:
     response_model=UserOut,
     responses={status.HTTP_404_NOT_FOUND: {"model": Detail}},
 )
-def get_user(user_id: int, db: DB_session) -> UserOut:
+async def get_user(user_id: int, db: DB_session) -> UserOut:
     user_service = UserService(db_session=db)
     try:
         user: User = user_service.get_user(user_id=user_id)
@@ -41,7 +41,7 @@ def get_user(user_id: int, db: DB_session) -> UserOut:
     response_model=UserOut,
     responses={status.HTTP_409_CONFLICT: {"model": Detail}},
 )
-def create_user(user: UserCreate, db: DB_session) -> UserOut:
+async def create_user(user: UserCreate, db: DB_session) -> UserOut:
     user_service = UserService(db_session=db)
     try:
         new_user: User = user_service.create_user(user.email, user.password)
