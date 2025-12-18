@@ -7,4 +7,5 @@ class Detail(BaseModel):
     Often used to convey error messages or other informational text
     in the API or routes.
     """
+
     detail: str
