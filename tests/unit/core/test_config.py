@@ -18,3 +18,8 @@ def test_version():
     assert version is not None
     assert isinstance(version, str)
     assert version.count(".") == 2  # Basic check for version format
+
+
+def test_mode():
+    mode = env.MODE
+    assert mode in {"development", "production", "testing"}
