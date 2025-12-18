@@ -42,9 +42,13 @@ docs:
 	uv run mkdocs serve -f docs/mkdocs.yml -a localhost:7002
 
 ## Run tests
-.PHONY: test
-test:
-	uv run pytest tests
+.PHONY: test-unit
+test-unit:
+	uv run pytest tests/unit
+
+.PHONY: test-e2e
+test-e2e:
+	uv run pytest tests/e2e
 
 ## Lint using ruff (use `make format` to do formatting)
 .PHONY: lint
