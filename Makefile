@@ -23,6 +23,7 @@ requirements:
 dev:
 	docker compose -f scripts/dev/docker-compose.yml down
 	docker compose -f scripts/dev/docker-compose.yml up --build -d
+	sleep 3
 	uv run fastapi dev docuisine/main.py --host 0.0.0.0 --port 7000
 
 # Stop development server
