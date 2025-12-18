@@ -8,4 +8,4 @@ omit =
     */core/*
 
     __init__.py
-
+    main.py
