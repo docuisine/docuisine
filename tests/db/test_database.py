@@ -32,15 +32,15 @@ def db_session():
 
 
 def test_insert_user(db_session):
-    test_email = "test@example.com"
-    new_user = User(email=test_email, password="hashedpassword")
+    test_username = "testuser"
+    new_user = User(username=test_username, password="hashedpassword")
 
     db_session.add(new_user)
     db_session.commit()
 
-    results = db_session.query(User).filter(User.email == test_email).all()
+    results = db_session.query(User).filter(User.username == test_username).all()
     assert len(results) == 1
-    assert results[0].email == test_email
+    assert results[0].username == test_username
     assert isinstance(results[0].created_at, datetime), (
         f"created_at should be a datetime, got {type(results[0].created_at)}"
     )

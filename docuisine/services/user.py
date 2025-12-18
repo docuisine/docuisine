@@ -11,14 +11,14 @@ class UserService:
     def __init__(self, db_session):
         self.db_session = db_session
 
-    def create_user(self, email: str, password: str) -> User:
+    def create_user(self, username: str, password: str) -> User:
         """
         Create a new user in the database with an encrypted password.
 
         Parameters
         ----------
-        email : str
-            The email address of the new user. Must be unique.
+        username : str
+            The username of the new user. Must be unique.
         password : str
             The plain-text password to be encrypted and stored.
 
@@ -38,55 +38,55 @@ class UserService:
         - This method commits the transaction immediately.
         """
         encrypted_password = hash_in_sha256(password)
-        new_user = User(email=email, password=encrypted_password)
+        new_user = User(username=username, password=encrypted_password)
         try:
             self.db_session.add(new_user)
             self.db_session.commit()
         except IntegrityError:
             self.db_session.rollback()
-            raise UserExistsError(email=email)
+            raise UserExistsError(username)
         return new_user
 
-    def get_user(self, user_id: Optional[int] = None, email: Optional[str] = None) -> User:
+    def get_user(self, user_id: Optional[int] = None, username: Optional[str] = None) -> User:
         """
-        Retrieve a user from the database by ID or email.
+        Retrieve a user from the database by ID or username.
 
         Parameters
         ----------
         user_id : int, optional
             The unique ID of the user to retrieve. Default is None.
-        email : str, optional
-            The email of the user to retrieve. Default is None.
+        username : str, optional
+            The username of the user to retrieve. Default is None.
 
         Returns
         -------
         User
-            The `User` instance matching the provided ID or email.
+            The `User` instance matching the provided ID or username.
 
         Raises
         ------
         ValueError
-            If neither `user_id` nor `email` is provided.
+            If neither `user_id` nor `username` is provided.
         UserNotFoundError
             If no user is found with the given criteria.
 
         Notes
         -----
-        - If both `user_id` and `email` are provided, `user_id` takes precedence.
+        - If both `user_id` and `username` are provided, `user_id` takes precedence.
         - Returns `None` if no user is found with the given criteria.
         """
-        if user_id is None and email is None:
-            raise ValueError("Either user ID or email must be provided.")
+        if user_id is None and username is None:
+            raise ValueError("Either user ID or username must be provided.")
         if user_id is not None:
             result = self.db_session.query(User).filter_by(id=user_id).first()
         else:
-            result = self.db_session.query(User).filter_by(email=email).first()
+            result = self.db_session.query(User).filter_by(username=username).first()
 
         if result is None:
             raise (
                 UserNotFoundError(user_id=user_id)
                 if user_id is not None
-                else UserNotFoundError(email=email)
+                else UserNotFoundError(username=username)
             )
 
         return result

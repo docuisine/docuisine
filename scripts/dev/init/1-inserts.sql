@@ -1,9 +1,9 @@
 -- Strong Entities
 
-INSERT INTO users (email, password, role) VALUES
-('admin@docuisine.dev', '$2b$12$adminhashedpassword', 'admin'),
-('alice@docuisine.dev', '$2b$12$alicehashedpassword', 'user'),
-('bob@docuisine.dev', '$2b$12$bobhashedpassword', 'user');
+INSERT INTO users (username, password, role) VALUES
+('admin123', '$2b$12$adminhashedpassword', 'admin'),
+('aliceInWakanda', '$2b$12$alicehashedpassword', 'user'),
+('bob@aji', '$2b$12$bobhashedpassword', 'user');
 
 INSERT INTO tags (name) VALUES
 ('vegan'),

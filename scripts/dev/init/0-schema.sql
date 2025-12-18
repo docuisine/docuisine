@@ -6,7 +6,8 @@ CREATE TABLE entity (
 
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,
-    email TEXT NOT NULL UNIQUE,
+    username TEXT UNIQUE NOT NULL,
+    email TEXT UNIQUE,
     password TEXT NOT NULL,
     role TEXT NOT NULL
 ) INHERITS (entity);
@@ -46,7 +47,7 @@ CREATE TABLE store (
 ) INHERITS (entity);
 
 
-CREATE INDEX idx_user_email ON users(email);
+CREATE INDEX idx_user_username ON users(username);
 
 CREATE INDEX idx_recipe_ingredients_recipe
     ON recipe_ingredients(recipe_id);
