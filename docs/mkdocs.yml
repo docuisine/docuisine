@@ -1,12 +1,14 @@
-site_name: Docuisine Documentation
-# 
+site_name: Docuisine
 site_author: Chris Irag
-#
+repo_url: https://github.com/iragca/docuisine
+repo_name: iragca/docuisine
 theme:
   name: material
   features:
     - content.code.copy
-
+    - navigation.tabs
+    - navigation.sections
+    - navigation.expand
 markdown_extensions:
   - pymdownx.highlight:
       anchor_linenums: true
@@ -24,5 +26,19 @@ plugins:
         python:
           options:
             docstring_style: numpy
-            show_source: true    
+            show_source: true
             merge_init_into_class: true
+
+nav:
+  - Home: index.md
+  - "Getting Help": getting-help.md
+  - User Guide:
+      - Quick Start: user-guide/quick-start.md
+      - Installation: user-guide/installation.md
+      - Configuration: user-guide/configuration.md
+  - Contributing:
+      - Development: contributing/development.md
+      - "Source Tree": contributing/source-tree.md
+  - About:
+      - Changelog: about/changelog.md
+      - License: about/license.md
