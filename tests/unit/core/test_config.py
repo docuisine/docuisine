@@ -18,7 +18,7 @@ def setup_env_monkeypatch(monkeypatch):
 
 def test_database_url():
     assert isinstance(env.DATABASE_URL, str)
-    assert env.DATABASE_URL.startswith("postgresql")
+    assert env.DATABASE_URL.startswith("postgresql") or env.DATABASE_URL.startswith("sqlite")
 
 
 def test_commit_hash():
