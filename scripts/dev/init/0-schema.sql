@@ -39,7 +39,8 @@ CREATE TABLE recipe_steps (
 CREATE TABLE ingredients (
     id SERIAL PRIMARY KEY,
     name TEXT NOT NULL UNIQUE,
-    description TEXT
+    description TEXT,
+    recipe_id INTEGER REFERENCES recipes(id) ON DELETE SET NULL
 ) INHERITS (entity);
 
 CREATE TABLE recipe_ingredients (

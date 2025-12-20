@@ -34,6 +34,7 @@ erDiagram
         int id PK
         text name
         text description
+        int recipe_id
         text preview_img
         text img
         timestamp created_at
