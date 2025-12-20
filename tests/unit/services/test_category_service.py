@@ -235,3 +235,20 @@ def test_delete_category_not_found_raises_error(db_session: MagicMock, monkeypat
         service.delete_category(999)
 
     assert "999" in str(exc_info.value)
+
+
+def test_get_category_by_name_primitive(db_session: MagicMock):
+    """
+    Test retrieving a category by name by testing correct
+    calling procedure of primitive SQLAlchemy methods.
+    """
+    service = CategoryService(db_session)
+    example_category = Category(id=1, name="Italian", description="Italian cuisine")
+    db_session.first.return_value = example_category
+
+    result = service._get_category_by_name(name="Italian")
+
+    assert result == example_category
+    db_session.query.assert_called_once_with(Category)
+    db_session.filter_by.assert_called_with(name="Italian")
+    db_session.first.assert_called_once()
