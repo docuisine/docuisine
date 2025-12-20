@@ -1,6 +1,6 @@
 # Database
 
-## Entity Relation Diagram
+## Entity Relationship Diagram
 
 ```mermaid
 erDiagram
@@ -20,7 +20,10 @@ erDiagram
     STORE {
         int id PK
         text name
-        geojson location
+        float longitude
+        float latitude
+        text address
+        text description
         text preview_img
         text img
         timestamp created_at
@@ -29,8 +32,8 @@ erDiagram
 
     INGREDIENT {
         int id PK
-        int type_id
         text name
+        text description
         text preview_img
         text img
         timestamp created_at
@@ -40,11 +43,12 @@ erDiagram
     RECIPE {
         int id PK
         int user_id FK
-        int category_id FK
-        text title
+        text name
         int cook_time_sec
         int prep_time_sec
         int non_blocking_sec
+        int servings
+        text description
         text preview_img
         text img
         timestamp created_at
@@ -54,14 +58,19 @@ erDiagram
     CATEGORY {
         int id PK
         text name
+        text description
         text preview_img
         text img
         timestamp created_at
         timestamp updated_at
     }
 
+    RECIPE_CATEGORY {
+        int recipe_id FK
+        int category_id FK
+    }
+
     SHELF {
-        int id PK
         int store_id FK
         int ingredient_id FK
         int quantity
@@ -70,7 +79,6 @@ erDiagram
     }
 
     RECIPE_INGREDIENT {
-        int id PK
         int recipe_id FK
         int ingredient_id FK
         int amount_grams
@@ -80,10 +88,9 @@ erDiagram
     }
 
     RECIPE_STEP {
-        int id PK
         int recipe_id FK
-        text description
         int step_num
+        text description
         text preview_img
         text img
         timestamp created_at
@@ -93,14 +100,15 @@ erDiagram
     %% Relationships
 
     USER ||--o{ RECIPE : creates
-    CATEGORY ||--o{ RECIPE : categorizes
 
     RECIPE ||--o{ RECIPE_STEP : has
     RECIPE ||--o{ RECIPE_INGREDIENT : uses
+    RECIPE ||--o{ RECIPE_CATEGORY : has
+    CATEGORY ||--o{ RECIPE_CATEGORY : includes
     INGREDIENT ||--o{ RECIPE_INGREDIENT : included_in
 
     STORE ||--o{ SHELF : has
     INGREDIENT ||--o{ SHELF : stored_in
 ```
 
-Columns `preview_img`, `img`, `created_at`, `updated_at` should be implemented as a superclass `Entity` that should be inherited from when implementing `user`, `store`, `ingredient`, etc.
+Tables that store real life objects should inherit from a superclass `Entity` that has columns `preview_img`, `img`. All tables including `Entity` then inherits from the `default` table that has columns `created_at` and `updated_at`.
