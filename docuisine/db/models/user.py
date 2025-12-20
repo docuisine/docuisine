@@ -18,6 +18,7 @@ class User(Base, Entity):
 
     __tablename__ = "users"
 
+    id: Mapped[int] = mapped_column(primary_key=True)
     username: Mapped[str] = mapped_column(String, unique=True, nullable=False)
     email: Mapped[str] = mapped_column(String, unique=True, nullable=True)
     password: Mapped[str]
