@@ -119,7 +119,42 @@ class UserService:
         self.db_session.commit()
 
     def _get_user_by_id(self, user_id: int) -> Optional[User]:
+        """
+        Retrieve a user from the database by their unique ID.
+
+        Parameters
+        ----------
+        user_id : int
+            The unique ID of the user to retrieve.
+
+        Returns
+        -------
+        Optional[User]
+            The `User` instance if found, otherwise `None`.
+
+        Notes
+        -----
+        No business logic should be placed here.
+        """
         return self.db_session.query(User).filter_by(id=user_id).first()
 
     def _get_user_by_username(self, username: str) -> Optional[User]:
+        """
+        Retrieve a user from the database by their username.
+        No business logic should be placed here.
+
+        Parameters
+        ----------
+        username : str
+            The username of the user to retrieve.
+
+        Returns
+        -------
+        Optional[User]
+            The `User` instance if found, otherwise `None`.
+        
+        Notes
+        -----
+        No business logic should be placed here.
+        """
         return self.db_session.query(User).filter_by(username=username).first()
