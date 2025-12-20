@@ -24,7 +24,16 @@ def get_test_db():
 
 
 app.dependency_overrides[get_db_session] = get_test_db
-Base.metadata.create_all(bind=engine)
+
+
+@pytest.fixture()
+def setup_and_teardown():
+    """Setup and teardown the database for tests."""
+    # NOTE: A faster way to setup and teardown the database
+    # for tests is by using rollbacks, without committing changes.
+    Base.metadata.create_all(bind=engine)
+    yield
+    Base.metadata.drop_all(bind=engine)
 
 
 @pytest.fixture(scope="module")
