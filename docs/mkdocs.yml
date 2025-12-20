@@ -2,6 +2,9 @@ site_name: Docuisine
 site_author: Chris Irag
 repo_url: https://github.com/iragca/docuisine
 repo_name: iragca/docuisine
+copyright: Copyright &copy; 2025 Chris Irag
+site_description: Documentation for Docuisine, a data cuisine recipe manager.
+site_url: https://iragca.github.io/docuisine/
 theme:
   name: material
   features:
