@@ -116,3 +116,22 @@ def test_create_user_with_email(db_session):
 
     db_session.add.assert_called_once()
     db_session.commit.assert_called_once()
+
+
+def test_delete_user_success(db_session):
+    user = User(id=1, username="alice", password="pw")
+    db_session.first.return_value = user
+
+    service = UserService(db_session)
+    service.delete_user(user_id=1)
+
+    db_session.delete.assert_called_once_with(user)
+    db_session.commit.assert_called_once()
+
+
+def test_delete_user_not_found(db_session):
+    db_session.first.return_value = None
+    service = UserService(db_session)
+
+    with pytest.raises(UserNotFoundError):
+        service.delete_user(user_id=999)

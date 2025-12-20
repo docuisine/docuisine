@@ -94,3 +94,33 @@ class UserService:
 
     def get_all_users(self) -> list[User]:
         return self.db_session.query(User).all()
+
+    def delete_user(self, user_id: int) -> None:
+        """
+        Delete a user from the database by their unique ID.
+
+        Parameters
+        ----------
+        user_id : int
+            The unique ID of the user to delete.
+
+        Raises
+        ------
+        UserNotFoundError
+            If no user is found with the given ID.
+
+        Notes
+        -----
+        - This method commits the transaction immediately.
+        """
+        user = self._get_user_by_id(user_id)
+        if user is None:
+            raise UserNotFoundError(user_id=user_id)
+        self.db_session.delete(user)
+        self.db_session.commit()
+
+    def _get_user_by_id(self, user_id: int) -> Optional[User]:
+        return self.db_session.query(User).filter_by(id=user_id).first()
+
+    def _get_user_by_username(self, username: str) -> Optional[User]:
+        return self.db_session.query(User).filter_by(username=username).first()
