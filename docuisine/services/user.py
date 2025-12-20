@@ -76,12 +76,12 @@ class UserService:
         - If both `user_id` and `username` are provided, `user_id` takes precedence.
         - Returns `None` if no user is found with the given criteria.
         """
-        if user_id is None and username is None:
-            raise ValueError("Either user ID or username must be provided.")
         if user_id is not None:
-            result = self.db_session.query(User).filter_by(id=user_id).first()
+            result = self._get_user_by_id(user_id=user_id)
+        elif username is not None:
+            result = self._get_user_by_username(username=username)
         else:
-            result = self.db_session.query(User).filter_by(username=username).first()
+            raise ValueError("Either user ID or username must be provided.")
 
         if result is None:
             raise (

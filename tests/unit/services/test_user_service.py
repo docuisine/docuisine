@@ -56,7 +56,7 @@ def test_create_user_duplicate_raises(db_session):
 def test_get_user_no_args_raises(db_session):
     service = UserService(db_session)
 
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="Either user ID or username must be provided."):
         service.get_user()
 
 
@@ -65,10 +65,12 @@ def test_get_user_by_id(db_session):
     db_session.first.return_value = user
 
     service = UserService(db_session)
-    result = service.get_user(user_id=1)
+    result = service._get_user_by_id(user_id=1)
 
-    assert result is user
+    db_session.query.assert_called_once_with(User)
     db_session.filter_by.assert_called_with(id=1)
+    db_session.first.assert_called_once()
+    assert result is user
 
 
 def test_get_user_by_username(db_session):
@@ -76,10 +78,12 @@ def test_get_user_by_username(db_session):
     db_session.first.return_value = user
 
     service = UserService(db_session)
-    result = service.get_user(username="alice")
+    result = service._get_user_by_username(username="alice")
 
-    assert result is user
+    db_session.query.assert_called_once_with(User)
     db_session.filter_by.assert_called_with(username="alice")
+    db_session.first.assert_called_once()
+    assert result is user
 
 
 def test_get_user_not_found_by_id(db_session):
@@ -88,6 +92,14 @@ def test_get_user_not_found_by_id(db_session):
 
     with pytest.raises(UserNotFoundError):
         service.get_user(user_id=999)
+
+
+def test_get_user_not_found_by_username(db_session):
+    db_session.first.return_value = None
+    service = UserService(db_session)
+
+    with pytest.raises(UserNotFoundError):
+        service.get_user(username="nonexistent")
 
 
 def test_get_all_users(db_session):
