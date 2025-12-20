@@ -47,3 +47,19 @@ async def create_user(user: UserCreate, user_service: User_Service) -> UserOut:
             status_code=status.HTTP_409_CONFLICT,
             detail=e.message,
         )
+
+@router.delete(
+    "/{user_id}",
+    status_code=status.HTTP_200_OK,
+    response_model=Detail,
+    responses={status.HTTP_404_NOT_FOUND: {"model": Detail}},
+)
+async def delete_user(user_id: int, user_service: User_Service) -> Detail:
+    try:
+        user_service.delete_user(user_id=user_id)
+        return Detail(detail=f"User with ID {user_id} has been deleted.")
+    except errors.UserNotFoundError:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"User with ID '{user_id}' not found.",
+        )

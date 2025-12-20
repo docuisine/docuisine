@@ -127,3 +127,39 @@ def test_create_user_with_email_success():
     assert data["id"] == 1
     assert data["email"] == "newuser@example.com"
     assert "password" not in data  # Ensure password is not exposed
+
+
+def test_delete_user():
+    ## Setup
+    mock = MagicMock()
+
+    def mock_user_service():
+        return mock
+
+    app.dependency_overrides[get_user_service] = mock_user_service
+    client = TestClient(app)
+
+    ## Test
+    response = client.delete("/users/1")
+    assert response.status_code == status.HTTP_200_OK, response.text
+    data = response.json()
+    assert data["detail"] == "User with ID 1 has been deleted."
+
+    mock.delete_user.assert_called_once_with(user_id=1)
+
+
+def test_delete_user_not_found():
+    ## Setup
+    def mock_user_service():
+        mock = MagicMock()
+        mock.delete_user.side_effect = errors.UserNotFoundError(user_id=999)
+        return mock
+
+    app.dependency_overrides[get_user_service] = mock_user_service
+    client = TestClient(app)
+
+    ## Test
+    response = client.delete("/users/999")
+    assert response.status_code == status.HTTP_404_NOT_FOUND, response.text
+    data = response.json()
+    assert data["detail"] == "User with ID '999' not found."
