@@ -1,4 +1,10 @@
 from .category import CategoryExistsError, CategoryNotFoundError
-from .user import UserExistsError, UserNotFoundError
+from .user import DuplicateEmailError, UserExistsError, UserNotFoundError
 
-__all__ = ["UserExistsError", "UserNotFoundError", "CategoryExistsError", "CategoryNotFoundError"]
+__all__ = [
+    "DuplicateEmailError",
+    "UserExistsError",
+    "UserNotFoundError",
+    "CategoryExistsError",
+    "CategoryNotFoundError",
+]

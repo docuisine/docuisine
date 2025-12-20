@@ -4,7 +4,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from docuisine.db.models import User
-from docuisine.utils.errors import UserExistsError, UserNotFoundError
+from docuisine.utils.errors import DuplicateEmailError, UserExistsError, UserNotFoundError
 from docuisine.utils.hashing import hash_in_sha256
 
 
@@ -187,6 +187,8 @@ class UserService:
         ------
         UserNotFoundError
             If no user is found with the given ID.
+        DuplicateEmailError
+            If the new email is already associated with another user.
 
         Notes
         -----
@@ -196,9 +198,12 @@ class UserService:
         if user is None:
             raise UserNotFoundError(user_id=user_id)
         user.email = new_email
-        self.db_session.commit()
+        try:
+            self.db_session.commit()
+        except IntegrityError:
+            self.db_session.rollback()
+            raise DuplicateEmailError(new_email)
         return user
-
 
     def update_user_password(self, user_id: int, new_password: str) -> User:
         """

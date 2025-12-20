@@ -5,15 +5,7 @@ from sqlalchemy.exc import IntegrityError
 
 from docuisine.db.models import User
 from docuisine.services.user import UserService
-from docuisine.utils.errors import UserExistsError, UserNotFoundError
-
-
-@pytest.fixture
-def db_session():
-    session = MagicMock()
-    session.query.return_value = session
-    session.filter_by.return_value = session
-    return session
+from docuisine.utils.errors import DuplicateEmailError, UserExistsError, UserNotFoundError
 
 
 @pytest.fixture(autouse=True)
@@ -185,3 +177,21 @@ def test_update_password_user_not_found(db_session):
 
     with pytest.raises(UserNotFoundError):
         service.update_user_password(user_id=999, new_password="newpassword123")
+
+
+def test_update_user_duplicate_email_raises(db_session: MagicMock):
+    """Test that updating a user's email to one that already exists raises DuplicateEmailError."""
+    db_session.commit.side_effect = IntegrityError(
+        statement=None,
+        params=None,
+        orig=Exception(),
+    )
+
+    service = UserService(db_session)
+
+    with pytest.raises(DuplicateEmailError) as exc:
+        service.update_user_email(user_id=1, new_email="example@mail.com")
+
+    db_session.commit.assert_called_once()
+    db_session.rollback.assert_called_once()
+    assert "example@mail.com" in str(exc.value)

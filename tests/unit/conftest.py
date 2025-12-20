@@ -28,4 +28,5 @@ def db_session():
     session.delete.return_value = session
     session.commit.return_value = session
     session.add.return_value = session
+    session.rollback.return_value = session
     return session

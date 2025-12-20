@@ -21,3 +21,12 @@ class UserNotFoundError(Exception):
         else:
             self.message = f"User with ID {self.user_id} not found."
         super().__init__(self.message)
+
+
+class DuplicateEmailError(Exception):
+    """Exception raised when an email is already associated with another user."""
+
+    def __init__(self, email: str):
+        self.email = email
+        self.message = f"Email '{self.email}' is already associated with another user."
+        super().__init__(self.message)
