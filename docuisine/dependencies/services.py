@@ -2,7 +2,7 @@ from typing import Annotated
 
 from fastapi import Depends
 
-from docuisine.services import UserService
+from docuisine.services import CategoryService, UserService
 
 from .db import DB_Session
 
@@ -13,4 +13,11 @@ def get_user_service(
     return UserService(db_session)
 
 
+def get_category_service(
+    db_session: DB_Session,
+) -> CategoryService:
+    return CategoryService(db_session)
+
+
 User_Service = Annotated[UserService, Depends(get_user_service)]
+Category_Service = Annotated[CategoryService, Depends(get_category_service)]
