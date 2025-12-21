@@ -3,7 +3,7 @@ from fastapi import APIRouter, HTTPException, status
 from docuisine.db.models import User
 from docuisine.dependencies import User_Service
 from docuisine.schemas.common import Detail
-from docuisine.schemas.user import UserCreate, UserOut
+from docuisine.schemas.user import UserCreate, UserOut, UserUpdateEmail, UserUpdatePassword
 from docuisine.utils import errors
 
 router = APIRouter(prefix="/users", tags=["Users"])
@@ -59,6 +59,53 @@ async def delete_user(user_id: int, user_service: User_Service) -> Detail:
     try:
         user_service.delete_user(user_id=user_id)
         return Detail(detail=f"User with ID {user_id} has been deleted.")
+    except errors.UserNotFoundError as e:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=e.message,
+        )
+
+
+@router.put(
+    "/email",
+    status_code=status.HTTP_200_OK,
+    response_model=UserOut,
+    responses={
+        status.HTTP_400_BAD_REQUEST: {"model": Detail},
+        status.HTTP_404_NOT_FOUND: {"model": Detail},
+        status.HTTP_409_CONFLICT: {"model": Detail},
+    },
+)
+async def update_user_email(user: UserUpdateEmail, user_service: User_Service) -> UserOut:
+    try:
+        updated_user: User = user_service.update_user_email(user_id=user.id, new_email=user.email)
+        return UserOut.model_validate(updated_user)
+    except errors.UserNotFoundError as e:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=e.message,
+        )
+    except errors.DuplicateEmailError as e:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail=e.message,
+        )
+
+
+@router.put(
+    "/password",
+    status_code=status.HTTP_200_OK,
+    response_model=UserOut,
+    responses={
+        status.HTTP_404_NOT_FOUND: {"model": Detail},
+    },
+)
+async def update_user_password(user: UserUpdatePassword, user_service: User_Service) -> UserOut:
+    try:
+        updated_user: User = user_service.update_user_password(
+            user_id=user.id, old_password=user.old_password, new_password=user.new_password
+        )
+        return UserOut.model_validate(updated_user)
     except errors.UserNotFoundError as e:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,

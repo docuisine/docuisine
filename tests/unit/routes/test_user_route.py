@@ -152,3 +152,131 @@ def test_delete_user_not_found():
     assert response.status_code == status.HTTP_404_NOT_FOUND, response.text
     data = response.json()
     assert data["detail"] == "User with ID 999 not found."
+
+
+def test_update_user_password_not_found():
+    ## Setup
+    def mock_user_service():
+        mock = MagicMock()
+        mock.update_user_password.side_effect = errors.UserNotFoundError(user_id=999)
+        return mock
+
+    app.dependency_overrides[get_user_service] = mock_user_service
+    client = TestClient(app)
+
+    ## Test
+    password_data = {
+        "id": 999,
+        "old_password": "OldPassword!23",
+        "new_password": "NewSecurePassword!45",
+    }
+    response = client.put("/users/password", json=password_data)
+    assert response.status_code == status.HTTP_404_NOT_FOUND, response.text
+    data = response.json()
+    assert data["detail"] == "User with ID 999 not found."
+
+
+def test_update_user_password_success():
+    ## Setup
+    def mock_user_service():
+        mock = MagicMock()
+        mock.update_user_password.return_value = User(
+            id=1, username="existinguser", password="NewSecurePassword!45"
+        )
+        return mock
+
+    app.dependency_overrides[get_user_service] = mock_user_service
+    client = TestClient(app)
+
+    ## Test
+    password_data = {
+        "id": 1,
+        "old_password": "OldPassword!23",
+        "new_password": "NewSecurePassword!45",
+    }
+    response = client.put("/users/password", json=password_data)
+    assert response.status_code == status.HTTP_200_OK, response.text
+    data = response.json()
+    assert data["username"] == "existinguser"
+    assert data["id"] == 1
+    assert "password" not in data  # Ensure password is not exposed
+
+
+def test_update_user_password_invalid():
+    ## Setup
+    client = TestClient(app)
+
+    ## Test
+    password_data = {
+        "id": 1,
+        "old_password": "OldPassword!23",
+        "new_password": "short",
+    }
+    response = client.put("/users/password", json=password_data)
+    assert response.status_code == status.HTTP_422_UNPROCESSABLE_CONTENT
+    data = response.json()
+    assert data["detail"][0]["msg"] == "String should have at least 8 characters"
+
+
+def test_update_user_email_not_found():
+    ## Setup
+    def mock_user_service():
+        mock = MagicMock()
+        mock.update_user_email.side_effect = errors.UserNotFoundError(user_id=999)
+        return mock
+
+    app.dependency_overrides[get_user_service] = mock_user_service
+    client = TestClient(app)
+
+    ## Test
+    email_data = {"id": 999, "password": "CurrentPassword!23", "email": "newemail@example.com"}
+    response = client.put("/users/email", json=email_data)
+    assert response.status_code == status.HTTP_404_NOT_FOUND, response.text
+    data = response.json()
+    assert data["detail"] == "User with ID 999 not found."
+
+
+def test_update_user_email_conflict():
+    ## Setup
+    def mock_user_service():
+        mock = MagicMock()
+        mock.update_user_email.side_effect = errors.DuplicateEmailError(
+            email="newemail@example.com"
+        )
+        return mock
+
+    app.dependency_overrides[get_user_service] = mock_user_service
+    client = TestClient(app)
+
+    ## Test
+    email_data = {"id": 1, "password": "CurrentPassword!23", "email": "newemail@example.com"}
+    response = client.put("/users/email", json=email_data)
+    assert response.status_code == status.HTTP_409_CONFLICT, response.text
+    data = response.json()
+    assert (
+        data["detail"] == "Email 'newemail@example.com' is already associated with another user."
+    )
+
+
+def test_update_user_email_success():
+    ## Setup
+    def mock_user_service():
+        mock = MagicMock()
+        mock.update_user_email.return_value = User(
+            id=1, username="existinguser", password="Password!23", email="newemail@example.com"
+        )
+        return mock
+
+    app.dependency_overrides[get_user_service] = mock_user_service
+    client = TestClient(app)
+
+    ## Test
+    email_data = {"id": 1, "password": "CurrentPassword!23", "email": "newemail@example.com"}
+
+    response = client.put("/users/email", json=email_data)
+    assert response.status_code == status.HTTP_200_OK, response.text
+    data = response.json()
+    assert data["username"] == "existinguser"
+    assert data["id"] == 1
+    assert data["email"] == "newemail@example.com"
+    assert "password" not in data  # Ensure password is not exposed

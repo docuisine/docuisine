@@ -16,6 +16,26 @@ class UserCreate(BaseModel):
     )
 
 
+class UserUpdateEmail(BaseModel):
+    id: int = Field(..., description="The user's unique identifier", examples=[1])
+    password: Password = Field(
+        ..., description="The user's password", examples=["CurrentPassword!23"]
+    )
+    email: EmailStr = Field(
+        ..., description="The user's email address", examples=["example@mail.com"]
+    )
+
+
+class UserUpdatePassword(BaseModel):
+    id: int = Field(..., description="The user's unique identifier", examples=[1])
+    old_password: Password = Field(
+        ..., description="The user's current password", examples=["CurrentPassword!23"]
+    )
+    new_password: Password = Field(
+        ..., description="The user's new password", examples=["NewStrongPassword!45"]
+    )
+
+
 class UserRead(BaseModel):
     id: int = Field(..., description="The user's unique identifier", examples=[1])
 
