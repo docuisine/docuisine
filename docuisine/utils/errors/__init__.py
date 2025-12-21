@@ -1,4 +1,5 @@
 from .category import CategoryExistsError, CategoryNotFoundError
+from .ingredient import IngredientExistsError, IngredientNotFoundError
 from .user import DuplicateEmailError, UserExistsError, UserNotFoundError
 
 __all__ = [
@@ -7,4 +8,6 @@ __all__ = [
     "UserNotFoundError",
     "CategoryExistsError",
     "CategoryNotFoundError",
+    "IngredientExistsError",
+    "IngredientNotFoundError",
 ]
