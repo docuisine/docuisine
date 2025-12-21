@@ -1,12 +1,12 @@
-CREATE TABLE default (
+CREATE TABLE default_table (
     created_at TIMESTAMP DEFAULT NOW(),
     updated_at TIMESTAMP DEFAULT NOW()
 );
 
 CREATE TABLE entity (
     preview_img TEXT,
-    img TEXT,
-) INHERITS (default);
+    img TEXT
+) INHERITS (default_table);
 
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,
@@ -20,7 +20,7 @@ CREATE TABLE users (
 CREATE TABLE recipes (
     id SERIAL PRIMARY KEY,
     user_id INTEGER REFERENCES users(id),
-    name TEXT NOT NULL,
+    name TEXT NOT NULL UNIQUE,
     cook_time_sec INTEGER CHECK (cook_time_sec >= 0),
     prep_time_sec INTEGER CHECK (prep_time_sec >= 0),
     non_blocking_time_sec INTEGER CHECK (non_blocking_time_sec >= 0),
@@ -34,7 +34,7 @@ CREATE TABLE recipe_steps (
     description TEXT NOT NULL,
 
     PRIMARY KEY (recipe_id, step_number)
-) INHERITS (default);
+) INHERITS (default_table);
 
 CREATE TABLE ingredients (
     id SERIAL PRIMARY KEY,
@@ -50,7 +50,7 @@ CREATE TABLE recipe_ingredients (
     amount_readable TEXT NOT NULL,
 
     PRIMARY KEY (recipe_id, ingredient_id)
-) INHERITS (default);
+) INHERITS (default_table);
 
 
 CREATE TABLE categories (
@@ -64,7 +64,7 @@ CREATE TABLE recipe_categories (
     category_id INTEGER NOT NULL REFERENCES categories(id) ON DELETE CASCADE,
 
     PRIMARY KEY (recipe_id, category_id)
-) INHERITS (default);
+) INHERITS (default_table);
 
 CREATE TABLE stores (
     id SERIAL PRIMARY KEY,
@@ -79,14 +79,24 @@ CREATE TABLE stores (
 
 
 CREATE TABLE shelf (
-    store_id INTEGER NOT NULL REFERENCES store(id) ON DELETE CASCADE,
+    store_id INTEGER NOT NULL REFERENCES stores(id) ON DELETE CASCADE,
     ingredient_id INTEGER NOT NULL REFERENCES ingredients(id) ON DELETE CASCADE,
     quantity INTEGER NOT NULL CHECK (quantity >= 0),
 
     PRIMARY KEY (store_id, ingredient_id)
-) INHERITS (default);
+) INHERITS (default_table);
 
-CREATE INDEX idx_user_username ON users(username);
-CREATE INDEX idx_recipe_name ON recipes(name);
-CREATE INDEX idx_ingredient_name ON ingredients(name);
-CREATE INDEX idx_category_name ON categories(name);
+
+CREATE OR REPLACE FUNCTION set_updated_at()
+RETURNS TRIGGER AS $$
+BEGIN
+  NEW.updated_at = NOW();
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+
+CREATE TRIGGER trg_updated_at
+BEFORE UPDATE ON default_table
+FOR EACH ROW
+EXECUTE FUNCTION set_updated_at();

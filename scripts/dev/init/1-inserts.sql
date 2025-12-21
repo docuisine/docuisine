@@ -91,7 +91,7 @@ VALUES
 -- =====================
 -- STORES
 -- =====================
-INSERT INTO store (
+INSERT INTO stores (
     id,
     name,
     longitude,
