@@ -1,0 +1,1717 @@
+{
+  "openapi": "3.1.0",
+  "info": { "title": "FastAPI", "version": "0.1.0" },
+  "paths": {
+    "/": {
+      "get": {
+        "tags": ["Root"],
+        "summary": "Read Root",
+        "operationId": "read_root__get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": { "application/json": { "schema": {} } }
+          }
+        }
+      }
+    },
+    "/users/": {
+      "get": {
+        "tags": ["Users"],
+        "summary": "Get Users",
+        "operationId": "get_users_users__get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": { "$ref": "#/components/schemas/UserOut" },
+                  "type": "array",
+                  "title": "Response Get Users Users  Get"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Users"],
+        "summary": "Create User",
+        "operationId": "create_user_users__post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/UserCreate" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/UserOut" }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Detail" }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/{user_id}": {
+      "get": {
+        "tags": ["Users"],
+        "summary": "Get User",
+        "operationId": "get_user_users__user_id__get",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "title": "User Id" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/UserOut" }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Detail" }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Users"],
+        "summary": "Delete User",
+        "operationId": "delete_user_users__user_id__delete",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "title": "User Id" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Detail" }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Detail" }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/email": {
+      "put": {
+        "tags": ["Users"],
+        "summary": "Update User Email",
+        "operationId": "update_user_email_users_email_put",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/UserUpdateEmail" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/UserOut" }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Detail" }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Detail" }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Detail" }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/password": {
+      "put": {
+        "tags": ["Users"],
+        "summary": "Update User Password",
+        "operationId": "update_user_password_users_password_put",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/UserUpdatePassword" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/UserOut" }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Detail" }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/categories/": {
+      "get": {
+        "tags": ["Categories"],
+        "summary": "Get Categories",
+        "description": "Get all categories.",
+        "operationId": "get_categories_categories__get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": { "$ref": "#/components/schemas/CategoryOut" },
+                  "type": "array",
+                  "title": "Response Get Categories Categories  Get"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Categories"],
+        "summary": "Create Category",
+        "description": "Create a new category.",
+        "operationId": "create_category_categories__post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CategoryCreate" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/CategoryOut" }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Detail" }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/categories/{category_id}": {
+      "get": {
+        "tags": ["Categories"],
+        "summary": "Get Category",
+        "description": "Get a category by ID.",
+        "operationId": "get_category_categories__category_id__get",
+        "parameters": [
+          {
+            "name": "category_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "title": "Category Id" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/CategoryOut" }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Detail" }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["Categories"],
+        "summary": "Update Category",
+        "description": "Update a category by ID.",
+        "operationId": "update_category_categories__category_id__put",
+        "parameters": [
+          {
+            "name": "category_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "title": "Category Id" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CategoryUpdate" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/CategoryOut" }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Detail" }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Detail" }
+              }
+            },
+            "description": "Conflict"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Categories"],
+        "summary": "Delete Category",
+        "description": "Delete a category by ID.",
+        "operationId": "delete_category_categories__category_id__delete",
+        "parameters": [
+          {
+            "name": "category_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "title": "Category Id" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Detail" }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Detail" }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/stores/": {
+      "get": {
+        "tags": ["Stores"],
+        "summary": "Get Stores",
+        "description": "Get all stores.",
+        "operationId": "get_stores_stores__get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": { "$ref": "#/components/schemas/StoreOut" },
+                  "type": "array",
+                  "title": "Response Get Stores Stores  Get"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Stores"],
+        "summary": "Create Store",
+        "description": "Create a new store.",
+        "operationId": "create_store_stores__post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/StoreCreate" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/StoreOut" }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Detail" }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/stores/{store_id}": {
+      "get": {
+        "tags": ["Stores"],
+        "summary": "Get Store",
+        "description": "Get a store by ID.",
+        "operationId": "get_store_stores__store_id__get",
+        "parameters": [
+          {
+            "name": "store_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "title": "Store Id" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/StoreOut" }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Detail" }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["Stores"],
+        "summary": "Update Store",
+        "description": "Update a store by ID.",
+        "operationId": "update_store_stores__store_id__put",
+        "parameters": [
+          {
+            "name": "store_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "title": "Store Id" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/StoreUpdate" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/StoreOut" }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Detail" }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Detail" }
+              }
+            },
+            "description": "Conflict"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Stores"],
+        "summary": "Delete Store",
+        "description": "Delete a store by ID.",
+        "operationId": "delete_store_stores__store_id__delete",
+        "parameters": [
+          {
+            "name": "store_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "title": "Store Id" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Detail" }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Detail" }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/ingredients/": {
+      "get": {
+        "tags": ["Ingredients"],
+        "summary": "Get Ingredients",
+        "description": "Get all ingredients.",
+        "operationId": "get_ingredients_ingredients__get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": { "$ref": "#/components/schemas/IngredientOut" },
+                  "type": "array",
+                  "title": "Response Get Ingredients Ingredients  Get"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Ingredients"],
+        "summary": "Create Ingredient",
+        "description": "Create a new ingredient.",
+        "operationId": "create_ingredient_ingredients__post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/IngredientCreate" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/IngredientOut" }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Detail" }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/ingredients/{ingredient_id}": {
+      "get": {
+        "tags": ["Ingredients"],
+        "summary": "Get Ingredient",
+        "description": "Get an ingredient by ID.",
+        "operationId": "get_ingredient_ingredients__ingredient_id__get",
+        "parameters": [
+          {
+            "name": "ingredient_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "title": "Ingredient Id" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/IngredientOut" }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Detail" }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["Ingredients"],
+        "summary": "Update Ingredient",
+        "description": "Update an ingredient by ID.",
+        "operationId": "update_ingredient_ingredients__ingredient_id__put",
+        "parameters": [
+          {
+            "name": "ingredient_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "title": "Ingredient Id" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/IngredientUpdate" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/IngredientOut" }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Detail" }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Detail" }
+              }
+            },
+            "description": "Conflict"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Ingredients"],
+        "summary": "Delete Ingredient",
+        "description": "Delete an ingredient by ID.",
+        "operationId": "delete_ingredient_ingredients__ingredient_id__delete",
+        "parameters": [
+          {
+            "name": "ingredient_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "title": "Ingredient Id" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Detail" }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Detail" }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/recipes/": {
+      "get": {
+        "tags": ["Recipes"],
+        "summary": "Get Recipes",
+        "description": "Get all recipes.",
+        "operationId": "get_recipes_recipes__get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": { "$ref": "#/components/schemas/RecipeOut" },
+                  "type": "array",
+                  "title": "Response Get Recipes Recipes  Get"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Recipes"],
+        "summary": "Create Recipe",
+        "description": "Create a new recipe.",
+        "operationId": "create_recipe_recipes__post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/RecipeCreate" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/RecipeOut" }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Detail" }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/recipes/user/{user_id}": {
+      "get": {
+        "tags": ["Recipes"],
+        "summary": "Get Recipes By User",
+        "description": "Get all recipes created by a specific user.",
+        "operationId": "get_recipes_by_user_recipes_user__user_id__get",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "title": "User Id" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/RecipeOut" },
+                  "title": "Response Get Recipes By User Recipes User  User Id  Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/recipes/{recipe_id}": {
+      "get": {
+        "tags": ["Recipes"],
+        "summary": "Get Recipe",
+        "description": "Get a recipe by ID.",
+        "operationId": "get_recipe_recipes__recipe_id__get",
+        "parameters": [
+          {
+            "name": "recipe_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "title": "Recipe Id" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/RecipeOut" }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Detail" }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["Recipes"],
+        "summary": "Update Recipe",
+        "description": "Update a recipe by ID.",
+        "operationId": "update_recipe_recipes__recipe_id__put",
+        "parameters": [
+          {
+            "name": "recipe_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "title": "Recipe Id" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/RecipeUpdate" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/RecipeOut" }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Detail" }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Detail" }
+              }
+            },
+            "description": "Conflict"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Recipes"],
+        "summary": "Delete Recipe",
+        "description": "Delete a recipe by ID.",
+        "operationId": "delete_recipe_recipes__recipe_id__delete",
+        "parameters": [
+          {
+            "name": "recipe_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "title": "Recipe Id" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Detail" }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Detail" }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/health/": {
+      "get": {
+        "tags": ["Health"],
+        "summary": "Health Check",
+        "operationId": "health_check_health__get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HealthCheck" }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "CategoryCreate": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name",
+            "description": "The category name",
+            "examples": ["Dessert", "Vegetarian"]
+          },
+          "description": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Description",
+            "description": "The category description",
+            "examples": ["Sweet dishes and treats"]
+          }
+        },
+        "type": "object",
+        "required": ["name"],
+        "title": "CategoryCreate"
+      },
+      "CategoryOut": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id",
+            "description": "The category's unique identifier",
+            "examples": [1]
+          },
+          "name": {
+            "type": "string",
+            "title": "Name",
+            "description": "The category name",
+            "examples": ["Dessert"]
+          },
+          "description": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Description",
+            "description": "The category description",
+            "examples": ["Sweet dishes and treats"]
+          }
+        },
+        "type": "object",
+        "required": ["id", "name"],
+        "title": "CategoryOut"
+      },
+      "CategoryUpdate": {
+        "properties": {
+          "name": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Name",
+            "description": "The category name",
+            "examples": ["Dessert"]
+          },
+          "description": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Description",
+            "description": "The category description",
+            "examples": ["Sweet dishes and treats"]
+          }
+        },
+        "type": "object",
+        "title": "CategoryUpdate"
+      },
+      "Detail": {
+        "properties": { "detail": { "type": "string", "title": "Detail" } },
+        "type": "object",
+        "required": ["detail"],
+        "title": "Detail",
+        "description": "Schema for detail messages in HTTP responses.\nOften used to convey error messages or other informational text\nin the API or routes."
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": { "$ref": "#/components/schemas/ValidationError" },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "HealthCheck": {
+        "properties": {
+          "status": {
+            "$ref": "#/components/schemas/Status",
+            "description": "The health status of the application.",
+            "examples": ["healthy"]
+          },
+          "commit_hash": {
+            "type": "string",
+            "maxLength": 7,
+            "minLength": 7,
+            "title": "Commit Hash",
+            "description": "The Git commit hash of the current build in the backend.",
+            "examples": ["a1b2c3d", "4e5f6g7"]
+          },
+          "version": {
+            "type": "string",
+            "minLength": 5,
+            "title": "Version",
+            "description": "The version of the application in the backend.",
+            "examples": ["1.0.0", "2.5.3"]
+          }
+        },
+        "type": "object",
+        "required": ["status", "commit_hash", "version"],
+        "title": "HealthCheck"
+      },
+      "IngredientCreate": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name",
+            "description": "The ingredient name",
+            "examples": ["Sugar", "Flour"]
+          },
+          "description": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Description",
+            "description": "The ingredient description",
+            "examples": ["Granulated white sugar"]
+          },
+          "recipe_id": {
+            "anyOf": [{ "type": "integer" }, { "type": "null" }],
+            "title": "Recipe Id",
+            "description": "Recipe ID that produces this ingredient",
+            "examples": [1]
+          }
+        },
+        "type": "object",
+        "required": ["name"],
+        "title": "IngredientCreate"
+      },
+      "IngredientOut": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id",
+            "description": "The ingredient's unique identifier",
+            "examples": [1]
+          },
+          "name": {
+            "type": "string",
+            "title": "Name",
+            "description": "The ingredient name",
+            "examples": ["Sugar"]
+          },
+          "description": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Description",
+            "description": "The ingredient description",
+            "examples": ["Granulated white sugar"]
+          },
+          "recipe_id": {
+            "anyOf": [{ "type": "integer" }, { "type": "null" }],
+            "title": "Recipe Id",
+            "description": "Recipe ID that produces this ingredient",
+            "examples": [1]
+          }
+        },
+        "type": "object",
+        "required": ["id", "name"],
+        "title": "IngredientOut"
+      },
+      "IngredientUpdate": {
+        "properties": {
+          "name": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Name",
+            "description": "The ingredient name",
+            "examples": ["Sugar"]
+          },
+          "description": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Description",
+            "description": "The ingredient description",
+            "examples": ["Granulated white sugar"]
+          },
+          "recipe_id": {
+            "anyOf": [{ "type": "integer" }, { "type": "null" }],
+            "title": "Recipe Id",
+            "description": "Recipe ID that produces this ingredient",
+            "examples": [1]
+          }
+        },
+        "type": "object",
+        "title": "IngredientUpdate"
+      },
+      "RecipeCreate": {
+        "properties": {
+          "user_id": {
+            "type": "integer",
+            "title": "User Id",
+            "description": "ID of the user creating the recipe",
+            "examples": [1]
+          },
+          "name": {
+            "type": "string",
+            "title": "Name",
+            "description": "Recipe name",
+            "examples": ["Chocolate Cake"]
+          },
+          "cook_time_sec": {
+            "anyOf": [{ "type": "integer" }, { "type": "null" }],
+            "title": "Cook Time Sec",
+            "description": "Cooking time in seconds",
+            "examples": [3600]
+          },
+          "prep_time_sec": {
+            "anyOf": [{ "type": "integer" }, { "type": "null" }],
+            "title": "Prep Time Sec",
+            "description": "Preparation time in seconds",
+            "examples": [1200]
+          },
+          "non_blocking_time_sec": {
+            "anyOf": [{ "type": "integer" }, { "type": "null" }],
+            "title": "Non Blocking Time Sec",
+            "description": "Non-blocking time in seconds",
+            "examples": [600]
+          },
+          "servings": {
+            "anyOf": [{ "type": "integer" }, { "type": "null" }],
+            "title": "Servings",
+            "description": "Number of servings",
+            "examples": [8]
+          },
+          "description": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Description",
+            "description": "Recipe description",
+            "examples": ["Delicious chocolate cake"]
+          }
+        },
+        "type": "object",
+        "required": ["user_id", "name"],
+        "title": "RecipeCreate"
+      },
+      "RecipeOut": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id",
+            "description": "Recipe's unique identifier",
+            "examples": [1]
+          },
+          "user_id": {
+            "type": "integer",
+            "title": "User Id",
+            "description": "ID of the user who created the recipe",
+            "examples": [1]
+          },
+          "name": {
+            "type": "string",
+            "title": "Name",
+            "description": "Recipe name",
+            "examples": ["Chocolate Cake"]
+          },
+          "cook_time_sec": {
+            "anyOf": [{ "type": "integer" }, { "type": "null" }],
+            "title": "Cook Time Sec",
+            "description": "Cooking time in seconds"
+          },
+          "prep_time_sec": {
+            "anyOf": [{ "type": "integer" }, { "type": "null" }],
+            "title": "Prep Time Sec",
+            "description": "Preparation time in seconds"
+          },
+          "non_blocking_time_sec": {
+            "anyOf": [{ "type": "integer" }, { "type": "null" }],
+            "title": "Non Blocking Time Sec",
+            "description": "Non-blocking time in seconds"
+          },
+          "servings": {
+            "anyOf": [{ "type": "integer" }, { "type": "null" }],
+            "title": "Servings",
+            "description": "Number of servings"
+          },
+          "description": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Description",
+            "description": "Recipe description"
+          }
+        },
+        "type": "object",
+        "required": ["id", "user_id", "name"],
+        "title": "RecipeOut"
+      },
+      "RecipeUpdate": {
+        "properties": {
+          "name": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Name",
+            "description": "Recipe name"
+          },
+          "cook_time_sec": {
+            "anyOf": [{ "type": "integer" }, { "type": "null" }],
+            "title": "Cook Time Sec",
+            "description": "Cooking time in seconds"
+          },
+          "prep_time_sec": {
+            "anyOf": [{ "type": "integer" }, { "type": "null" }],
+            "title": "Prep Time Sec",
+            "description": "Preparation time in seconds"
+          },
+          "non_blocking_time_sec": {
+            "anyOf": [{ "type": "integer" }, { "type": "null" }],
+            "title": "Non Blocking Time Sec",
+            "description": "Non-blocking time in seconds"
+          },
+          "servings": {
+            "anyOf": [{ "type": "integer" }, { "type": "null" }],
+            "title": "Servings",
+            "description": "Number of servings"
+          },
+          "description": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Description",
+            "description": "Recipe description"
+          }
+        },
+        "type": "object",
+        "title": "RecipeUpdate"
+      },
+      "Status": {
+        "type": "string",
+        "enum": ["healthy", "unhealthy"],
+        "title": "Status"
+      },
+      "StoreCreate": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name",
+            "description": "The store name",
+            "examples": ["Grocery Mart"]
+          },
+          "address": {
+            "type": "string",
+            "title": "Address",
+            "description": "The store address",
+            "examples": ["123 Main St"]
+          },
+          "longitude": {
+            "anyOf": [{ "type": "number" }, { "type": "null" }],
+            "title": "Longitude",
+            "description": "Longitude coordinate",
+            "examples": [-122.4194]
+          },
+          "latitude": {
+            "anyOf": [{ "type": "number" }, { "type": "null" }],
+            "title": "Latitude",
+            "description": "Latitude coordinate",
+            "examples": [37.7749]
+          },
+          "phone": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Phone",
+            "description": "Phone number",
+            "examples": ["555-1234"]
+          },
+          "website": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Website",
+            "description": "Website URL",
+            "examples": ["https://example.com"]
+          },
+          "description": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Description",
+            "description": "Store description",
+            "examples": ["Local grocery store"]
+          }
+        },
+        "type": "object",
+        "required": ["name", "address"],
+        "title": "StoreCreate"
+      },
+      "StoreOut": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id",
+            "description": "The store's unique identifier",
+            "examples": [1]
+          },
+          "name": {
+            "type": "string",
+            "title": "Name",
+            "description": "The store name",
+            "examples": ["Grocery Mart"]
+          },
+          "address": {
+            "type": "string",
+            "title": "Address",
+            "description": "The store address",
+            "examples": ["123 Main St"]
+          },
+          "longitude": {
+            "anyOf": [{ "type": "number" }, { "type": "null" }],
+            "title": "Longitude",
+            "description": "Longitude coordinate",
+            "examples": [-122.4194]
+          },
+          "latitude": {
+            "anyOf": [{ "type": "number" }, { "type": "null" }],
+            "title": "Latitude",
+            "description": "Latitude coordinate",
+            "examples": [37.7749]
+          },
+          "phone": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Phone",
+            "description": "Phone number",
+            "examples": ["+31555-1234"]
+          },
+          "website": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Website",
+            "description": "Website URL",
+            "examples": ["https://example.com"]
+          },
+          "description": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Description",
+            "description": "Store description"
+          }
+        },
+        "type": "object",
+        "required": ["id", "name", "address"],
+        "title": "StoreOut"
+      },
+      "StoreUpdate": {
+        "properties": {
+          "name": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Name",
+            "description": "The store name"
+          },
+          "address": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Address",
+            "description": "The store address"
+          },
+          "longitude": {
+            "anyOf": [{ "type": "number" }, { "type": "null" }],
+            "title": "Longitude",
+            "description": "Longitude coordinate"
+          },
+          "latitude": {
+            "anyOf": [{ "type": "number" }, { "type": "null" }],
+            "title": "Latitude",
+            "description": "Latitude coordinate"
+          },
+          "phone": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Phone",
+            "description": "Phone number"
+          },
+          "website": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Website",
+            "description": "Website URL"
+          },
+          "description": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Description",
+            "description": "Store description"
+          }
+        },
+        "type": "object",
+        "title": "StoreUpdate"
+      },
+      "UserCreate": {
+        "properties": {
+          "username": {
+            "type": "string",
+            "minLength": 3,
+            "title": "Username",
+            "description": "The user's username",
+            "examples": ["user123"]
+          },
+          "email": {
+            "anyOf": [
+              { "type": "string", "format": "email" },
+              { "type": "null" }
+            ],
+            "title": "Email",
+            "description": "The user's email address",
+            "examples": ["user@example.com"]
+          },
+          "password": {
+            "type": "string",
+            "maxLength": 128,
+            "minLength": 8,
+            "title": "Password",
+            "description": "The user's password",
+            "examples": ["strongPassword123!", "01fKl%#RJa4~Ob)'BER]"]
+          }
+        },
+        "type": "object",
+        "required": ["username", "password"],
+        "title": "UserCreate"
+      },
+      "UserOut": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id",
+            "description": "The user's unique identifier",
+            "examples": [1]
+          },
+          "username": {
+            "anyOf": [{ "type": "string", "minLength": 3 }, { "type": "null" }],
+            "title": "Username",
+            "description": "The user's username",
+            "examples": ["user123"]
+          },
+          "email": {
+            "anyOf": [
+              { "type": "string", "format": "email" },
+              { "type": "null" }
+            ],
+            "title": "Email",
+            "description": "The user's email address",
+            "examples": ["user@example.com"]
+          }
+        },
+        "type": "object",
+        "required": ["id"],
+        "title": "UserOut"
+      },
+      "UserUpdateEmail": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id",
+            "description": "The user's unique identifier",
+            "examples": [1]
+          },
+          "password": {
+            "type": "string",
+            "maxLength": 128,
+            "minLength": 8,
+            "title": "Password",
+            "description": "The user's password",
+            "examples": ["CurrentPassword!23"]
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "title": "Email",
+            "description": "The user's email address",
+            "examples": ["example@mail.com"]
+          }
+        },
+        "type": "object",
+        "required": ["id", "password", "email"],
+        "title": "UserUpdateEmail"
+      },
+      "UserUpdatePassword": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id",
+            "description": "The user's unique identifier",
+            "examples": [1]
+          },
+          "old_password": {
+            "type": "string",
+            "maxLength": 128,
+            "minLength": 8,
+            "title": "Old Password",
+            "description": "The user's current password",
+            "examples": ["CurrentPassword!23"]
+          },
+          "new_password": {
+            "type": "string",
+            "maxLength": 128,
+            "minLength": 8,
+            "title": "New Password",
+            "description": "The user's new password",
+            "examples": ["NewStrongPassword!45"]
+          }
+        },
+        "type": "object",
+        "required": ["id", "old_password", "new_password"],
+        "title": "UserUpdatePassword"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": { "anyOf": [{ "type": "string" }, { "type": "integer" }] },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": { "type": "string", "title": "Message" },
+          "type": { "type": "string", "title": "Error Type" }
+        },
+        "type": "object",
+        "required": ["loc", "msg", "type"],
+        "title": "ValidationError"
+      }
+    }
+  }
+}

@@ -47,6 +47,10 @@ markdown_extensions:
           class: mermaid
           format: !!python/name:pymdownx.superfences.fence_code_format
   - admonition
+  - attr_list
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
   - pymdownx.details
 
 plugins:
@@ -58,6 +62,11 @@ plugins:
             docstring_style: numpy
             show_source: true
             merge_init_into_class: true
+  - neoteroi.mkdocsoad:
+      use_pymdownx: true
+
+extra_css:
+  - assets/neoteroi.css
 
 nav:
   - Home: index.md
@@ -72,6 +81,7 @@ nav:
       - "Source Tree": contributing/source-tree.md
       - Style Guides: contributing/style-guides.md
       - Artifacts:
+        - API Reference: contributing/artifacts/api-reference.md
         - Database: contributing/artifacts/database.md
   - About:
       - Changelog: about/changelog.md
