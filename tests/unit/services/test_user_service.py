@@ -12,7 +12,7 @@ from docuisine.utils.errors import DuplicateEmailError, UserExistsError, UserNot
 def mock_hash(monkeypatch):
     """Mock the password hashing function to return a predictable value."""
     monkeypatch.setattr(
-        "docuisine.services.users.hash_in_sha256",
+        "docuisine.services.user.hash_in_sha256",
         lambda pw: f"hashed::{pw}",
     )
 
