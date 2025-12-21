@@ -285,6 +285,26 @@ line-length = 99
 select = ["E", "F", "B", "I"]
 ```
 
+### API response messages
+
+Messages that contain string variable values should be single-quoted, otherwise if numeric use no quotes at all.
+
+String response:
+
+```
+Something name 'something' was not found.
+```
+
+Numeric response:
+
+```
+Somethin ID 1 was not found.
+```
+
+### Docstrings
+
+We use the [NumPy style](https://numpydoc.readthedocs.io/en/latest/format.html) for writing docstrigns
+
 ## Golden Rule (Very Important)
 
 > **Python names → snake_case** > **Classes → PascalCase** > **DB tables → plural snake_case** > **DB columns → snake_case**
