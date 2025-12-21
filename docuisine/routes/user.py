@@ -25,10 +25,10 @@ async def get_user(user_id: int, user_service: User_Service) -> UserOut:
     try:
         user: User = user_service.get_user(user_id=user_id)
         return UserOut.model_validate(user)
-    except errors.UserNotFoundError:
+    except errors.UserNotFoundError as e:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"User with ID {user_id} not found.",
+            detail=e.message,
         )
 
 
@@ -59,8 +59,8 @@ async def delete_user(user_id: int, user_service: User_Service) -> Detail:
     try:
         user_service.delete_user(user_id=user_id)
         return Detail(detail=f"User with ID {user_id} has been deleted.")
-    except errors.UserNotFoundError:
+    except errors.UserNotFoundError as e:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"User with ID '{user_id}' not found.",
+            detail=e.message,
         )
