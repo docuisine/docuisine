@@ -1,4 +1,4 @@
 from .categories import CategoryService
-from .user import UserService
+from .users import UserService
 
 __all__ = ["UserService", "CategoryService"]

@@ -2,7 +2,7 @@ from typing import Annotated
 
 from fastapi import Depends
 
-from docuisine.services.user import UserService
+from docuisine.services import UserService
 
 from .db import DB_Session
 

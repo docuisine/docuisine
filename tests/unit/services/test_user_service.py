@@ -4,7 +4,7 @@ import pytest
 from sqlalchemy.exc import IntegrityError
 
 from docuisine.db.models import User
-from docuisine.services.user import UserService
+from docuisine.services import UserService
 from docuisine.utils.errors import DuplicateEmailError, UserExistsError, UserNotFoundError
 
 
@@ -12,7 +12,7 @@ from docuisine.utils.errors import DuplicateEmailError, UserExistsError, UserNot
 def mock_hash(monkeypatch):
     """Mock the password hashing function to return a predictable value."""
     monkeypatch.setattr(
-        "docuisine.services.user.hash_in_sha256",
+        "docuisine.services.users.hash_in_sha256",
         lambda pw: f"hashed::{pw}",
     )
 
