@@ -186,11 +186,11 @@ def test_update_email_user_not_found(db_session: MagicMock):
 
 def test_update_password_success(db_session: MagicMock):
     """Test that updating a user's password works correctly."""
-    user = User(id=1, username="alice", password="old_hashed_pw")
+    user = User(id=1, username="alice", password="hashed::oldpassword123")
     db_session.first.return_value = user
 
     service = UserService(db_session)
-    updated_user = service.update_user_password(user_id=1, new_password="newpassword123")
+    updated_user = service.update_user_password(user_id=1, old_password="oldpassword123", new_password="newpassword123")
 
     assert updated_user.password == "hashed::newpassword123"
     db_session.commit.assert_called_once()
@@ -202,7 +202,7 @@ def test_update_password_user_not_found(db_session: MagicMock):
     service = UserService(db_session)
 
     with pytest.raises(UserNotFoundError):
-        service.update_user_password(user_id=999, new_password="newpassword123")
+        service.update_user_password(user_id=999, old_password="oldpassword123", new_password="newpassword123")
 
 
 def test_update_user_duplicate_email_raises(db_session: MagicMock):

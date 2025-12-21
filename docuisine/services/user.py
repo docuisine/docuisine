@@ -4,7 +4,12 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from docuisine.db.models import User
-from docuisine.utils.errors import DuplicateEmailError, UserExistsError, UserNotFoundError
+from docuisine.utils.errors import (
+    DuplicateEmailError,
+    InvalidPasswordError,
+    UserExistsError,
+    UserNotFoundError,
+)
 from docuisine.utils.hashing import hash_in_sha256
 
 
@@ -205,7 +210,7 @@ class UserService:
             raise DuplicateEmailError(new_email)
         return user
 
-    def update_user_password(self, user_id: int, new_password: str) -> User:
+    def update_user_password(self, user_id: int, old_password: str, new_password: str) -> User:
         """
         Update the password of an existing user.
 
@@ -234,6 +239,9 @@ class UserService:
         user = self._get_user_by_id(user_id)
         if user is None:
             raise UserNotFoundError(user_id=user_id)
+        old_password_encrypted = hash_in_sha256(old_password)
+        if user.password != old_password_encrypted:
+            raise InvalidPasswordError("Old password does not match.")
         encrypted_password = hash_in_sha256(new_password)
         user.password = encrypted_password
         self.db_session.commit()
