@@ -90,7 +90,7 @@ All required configuration files are downloaded directly from the repository.
     docker compose up -d
     ```
 
-    Docuisine is now accesible at http://localhost:7000. If port configuration was set to `7000`.
+    Docuisine is now accessible at http://localhost:7000. If port configuration was set to `7000`.
 
 ### Environment Variables
 
