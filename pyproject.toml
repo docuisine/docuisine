@@ -18,11 +18,6 @@ classifiers = [
 dependencies = [
     "email-validator>=2.3.0",
     "fastapi[standard]>=0.121.1",
-    "mkdocs",
-    "mkdocs-material>=9.6.23",
-    "mkdocstrings[python]>=0.30.1",
-    "neoteroi-mkdocs[mkdocsoad]>=1.2.0",
-    "pip",
     "psycopg2-binary>=2.9.11",
     "pydantic>=2.12.4",
     "python-dotenv",
@@ -45,6 +40,10 @@ force-sort-within-sections = true
 
 [dependency-groups]
 dev = [
+    "mkdocs>=1.6.1",
+    "mkdocs-material>=9.6.23",
+    "mkdocstrings[python]>=0.30.1",
+    "neoteroi-mkdocs>=1.2.0",
     "pytest>=9.0.2",
     "pytest-cov>=7.0.0",
     "ruff>=0.14.9",
