@@ -66,6 +66,11 @@ docker build \
   -t docuisine:backend \
   .
 ```
+Then tag and push to Docker Hub
+```bash
+docker tag docuisine:backend iragca/docuisine-backend:latest
+docker push iragca/docuisine-backend:latest
+```
 
 or build and run using `docker compose`:
 
