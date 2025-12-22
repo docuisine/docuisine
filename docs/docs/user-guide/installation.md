@@ -85,8 +85,8 @@ All required configuration files are downloaded directly from the repository.
 
     ```bash title="Terminal"
     cd path/to/folder
-    curl -f -O https://raw.githubusercontent.com/iragca/docuisine/refs/heads/master/docs/assets/user-guide/docker-compose.yml
-    curl -f -o .env https://raw.githubusercontent.com/iragca/docuisine/refs/heads/master/docs/assets/user-guide/.env.example
+    curl -f -O https://raw.githubusercontent.com/iragca/docuisine/refs/heads/master/docs/docs/assets/user-guide/docker-compose.yml
+    curl -f -o .env https://raw.githubusercontent.com/iragca/docuisine/refs/heads/master/docs/docs/assets/user-guide/.env.example
     docker compose up -d
     ```
 
