@@ -265,9 +265,9 @@ def test_authenticate_user_not_found(db_session: MagicMock):
     db_session.first.return_value = None
 
     service = UserService(db_session)
-    result = service.authenticate_user(username="nonexistent", password="password123")
 
-    assert result is False
+    with pytest.raises(UserNotFoundError):
+        service.authenticate_user(username="nonexistent", password="password123")
 
 
 def test_verify_password(db_session: MagicMock, monkeypatch):
