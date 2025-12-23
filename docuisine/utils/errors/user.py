@@ -30,4 +30,3 @@ class DuplicateEmailError(Exception):
         self.email = email
         self.message = f"Email '{self.email}' is already associated with another user."
         super().__init__(self.message)
-
