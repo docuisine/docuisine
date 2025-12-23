@@ -254,3 +254,11 @@ def test_authenticate_user_not_found(db_session: MagicMock):
     result = service.authenticate_user(username="nonexistent", password="password123")
 
     assert result is False
+
+
+def test_verify_password(db_session: MagicMock):
+    """Test that the password verification method works correctly."""
+    service = UserService(db_session)
+
+    assert service._verify_password("password123", "hashed::password123") is True
+    assert service._verify_password("wrongpassword", "hashed::password123") is False

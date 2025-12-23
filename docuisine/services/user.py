@@ -271,14 +271,34 @@ class UserService:
         -----
         - The provided password is encrypted using SHA-256 for comparison.
         """
-        hash_password = hash_in_sha256(password)
-
         try:
             user = self.get_user(user_id=id, username=username)
         except UserNotFoundError:
             return False
 
-        if user.password != hash_password:
+        if not self._verify_password(password, user.password):
             return False
 
         return user
+
+    def _verify_password(self, plain_password: str, hashed_password: str) -> bool:
+        """
+        Verify a plain-text password against its hashed version.
+
+        Parameters
+        ----------
+        plain_password : str
+            The plain-text password to verify.
+        hashed_password : str
+            The hashed password to compare against.
+
+        Returns
+        -------
+        bool
+            `True` if the passwords match, otherwise `False`.
+
+        Notes
+        -----
+        - This method uses SHA-256 hashing for verification.
+        """
+        return hash_in_sha256(plain_password) == hashed_password
