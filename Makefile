@@ -31,6 +31,10 @@ dev:
 dev-down:
 	docker compose -f scripts/dev/docker-compose.yml down
 
+.PHONY: del-dev-db
+del-dev-db:
+	docker compose -f scripts/dev/docker-compose.yml down -v
+
 ## Run production server
 .PHONY: prod
 prod:
