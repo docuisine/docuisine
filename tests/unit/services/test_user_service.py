@@ -190,7 +190,9 @@ def test_update_password_success(db_session: MagicMock):
     db_session.first.return_value = user
 
     service = UserService(db_session)
-    updated_user = service.update_user_password(user_id=1, old_password="oldpassword123", new_password="newpassword123")
+    updated_user = service.update_user_password(
+        user_id=1, old_password="oldpassword123", new_password="newpassword123"
+    )
 
     assert updated_user.password == "hashed::newpassword123"
     db_session.commit.assert_called_once()
@@ -202,7 +204,9 @@ def test_update_password_user_not_found(db_session: MagicMock):
     service = UserService(db_session)
 
     with pytest.raises(UserNotFoundError):
-        service.update_user_password(user_id=999, old_password="oldpassword123", new_password="newpassword123")
+        service.update_user_password(
+            user_id=999, old_password="oldpassword123", new_password="newpassword123"
+        )
 
 
 def test_update_user_duplicate_email_raises(db_session: MagicMock):
@@ -221,7 +225,6 @@ def test_update_user_duplicate_email_raises(db_session: MagicMock):
     db_session.commit.assert_called_once()
     db_session.rollback.assert_called_once()
     assert "example@mail.com" in str(exc.value)
-
 
 
 def test_authenticate_user_success(db_session: MagicMock, monkeypatch):
@@ -269,7 +272,8 @@ def test_verify_password(db_session: MagicMock, monkeypatch):
     service = UserService(db_session)
     monkeypatch.setattr(
         "docuisine.services.user.UserService._verify_password",
-        lambda self, plain_password, hashed_password: f"hashed::{plain_password}" == hashed_password,
+        lambda self, plain_password, hashed_password: f"hashed::{plain_password}"
+        == hashed_password,
     )
 
     assert service._verify_password("password123", "hashed::password123") is True
