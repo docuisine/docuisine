@@ -105,6 +105,13 @@ Everything `Public` can do, can be done by `User` and then some. Everything that
 
 No `PUT` or `DELETE` method should not be accessible to `Public` aside from `POST - /users/` when creating a user or `POST - /auth/token` when logging in.
 
+Default developer accounts:
+
+| Username  | Email                   | Role  | Role | Password       | Password SHA256 hash                                             |
+| --------- | ----------------------- | ----- | ---- | -------------- | ---------------------------------------------------------------- |
+| dev-user  | dev-user@docuisine.org  | User  | User | DevPassword1P! | 1920b94cd7cee322eaa299e703301f6a446c5ffe8da65e09b110880c9a02747e |
+| dev-admin | dev-admin@docuisine.org | Admin | User | DevPassword2P! | 752b50d7be2843f1f3b2f6879e5c4fc235c32109781c21fdc938d1f1ce2b17be |
+
 #### Users
 
 | Method   | Route            | Access      |
