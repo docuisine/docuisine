@@ -281,11 +281,7 @@ class UserService:
         -----
         - The provided password is encrypted using SHA-256 for comparison.
         """
-        try:
-            user = self.get_user(user_id=id, username=username)
-        except UserNotFoundError:
-            return False
-
+        user = self.get_user(user_id=id, username=username)
         if not self._verify_password(password, user.password):
             return False
 
@@ -339,5 +335,7 @@ class UserService:
         if self.jwt_config.access_token_expire_minutes:
             expires_delta = datetime.timedelta(minutes=self.jwt_config.access_token_expire_minutes)
             data.update({"exp": datetime.datetime.now(datetime.timezone.utc) + expires_delta})
-        token = jwt.encode(data, self.jwt_config.secret_key, algorithm=self.jwt_config.algorithm)
+        token = jwt.encode(
+            data, self.jwt_config.secret_key, algorithm=self.jwt_config.algorithm.value
+        )
         return token
