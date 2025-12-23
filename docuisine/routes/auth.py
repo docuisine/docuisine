@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, status
 
 from docuisine.db.models import User
-from docuisine.dependencies.auth import AuthForm
+from docuisine.dependencies import AuthForm
 from docuisine.dependencies.services import User_Service
 from docuisine.schemas.auth import Token
 from docuisine.schemas.common import Detail
