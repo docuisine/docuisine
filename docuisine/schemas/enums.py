@@ -9,6 +9,7 @@ class Status(str, Enum):
 class Role(str, Enum):
     ADMIN = "admin"
     USER = "user"
+    PUBLIC = "public"
 
 
 class Mode(str, Enum):
