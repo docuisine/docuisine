@@ -122,3 +122,25 @@ VALUES
     (2, 5, 60);  -- Eggs
 
 COMMIT;
+
+
+-- Reset sequences to match current data
+SELECT setval(pg_get_serial_sequence('users', 'id'),
+              (SELECT MAX(id) FROM users),
+              true);
+
+SELECT setval(pg_get_serial_sequence('ingredients', 'id'),
+              (SELECT MAX(id) FROM ingredients),
+              true);
+
+SELECT setval(pg_get_serial_sequence('categories', 'id'),
+              (SELECT MAX(id) FROM categories),
+              true);
+
+SELECT setval(pg_get_serial_sequence('recipes', 'id'),
+              (SELECT MAX(id) FROM recipes),
+              true);
+
+SELECT setval(pg_get_serial_sequence('stores', 'id'),
+              (SELECT MAX(id) FROM stores),
+              true);
