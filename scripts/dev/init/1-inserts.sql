@@ -5,8 +5,10 @@ BEGIN;
 -- =====================
 INSERT INTO users (id, username, email, password, role, preview_img, img)
 VALUES
-    (1, 'alice', 'alice@example.com', 'hashed_password_1P!', 'user', NULL, NULL),
-    (2, 'bob', 'bob@example.com', 'hashed_password_2P!', 'admin', NULL, NULL);
+    -- password: DevPassword1P!
+    (1, 'alice', 'alice@example.com', '1920b94cd7cee322eaa299e703301f6a446c5ffe8da65e09b110880c9a02747e', 'user', NULL, NULL),
+    -- password: DevPassword2P!
+    (2, 'bob', 'bob@example.com', '1920b94cd7cee322eaa299e703301f6a446c5ffe8da65e09b110880c9a02747e', 'admin', NULL, NULL);
 
 -- =====================
 -- INGREDIENTS
