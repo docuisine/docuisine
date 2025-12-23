@@ -1,9 +1,12 @@
+import datetime
 from typing import Optional, Union
 
+import jwt
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from docuisine.db.models import User
+from docuisine.schemas.auth import JWTConfig
 from docuisine.utils.errors import (
     DuplicateEmailError,
     InvalidPasswordError,
@@ -14,8 +17,9 @@ from docuisine.utils.hashing import hash_in_sha256
 
 
 class UserService:
-    def __init__(self, db_session: Session):
+    def __init__(self, db_session: Session, jwt_config: Optional[JWTConfig] = None):
         self.db_session: Session = db_session
+        self.jwt_config = jwt_config
 
     def create_user(self, username: str, password: str, email: Optional[str] = None) -> User:
         """
@@ -308,3 +312,32 @@ class UserService:
         - This method uses SHA-256 hashing for verification.
         """
         return hash_in_sha256(plain_password) == hashed_password
+
+    def create_access_token(self, user: User) -> str:
+        """
+        Create a JWT access token for the given user.
+
+        Parameters
+        ----------
+        user : User
+            The user for whom the access token is to be created.
+
+        Returns
+        -------
+        str
+            The generated JWT access token as a string.
+
+        Raises
+        ------
+        ValueError
+            If the JWT configuration is not set for the UserService.
+        """
+
+        if self.jwt_config is None:
+            raise ValueError("JWT configuration is not set for UserService.")
+        data = {"sub": user.username}
+        if self.jwt_config.access_token_expire_minutes:
+            expires_delta = datetime.timedelta(minutes=self.jwt_config.access_token_expire_minutes)
+            data.update({"exp": datetime.datetime.now(datetime.timezone.utc) + expires_delta})
+        token = jwt.encode(data, self.jwt_config.secret_key, algorithm=self.jwt_config.algorithm)
+        return token

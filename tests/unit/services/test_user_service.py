@@ -1,9 +1,12 @@
+import time
 from unittest.mock import MagicMock
 
 import pytest
 from sqlalchemy.exc import IntegrityError
 
 from docuisine.db.models import User
+from docuisine.schemas.auth import JWTConfig
+from docuisine.schemas.enums import JWTAlgorithm
 from docuisine.services import UserService
 from docuisine.utils.errors import DuplicateEmailError, UserExistsError, UserNotFoundError
 
@@ -278,3 +281,33 @@ def test_verify_password(db_session: MagicMock, monkeypatch):
 
     assert service._verify_password("password123", "hashed::password123") is True
     assert service._verify_password("wrongpassword", "hashed::password123") is False
+
+
+def test_create_access_token(db_session: MagicMock):
+    """Test that creating an access token returns a non-empty string."""
+    jwt_config = JWTConfig(
+        secret_key="testsecret",
+        algorithm=JWTAlgorithm.HS256,
+        access_token_expire_minutes=30,
+    )
+    service = UserService(db_session, jwt_config=jwt_config)
+    user = User(id=1, username="alice", password="pw")
+    token = service.create_access_token(user)
+    assert isinstance(token, str)
+    assert len(token) > 0
+
+
+def test_create_access_token_different_tokens(db_session: MagicMock):
+    """Test that creating access tokens at different times produces different tokens."""
+
+    jwt_config = JWTConfig(
+        secret_key="testsecret",
+        algorithm=JWTAlgorithm.HS256,
+        access_token_expire_minutes=30,
+    )
+    service = UserService(db_session, jwt_config=jwt_config)
+    user = User(id=1, username="alice", password="pw")
+    token1 = service.create_access_token(user)
+    time.sleep(1)  # Ensure a time difference
+    token2 = service.create_access_token(user)
+    assert token1 != token2
