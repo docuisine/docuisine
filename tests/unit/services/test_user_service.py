@@ -8,6 +8,7 @@ from docuisine.db.models import User
 from docuisine.schemas.auth import JWTConfig
 from docuisine.schemas.enums import JWTAlgorithm
 from docuisine.services import UserService
+from docuisine.utils import errors
 from docuisine.utils.errors import (
     DuplicateEmailError,
     InvalidPasswordError,
@@ -315,3 +316,56 @@ def test_create_access_token_different_tokens(db_session: MagicMock):
     time.sleep(1)  # Ensure a time difference
     token2 = service.create_access_token(user)
     assert token1 != token2
+
+
+def test_create_access_token_no_jwt_config(db_session: MagicMock):
+    """Test that creating an access token without JWT config raises ValueError."""
+    service = UserService(db_session, jwt_config=None)
+    user = User(id=1, username="alice", password="pw")
+
+    with pytest.raises(ValueError, match="JWT configuration is not set for UserService."):
+        service.create_access_token(user)
+
+
+def test_authorize_user_success(db_session: MagicMock, monkeypatch):
+    """Test that authorizing a user with a valid token works correctly."""
+    jwt_config = JWTConfig(
+        secret_key="testsecret",
+        algorithm=JWTAlgorithm.HS256,
+        access_token_expire_minutes=30,
+    )
+
+    monkeypatch.setattr(
+        "docuisine.services.user.jwt.decode",
+        lambda token, key, algorithms: {"sub": "alice"},
+    )
+    monkeypatch.setattr(
+        "docuisine.services.user.UserService.get_user",
+        lambda user_id, username: User(id=1, username="alice", password="pw"),
+    )
+
+    service = UserService(db_session, jwt_config=jwt_config)
+    token = "validtoken"
+    result = service.authorize_user(token)
+    assert result.username == "alice"
+    assert isinstance(result, User)
+    assert result.id == 1
+
+
+def test_authorize_user_invalid_token(db_session: MagicMock, monkeypatch):
+    """Test that authorizing a user with an invalid token raises InvalidCredentialsError."""
+    jwt_config = JWTConfig(
+        secret_key="testsecret",
+        algorithm=JWTAlgorithm.HS256,
+        access_token_expire_minutes=30,
+    )
+
+    mock_decode = MagicMock(side_effect=errors.InvalidCredentialsError)
+    monkeypatch.setattr(
+        "docuisine.services.user.jwt.decode",
+        mock_decode,
+    )
+    service = UserService(db_session, jwt_config=jwt_config)
+
+    with pytest.raises(errors.InvalidCredentialsError):
+        service.authorize_user("invalidtoken")

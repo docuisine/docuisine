@@ -9,6 +9,7 @@ from docuisine.db.models import User
 from docuisine.schemas.auth import JWTConfig
 from docuisine.utils.errors import (
     DuplicateEmailError,
+    InvalidCredentialsError,
     InvalidPasswordError,
     UserExistsError,
     UserNotFoundError,
@@ -340,3 +341,39 @@ class UserService:
             data, self.jwt_config.secret_key, algorithm=self.jwt_config.algorithm.value
         )
         return token
+
+    def authorize_user(self, token: str) -> User:
+        """
+        Authorize a user based on the provided JWT token.
+
+        Parameters
+        ----------
+        token : str
+            The JWT token to decode and verify.
+
+        Returns
+        -------
+        User
+            The authorized `User` instance.
+
+        Raises
+        ------
+        ValueError
+            If the JWT configuration is not set for the UserService.
+        InvalidCredentialsError
+            If the token is invalid.
+        """
+
+        if self.jwt_config is None:
+            raise ValueError("JWT configuration is not set for UserService.")
+        try:
+            payload = jwt.decode(
+                token, self.jwt_config.secret_key, algorithms=[self.jwt_config.algorithm.value]
+            )
+            username: str = payload.get("sub")
+            if username is None:
+                raise InvalidCredentialsError
+            user = self.get_user(username=username)
+        except (jwt.InvalidTokenError, UserNotFoundError) as e:
+            raise InvalidCredentialsError from e
+        return user
