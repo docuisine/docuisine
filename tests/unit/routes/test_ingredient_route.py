@@ -86,7 +86,7 @@ class TestRegularUser:
             )
             return mock
 
-        app.dependency_overrides[get_ingredient_service] = mock_ingredient_service
+        app_regular_user.dependency_overrides[get_ingredient_service] = mock_ingredient_service
         client = TestClient(app_regular_user)
 
         ingredient_data = {"name": "Eggs", "description": "Large eggs"}
@@ -108,7 +108,7 @@ class TestRegularUser:
             )
             return mock
 
-        app.dependency_overrides[get_ingredient_service] = mock_ingredient_service
+        app_regular_user.dependency_overrides[get_ingredient_service] = mock_ingredient_service
         client = TestClient(app_regular_user)
 
         ingredient_data = {"name": "Pepper"}
@@ -128,7 +128,7 @@ class TestRegularUser:
             )
             return mock
 
-        app.dependency_overrides[get_ingredient_service] = mock_ingredient_service
+        app_regular_user.dependency_overrides[get_ingredient_service] = mock_ingredient_service
         client = TestClient(app_regular_user)
 
         ingredient_data = {"name": "Pasta", "description": "Homemade pasta", "recipe_id": 5}
@@ -146,7 +146,7 @@ class TestRegularUser:
             mock.create_ingredient.side_effect = errors.IngredientExistsError(name="Sugar")
             return mock
 
-        app.dependency_overrides[get_ingredient_service] = mock_ingredient_service
+        app_regular_user.dependency_overrides[get_ingredient_service] = mock_ingredient_service
         client = TestClient(app_regular_user)
 
         ingredient_data = {"name": "Sugar", "description": "White sugar"}
@@ -167,7 +167,7 @@ class TestAdminUser:
             )
             return mock
 
-        app.dependency_overrides[get_ingredient_service] = mock_ingredient_service
+        app_admin.dependency_overrides[get_ingredient_service] = mock_ingredient_service
         client = TestClient(app_admin)
 
         update_data = {"name": "Brown Sugar", "description": "Updated description"}
@@ -188,7 +188,7 @@ class TestAdminUser:
             )
             return mock
 
-        app.dependency_overrides[get_ingredient_service] = mock_ingredient_service
+        app_admin.dependency_overrides[get_ingredient_service] = mock_ingredient_service
         client = TestClient(app_admin)
 
         update_data = {"name": "Updated Name"}

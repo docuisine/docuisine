@@ -127,7 +127,7 @@ class TestAdminUser:
             )
             return mock
 
-        app.dependency_overrides[get_recipe_service] = mock_recipe_service
+        app_admin.dependency_overrides[get_recipe_service] = mock_recipe_service
         client = TestClient(app_admin)
 
         recipe_data = {
@@ -154,7 +154,7 @@ class TestAdminUser:
             mock.create_recipe.return_value = Recipe(id=2, user_id=2, name="Simple Salad")
             return mock
 
-        app.dependency_overrides[get_recipe_service] = mock_recipe_service
+        app_admin.dependency_overrides[get_recipe_service] = mock_recipe_service
         client = TestClient(app_admin)
 
         recipe_data = {"user_id": 2, "name": "Simple Salad"}
@@ -172,7 +172,7 @@ class TestAdminUser:
             mock.create_recipe.side_effect = errors.RecipeExistsError(name="Existing Recipe")
             return mock
 
-        app.dependency_overrides[get_recipe_service] = mock_recipe_service
+        app_admin.dependency_overrides[get_recipe_service] = mock_recipe_service
         client = TestClient(app_admin)
 
         recipe_data = {"user_id": 1, "name": "Existing Recipe"}
@@ -197,7 +197,7 @@ class TestAdminUser:
             )
             return mock
 
-        app.dependency_overrides[get_recipe_service] = mock_recipe_service
+        app_admin.dependency_overrides[get_recipe_service] = mock_recipe_service
         client = TestClient(app_admin)
 
         update_data = {
@@ -230,7 +230,7 @@ class TestAdminUser:
             )
             return mock
 
-        app.dependency_overrides[get_recipe_service] = mock_recipe_service
+        app_admin.dependency_overrides[get_recipe_service] = mock_recipe_service
         client = TestClient(app_admin)
 
         update_data = {"servings": 10}
@@ -247,7 +247,7 @@ class TestAdminUser:
             mock.update_recipe.side_effect = errors.RecipeNotFoundError(recipe_id=999)
             return mock
 
-        app.dependency_overrides[get_recipe_service] = mock_recipe_service
+        app_admin.dependency_overrides[get_recipe_service] = mock_recipe_service
         client = TestClient(app_admin)
 
         update_data = {"name": "New Name"}
@@ -264,7 +264,7 @@ class TestAdminUser:
             mock.update_recipe.side_effect = errors.RecipeExistsError(name="Existing Recipe")
             return mock
 
-        app.dependency_overrides[get_recipe_service] = mock_recipe_service
+        app_admin.dependency_overrides[get_recipe_service] = mock_recipe_service
         client = TestClient(app_admin)
 
         update_data = {"name": "Existing Recipe"}
@@ -281,7 +281,7 @@ class TestAdminUser:
             mock.delete_recipe.return_value = None
             return mock
 
-        app.dependency_overrides[get_recipe_service] = mock_recipe_service
+        app_admin.dependency_overrides[get_recipe_service] = mock_recipe_service
         client = TestClient(app_admin)
 
         response = client.delete("/recipes/1")
@@ -297,7 +297,7 @@ class TestAdminUser:
             mock.delete_recipe.side_effect = errors.RecipeNotFoundError(recipe_id=999)
             return mock
 
-        app.dependency_overrides[get_recipe_service] = mock_recipe_service
+        app_admin.dependency_overrides[get_recipe_service] = mock_recipe_service
         client = TestClient(app_admin)
 
         ## Test

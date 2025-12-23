@@ -139,7 +139,7 @@ class TestRegularUser:
             mock = MagicMock()
             mock.delete_user.return_value = None
             return mock
-        app.dependency_overrides[get_user_service] = mock_user_service
+        app_regular_user.dependency_overrides[get_user_service] = mock_user_service
         client = TestClient(app_regular_user)
         
         ## Test
@@ -155,7 +155,7 @@ class TestRegularUser:
             mock.delete_user.side_effect = errors.UserNotFoundError(user_id=1)
             return mock
 
-        app.dependency_overrides[get_user_service] = mock_user_service
+        app_regular_user.dependency_overrides[get_user_service] = mock_user_service
         client = TestClient(app_regular_user)
 
         ## Test
@@ -172,7 +172,7 @@ class TestRegularUser:
             mock.update_user_password.side_effect = errors.UserNotFoundError(user_id=1)
             return mock
 
-        app.dependency_overrides[get_user_service] = mock_user_service
+        app_regular_user.dependency_overrides[get_user_service] = mock_user_service
         client = TestClient(app_regular_user)
 
         ## Test
@@ -187,7 +187,7 @@ class TestRegularUser:
         assert data["detail"] == "User with ID 1 not found."
 
 
-    def test_update_user_password_success(self):
+    def test_update_user_password_success(self, app_regular_user: MagicMock):
         ## Setup
         def mock_user_service():
             mock = MagicMock()
@@ -196,8 +196,8 @@ class TestRegularUser:
             )
             return mock
 
-        app.dependency_overrides[get_user_service] = mock_user_service
-        client = TestClient(app)
+        app_regular_user.dependency_overrides[get_user_service] = mock_user_service
+        client = TestClient(app_regular_user)
 
         ## Test
         password_data = {
@@ -213,9 +213,9 @@ class TestRegularUser:
         assert "password" not in data  # Ensure password is not exposed
 
 
-    def test_update_user_password_invalid(self):
+    def test_update_user_password_invalid(self, app_regular_user: MagicMock):
         ## Setup
-        client = TestClient(app)
+        client = TestClient(app_regular_user)
 
         ## Test
         password_data = {
@@ -237,7 +237,7 @@ class TestRegularUser:
             mock.update_user_email.side_effect = errors.UserNotFoundError(user_id=1)
             return mock
 
-        app.dependency_overrides[get_user_service] = mock_user_service
+        app_regular_user.dependency_overrides[get_user_service] = mock_user_service
         client = TestClient(app_regular_user)
 
         ## Test
@@ -248,7 +248,7 @@ class TestRegularUser:
         assert data["detail"] == "User with ID 1 not found."
 
 
-    def test_update_user_email_conflict(self):
+    def test_update_user_email_conflict(self, app_regular_user: MagicMock):
         ## Setup
         def mock_user_service():
             mock = MagicMock()
@@ -257,8 +257,8 @@ class TestRegularUser:
             )
             return mock
 
-        app.dependency_overrides[get_user_service] = mock_user_service
-        client = TestClient(app)
+        app_regular_user.dependency_overrides[get_user_service] = mock_user_service
+        client = TestClient(app_regular_user)
 
         ## Test
         email_data = {"id": 1, "password": "CurrentPassword!23", "email": "newemail@example.com"}
@@ -270,7 +270,7 @@ class TestRegularUser:
         )
 
 
-    def test_update_user_email_success(self):
+    def test_update_user_email_success(self, app_regular_user: MagicMock):
         ## Setup
         def mock_user_service():
             mock = MagicMock()
@@ -279,8 +279,8 @@ class TestRegularUser:
             )
             return mock
 
-        app.dependency_overrides[get_user_service] = mock_user_service
-        client = TestClient(app)
+        app_regular_user.dependency_overrides[get_user_service] = mock_user_service
+        client = TestClient(app_regular_user)
 
         ## Test
         email_data = {"id": 1, "password": "CurrentPassword!23", "email": "newemail@example.com"}

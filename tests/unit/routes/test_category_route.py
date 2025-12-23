@@ -85,7 +85,7 @@ class TestAdminUser:
             )
             return mock
 
-        app.dependency_overrides[get_category_service] = mock_category_service
+        app_admin.dependency_overrides[get_category_service] = mock_category_service
         client = TestClient(app_admin)
 
         category_data = {"name": "Mexican", "description": "Mexican cuisine"}
@@ -104,7 +104,7 @@ class TestAdminUser:
             mock.create_category.return_value = Category(id=2, name="Vegan", description=None)
             return mock
 
-        app.dependency_overrides[get_category_service] = mock_category_service
+        app_admin.dependency_overrides[get_category_service] = mock_category_service
         client = TestClient(app_admin)
 
         category_data = {"name": "Vegan"}
@@ -122,7 +122,7 @@ class TestAdminUser:
             mock.create_category.side_effect = errors.CategoryExistsError(name="Dessert")
             return mock
 
-        app.dependency_overrides[get_category_service] = mock_category_service
+        app_admin.dependency_overrides[get_category_service] = mock_category_service
         client = TestClient(app_admin)
 
         category_data = {"name": "Dessert", "description": "Sweet dishes"}
@@ -141,7 +141,7 @@ class TestAdminUser:
             )
             return mock
 
-        app.dependency_overrides[get_category_service] = mock_category_service
+        app_admin.dependency_overrides[get_category_service] = mock_category_service
         client = TestClient(app_admin)
 
         update_data = {"name": "Desserts", "description": "Updated description"}
@@ -162,7 +162,7 @@ class TestAdminUser:
             )
             return mock
 
-        app.dependency_overrides[get_category_service] = mock_category_service
+        app_admin.dependency_overrides[get_category_service] = mock_category_service
         client = TestClient(app_admin)
 
         update_data = {"name": "Updated Name"}
@@ -179,7 +179,7 @@ class TestAdminUser:
             mock.update_category.side_effect = errors.CategoryNotFoundError(category_id=999)
             return mock
 
-        app.dependency_overrides[get_category_service] = mock_category_service
+        app_admin.dependency_overrides[get_category_service] = mock_category_service
         client = TestClient(app_admin)
 
         update_data = {"name": "New Name"}
@@ -196,7 +196,7 @@ class TestAdminUser:
             mock.update_category.side_effect = errors.CategoryExistsError(name="Existing")
             return mock
 
-        app.dependency_overrides[get_category_service] = mock_category_service
+        app_admin.dependency_overrides[get_category_service] = mock_category_service
         client = TestClient(app_admin)
 
         update_data = {"name": "Existing"}
@@ -213,7 +213,7 @@ class TestAdminUser:
             mock.delete_category.return_value = None
             return mock
 
-        app.dependency_overrides[get_category_service] = mock_category_service
+        app_admin.dependency_overrides[get_category_service] = mock_category_service
         client = TestClient(app_admin)
 
         response = client.delete("/categories/1")
@@ -229,7 +229,7 @@ class TestAdminUser:
             mock.delete_category.side_effect = errors.CategoryNotFoundError(category_id=999)
             return mock
 
-        app.dependency_overrides[get_category_service] = mock_category_service
+        app_admin.dependency_overrides[get_category_service] = mock_category_service
         client = TestClient(app_admin)
 
         response = client.delete("/categories/999")

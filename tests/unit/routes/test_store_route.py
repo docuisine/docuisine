@@ -99,7 +99,7 @@ class TestRegularUser:
             )
             return mock
 
-        app.dependency_overrides[get_store_service] = mock_store_service
+        app_regular_user.dependency_overrides[get_store_service] = mock_store_service
         client = TestClient(app_regular_user)
 
         store_data = {
@@ -124,7 +124,7 @@ class TestRegularUser:
             mock.create_store.return_value = Store(id=2, name="Mini", address="222 Second St")
             return mock
 
-        app.dependency_overrides[get_store_service] = mock_store_service
+        app_regular_user.dependency_overrides[get_store_service] = mock_store_service
         client = TestClient(app_regular_user)
 
         store_data = {"name": "Mini", "address": "222 Second St"}
@@ -143,7 +143,7 @@ class TestRegularUser:
             mock.create_store.side_effect = errors.StoreExistsError(name="Existing Store")
             return mock
 
-        app.dependency_overrides[get_store_service] = mock_store_service
+        app_regular_user.dependency_overrides[get_store_service] = mock_store_service
         client = TestClient(app_regular_user)
 
         store_data = {"name": "Existing Store", "address": "333 Third St"}
@@ -168,7 +168,7 @@ class TestRegularUser:
             )
             return mock
 
-        app.dependency_overrides[get_store_service] = mock_store_service
+        app_regular_user.dependency_overrides[get_store_service] = mock_store_service
         client = TestClient(app_regular_user)
 
         update_data = {
@@ -201,7 +201,7 @@ class TestRegularUser:
             )
             return mock
 
-        app.dependency_overrides[get_store_service] = mock_store_service
+        app_regular_user.dependency_overrides[get_store_service] = mock_store_service
         client = TestClient(app_regular_user)
 
         update_data = {"address": "New Address"}
@@ -219,7 +219,7 @@ class TestRegularUser:
             mock.update_store.side_effect = errors.StoreNotFoundError(store_id=999)
             return mock
 
-        app.dependency_overrides[get_store_service] = mock_store_service
+        app_regular_user.dependency_overrides[get_store_service] = mock_store_service
         client = TestClient(app_regular_user)
 
         update_data = {"name": "New Name"}
@@ -237,7 +237,7 @@ class TestRegularUser:
             mock.update_store.side_effect = errors.StoreExistsError(name="Existing Store")
             return mock
 
-        app.dependency_overrides[get_store_service] = mock_store_service
+        app_regular_user.dependency_overrides[get_store_service] = mock_store_service
         client = TestClient(app_regular_user)
 
         update_data = {"name": "Existing Store"}
@@ -255,7 +255,7 @@ class TestRegularUser:
             mock.delete_store.return_value = None
             return mock
 
-        app.dependency_overrides[get_store_service] = mock_store_service
+        app_regular_user.dependency_overrides[get_store_service] = mock_store_service
         client = TestClient(app_regular_user)
 
         response = client.delete("/stores/1")
@@ -272,7 +272,7 @@ class TestRegularUser:
             mock.delete_store.side_effect = errors.StoreNotFoundError(store_id=999)
             return mock
 
-        app.dependency_overrides[get_store_service] = mock_store_service
+        app_regular_user.dependency_overrides[get_store_service] = mock_store_service
         client = TestClient(app_regular_user)
 
         response = client.delete("/stores/999")
