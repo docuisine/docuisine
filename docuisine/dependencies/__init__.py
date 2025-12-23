@@ -1,4 +1,4 @@
-from .auth import AuthForm, AuthenticatedUser, AuthToken
+from .auth import AuthenticatedUser, AuthForm, AuthToken
 from .db import DB_Session
 from .services import (
     Category_Service,
@@ -10,6 +10,7 @@ from .services import (
 
 __all__ = [
     "AuthorizedUser",
+    "AuthenticatedUser",
     "AuthForm",
     "AuthToken",
     "DB_Session",
