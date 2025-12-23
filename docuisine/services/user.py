@@ -266,6 +266,13 @@ class UserService:
         Union[User, bool]
             The `User` instance if authentication is successful, otherwise `False`.
 
+        Raises
+        ------
+        UserNotFoundError
+            If no user is found with the given ID or username.
+        ValueError
+            If both `id` and `username` are `None`.
+
         Notes
         -----
         - The provided password is encrypted using SHA-256 for comparison.
