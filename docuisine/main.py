@@ -18,7 +18,7 @@ async def on_startup(app: FastAPI):
         if not callable(hasattr(engine, "dispose")):
             raise RuntimeError(
                 "Database engine is not initialized. "
-                "This is likely because the provided database URL is wrong."
+                "This is likely because the provided DATABASE_URL is wrong."
             )
         else:
             await engine.dispose()
