@@ -32,5 +32,22 @@ class Environment:
             raise EnvironmentError("MODE environment variable is not set.")
         return mode
 
+    @property
+    def JWT_SECRET_KEY(self) -> Optional[str]:
+        secret_key = os.getenv("JWT_SECRET_KEY")
+        return secret_key
+
+    @property
+    def JWT_ALGORITHM(self) -> str:
+        algorithm = os.getenv("JWT_ALGORITHM", "HS256")
+        return algorithm
+
+    @property
+    def JWT_ACCESS_TOKEN_EXPIRE_MINUTES(self) -> int:
+        expire_minutes = os.getenv(
+            "JWT_ACCESS_TOKEN_EXPIRE_MINUTES", "525600"
+        )  # Default to 1 year
+        return int(expire_minutes)
+
 
 env = Environment()
