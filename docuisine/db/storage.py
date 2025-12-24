@@ -18,6 +18,10 @@ s3_storage: client.BaseClient = boto3.client(
     aws_secret_access_key=s3_config.secret_key,
 )
 
+# Make this information available everywhere
+# Since there will be only one bucket used in this application
+setattr(s3_storage, "bucket_name", s3_config.bucket_name)
+
 
 # Ensure the S3 bucket exists
 try:
