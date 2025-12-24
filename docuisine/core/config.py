@@ -72,5 +72,10 @@ class Environment:
             raise EnvironmentError("S3_SECRET_KEY environment variable is not set.")
         return secret_key
 
+    @property
+    def S3_BUCKET_NAME(self) -> str:
+        bucket_name = os.getenv("S3_BUCKET_NAME", "docuisine-images")
+        return bucket_name
+
 
 env = Environment()
