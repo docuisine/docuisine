@@ -1,10 +1,12 @@
 from contextlib import asynccontextmanager
 
+from botocore.exceptions import ClientError
 from fastapi import FastAPI
 
 from docuisine import routes
 from docuisine.db.database import engine
 from docuisine.db.models.base import Base
+from docuisine.db.storage import s3_config, s3_storage
 
 
 @asynccontextmanager
@@ -12,6 +14,12 @@ async def on_startup(app: FastAPI):
     # Create database tables when the application starts
     try:
         Base.metadata.create_all(bind=engine)
+
+        # Ensure the S3 bucket exists
+        try:
+            s3_storage.head_bucket(Bucket=s3_config.bucket_name)
+        except ClientError:
+            s3_storage.create_bucket(Bucket=s3_config.bucket_name)
         yield
     finally:
         # Dispose of the database engine when the application shuts down

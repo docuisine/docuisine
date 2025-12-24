@@ -1,6 +1,5 @@
 import boto3
 from botocore import client
-from botocore.exceptions import ClientError
 
 from docuisine.core.config import env
 from docuisine.schemas.image import S3Config
@@ -21,10 +20,3 @@ s3_storage: client.BaseClient = boto3.client(
 # Make this information available everywhere
 # Since there will be only one bucket used in this application
 setattr(s3_storage, "bucket_name", s3_config.bucket_name)
-
-
-# Ensure the S3 bucket exists
-try:
-    s3_storage.head_bucket(Bucket=s3_config.bucket_name)
-except ClientError:
-    s3_storage.create_bucket(Bucket=s3_config.bucket_name)
