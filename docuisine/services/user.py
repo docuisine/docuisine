@@ -1,5 +1,6 @@
 import datetime
 from typing import Optional, Union
+from urllib.parse import urljoin
 
 import jwt
 from sqlalchemy.exc import IntegrityError
@@ -7,14 +8,33 @@ from sqlalchemy.orm import Session
 
 from docuisine.db.models import User
 from docuisine.schemas.auth import JWTConfig
+from docuisine.schemas.user import UserOut
 from docuisine.utils import errors
 from docuisine.utils.hashing import hash_in_sha256
 
 
 class UserService:
-    def __init__(self, db_session: Session, jwt_config: Optional[JWTConfig] = None):
+    def __init__(
+        self,
+        db_session: Session,
+        jwt_config: Optional[JWTConfig] = None,
+        image_host: Optional[str] = None,
+    ):
+        """
+        Initialize the UserService with a database session and optional JWT configuration.
+
+        Parameters
+        ----------
+        db_session : Session
+            The SQLAlchemy database session for database operations.
+        jwt_config : Optional[JWTConfig], optional
+            The JWT configuration for token generation and validation, by default None.
+        image_host : Optional[str], optional
+            The base URL for the image hosting service, by default None.
+        """
         self.db_session: Session = db_session
         self.jwt_config = jwt_config
+        self.image_host = image_host
 
     def create_user(self, username: str, password: str, email: Optional[str] = None) -> User:
         """
@@ -371,3 +391,44 @@ class UserService:
         except (jwt.InvalidTokenError, errors.UserNotFoundError) as e:
             raise errors.InvalidCredentialsError from e
         return user
+
+    def update_user_img(self, user_id: int, img: str, preview_img: str) -> UserOut:
+        """
+        Update the profile image and preview image of an existing user.
+
+        Parameters
+        ----------
+        user_id : int
+            The unique ID of the user whose images are to be updated.
+        img : str
+            The new profile image URL to set for the user.
+        preview_img : str
+            The new preview image URL to set for the user.
+
+        Returns
+        -------
+        User
+            The updated `User` instance.
+
+        Raises
+        ------
+        UserNotFoundError
+            If no user is found with the given ID.
+
+        Notes
+        -----
+        - This method commits the transaction immediately.
+        """
+        user = self._get_user_by_id(user_id)
+        if user is None:
+            raise errors.UserNotFoundError(user_id=user_id)
+        user.img = img
+        user.preview_img = preview_img
+        self.db_session.commit()
+        user_out = UserOut.model_validate(user)
+        if self.image_host:
+            if user_out.img:
+                user_out.img = urljoin(self.image_host, user_out.img)
+            if user_out.preview_img:
+                user_out.preview_img = urljoin(self.image_host, user_out.preview_img)
+        return user_out

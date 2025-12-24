@@ -1,10 +1,18 @@
-from fastapi import APIRouter, HTTPException, status
+from typing import Annotated
+
+from fastapi import APIRouter, Form, HTTPException, status
 
 from docuisine.db.models import User
-from docuisine.dependencies import AuthenticatedUser, User_Service
+from docuisine.dependencies import AuthenticatedUser, Image_Service, User_Service
+from docuisine.schemas.annotations import ImageUpload
 from docuisine.schemas.common import Detail
 from docuisine.schemas.enums import Role
-from docuisine.schemas.user import UserCreate, UserOut, UserUpdateEmail, UserUpdatePassword
+from docuisine.schemas.user import (
+    UserCreate,
+    UserOut,
+    UserUpdateEmail,
+    UserUpdatePassword,
+)
 from docuisine.utils import errors
 
 router = APIRouter(prefix="/users", tags=["Users"])
@@ -163,5 +171,42 @@ async def update_user_password(
     except errors.InvalidPasswordError as e:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
+            detail=e.message,
+        )
+
+
+@router.put(
+    "/img",
+    status_code=status.HTTP_200_OK,
+    response_model=UserOut,
+)
+async def update_user_img(
+    user_id: Annotated[int, Form()],
+    user_service: User_Service,
+    authenticated_user: AuthenticatedUser,
+    fileb: ImageUpload,
+    image_service: Image_Service,
+) -> UserOut:
+    """
+    Update the current user's profile.
+
+    Access Level: Admin, User
+    """
+    if authenticated_user.role not in {Role.ADMIN, Role.USER}:
+        raise errors.ForbiddenAccessError
+    if authenticated_user.id != user_id:
+        raise errors.ForbiddenAccessError
+
+    try:
+        image_set = image_service.upload_image(await fileb.read())
+
+        updated_user = user_service.update_user_img(
+            user_id=user_id, img=image_set.original, preview_img=image_set.preview
+        )
+        return updated_user
+
+    except errors.UserNotFoundError as e:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
             detail=e.message,
         )
