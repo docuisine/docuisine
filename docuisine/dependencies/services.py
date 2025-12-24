@@ -8,6 +8,7 @@ from docuisine.schemas.auth import JWTConfig
 from docuisine.schemas.enums import JWTAlgorithm
 
 from .db import DB_Session
+from .storage import S3_Client
 
 
 def get_user_service(
@@ -47,8 +48,15 @@ def get_recipe_service(
     return services.RecipeService(db_session)
 
 
+def get_image_service(
+    s3_client: S3_Client,
+) -> services.ImageService:
+    return services.ImageService(s3=s3_client)
+
+
 User_Service = Annotated[services.UserService, Depends(get_user_service)]
 Category_Service = Annotated[services.CategoryService, Depends(get_category_service)]
 Ingredient_Service = Annotated[services.IngredientService, Depends(get_ingredient_service)]
 Store_Service = Annotated[services.StoreService, Depends(get_store_service)]
 Recipe_Service = Annotated[services.RecipeService, Depends(get_recipe_service)]
+Image_Service = Annotated[services.ImageService, Depends(get_image_service)]
