@@ -1,6 +1,7 @@
 from functools import cached_property
 from hashlib import md5
 from io import BytesIO
+from urllib.parse import urljoin
 
 from botocore import client
 from PIL import Image, ImageFile
@@ -10,8 +11,6 @@ from docuisine.utils.errors import UnsupportedImageFormatError
 
 
 class ImageService:
-    BUCKET_NAME = "docuisine-images"
-
     def __init__(
         self,
         s3: client.BaseClient,
@@ -38,7 +37,7 @@ class ImageService:
         Returns
         -------
         str
-            The name of the uploaded image.
+            The URL of the uploaded image.
         """
         buffer = BytesIO(image)
         buffer.seek(0)
@@ -49,12 +48,12 @@ class ImageService:
         buffer.seek(0)
 
         self.s3.upload_fileobj(
-            Bucket=self.BUCKET_NAME,
+            Bucket=self.s3.bucket_name,
             Key=image_name,
             Fileobj=buffer,
             ExtraArgs={"ContentType": f"image/{format}"},
         )
-        return image_name
+        return urljoin(urljoin(self.s3.meta.endpoint_url, self.s3.bucket_name), image_name)
 
     @staticmethod
     def _build_image_name(image_bytes: bytes, format: str) -> str:

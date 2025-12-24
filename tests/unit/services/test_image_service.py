@@ -35,6 +35,8 @@ def test_upload_image(image_service: ImageService, monkeypatch, mock_s3_client: 
         "docuisine.services.image.ImageService._build_image_name",
         lambda *args: "newimage.jpeg",
     )
+    mock_s3_client.meta.endpoint_url = "http://mock-s3-endpoint/"
+    mock_s3_client.bucket_name = "docuisine-images"
 
     image_bytes = b"fake-image-bytes"
     image_service.upload_image(image_bytes)
