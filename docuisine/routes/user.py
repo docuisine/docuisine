@@ -160,3 +160,8 @@ async def update_user_password(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=e.message,
         )
+    except errors.InvalidPasswordError as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=e.message,
+        )
