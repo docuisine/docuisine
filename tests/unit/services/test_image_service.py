@@ -3,7 +3,6 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from docuisine.schemas.image import S3Config
 from docuisine.services import ImageService
 from docuisine.utils import errors
 
@@ -12,19 +11,13 @@ from docuisine.utils import errors
 def mock_s3_client(monkeypatch):
     """Fixture for mocking boto3 S3 client."""
     mock_s3 = MagicMock()
-    monkeypatch.setattr("boto3.client", lambda *args, **kwargs: mock_s3)
     return mock_s3
 
 
 @pytest.fixture
 def image_service(mock_s3_client: MagicMock, monkeypatch):
     """Fixture for ImageService with mocked S3 client and supported formats."""
-    s3_config = S3Config(
-        endpoint_url="http://localhost:9000",
-        access_key="test-access-key",
-        secret_key="test-secret-key",
-    )
-    service = ImageService(s3_config=s3_config)
+    service = ImageService(s3=mock_s3_client)
     monkeypatch.setattr(service, "_supported_formats", {"png", "jpeg", "jpg", "gif"})
     return service
 

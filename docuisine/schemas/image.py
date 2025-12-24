@@ -13,8 +13,11 @@ class S3Config(BaseModel):
         The access key for S3 authentication.
     secret_key : str
         The secret key for S3 authentication.
+    bucket_name : str
+        The name of the S3 bucket to use. Default is "docuisine-images".
     """
 
     endpoint_url: str
     access_key: str
     secret_key: str
+    bucket_name: str = "docuisine-images"

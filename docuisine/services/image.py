@@ -2,13 +2,10 @@ from functools import cached_property
 from hashlib import md5
 from io import BytesIO
 
-import boto3
 from botocore import client
-from botocore.exceptions import ClientError
 from PIL import Image, ImageFile
 
 from docuisine.schemas.enums import ImageFormat
-from docuisine.schemas.image import S3Config
 from docuisine.utils.errors import UnsupportedImageFormatError
 
 
@@ -17,19 +14,17 @@ class ImageService:
 
     def __init__(
         self,
-        s3_config: S3Config,
+        s3: client.BaseClient,
     ):
-        self.s3: client.BaseClient = boto3.client(
-            "s3",
-            endpoint_url=s3_config.endpoint_url,
-            aws_access_key_id=s3_config.access_key,
-            aws_secret_access_key=s3_config.secret_key,
-        )
+        """
+        Initialize the ImageService with S3 client.
 
-        try:
-            self.s3.head_bucket(Bucket=self.BUCKET_NAME)
-        except ClientError:
-            self.s3.create_bucket(Bucket=self.BUCKET_NAME)
+        Parameters
+        ----------
+        s3 : client.BaseClient
+            The S3 client for interacting with the S3 storage.
+        """
+        self.s3 = s3
 
     def upload_image(self, image: bytes) -> str:
         """
