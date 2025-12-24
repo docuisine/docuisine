@@ -1,5 +1,6 @@
 from .auth import ForbiddenAccessError, InvalidCredentialsError, InvalidPasswordError
 from .category import CategoryExistsError, CategoryNotFoundError
+from .image import UnsupportedImageFormatError
 from .ingredient import IngredientExistsError, IngredientNotFoundError
 from .recipe import RecipeExistsError, RecipeNotFoundError
 from .store import StoreExistsError, StoreNotFoundError
@@ -14,6 +15,7 @@ __all__ = [
     "UserNotFoundError",
     "CategoryExistsError",
     "CategoryNotFoundError",
+    "UnsupportedImageFormatError",
     "IngredientExistsError",
     "IngredientNotFoundError",
     "StoreExistsError",
