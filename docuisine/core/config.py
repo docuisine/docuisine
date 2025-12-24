@@ -51,5 +51,26 @@ class Environment:
         )  # Default to 1 year
         return int(expire_minutes)
 
+    @property
+    def S3_ENDPOINT_URL(self) -> str:
+        endpoint_url = os.getenv("S3_ENDPOINT_URL")
+        if endpoint_url is None:
+            raise EnvironmentError("S3_ENDPOINT_URL environment variable is not set.")
+        return endpoint_url
+
+    @property
+    def S3_ACCESS_KEY(self) -> str:
+        access_key = os.getenv("S3_ACCESS_KEY")
+        if access_key is None:
+            raise EnvironmentError("S3_ACCESS_KEY environment variable is not set.")
+        return access_key
+
+    @property
+    def S3_SECRET_KEY(self) -> str:
+        secret_key = os.getenv("S3_SECRET_KEY")
+        if secret_key is None:
+            raise EnvironmentError("S3_SECRET_KEY environment variable is not set.")
+        return secret_key
+
 
 env = Environment()
