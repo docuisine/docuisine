@@ -1,12 +1,23 @@
 from unittest.mock import MagicMock
 
+from fastapi.applications import AppType
 from fastapi.testclient import TestClient
 import pytest
 
 from docuisine.db.models import User
 from docuisine.dependencies.auth import get_client_user
 from docuisine.dependencies.services import get_user_service
-from docuisine.main import app
+from docuisine.main import app as fastapi_app
+
+
+@pytest.fixture(scope="module")
+def app():
+    """
+    Provide the FastAPI app for testing.
+    Used in units test for routes by mocking the services with a test client.
+    """
+    yield fastapi_app
+    fastapi_app.dependency_overrides.clear()
 
 
 @pytest.fixture(scope="module")
@@ -20,14 +31,13 @@ def mock_user_service():
 
 
 @pytest.fixture(scope="module")
-def client(mock_user_service):
+def client(app: AppType, mock_user_service):
     """
-    Provide a TestClient with mocked dependencies.
+    Provide a simple TestClient with mocked dependencies.
     Used in units test for routes by mocking the services with a test client.
     """
     app.dependency_overrides[get_user_service] = lambda: mock_user_service
     yield TestClient(app)
-    app.dependency_overrides.clear()
 
 
 @pytest.fixture
@@ -60,10 +70,11 @@ def regular_user():
     mock_user.role = "user"
     return mock_user
 
+
 @pytest.fixture
-def app_regular_user(regular_user):
+def app_regular_user(app: AppType, regular_user: User):
     """
-    Provide a TestClient with a regular authenticated user.
+    Provide a FastAPI app with a regular authenticated user.
     Used in unit tests for routes that require an authenticated regular user.
     """
     app.dependency_overrides[get_client_user] = lambda: regular_user
@@ -84,10 +95,11 @@ def admin_user():
     mock_user.role = "admin"
     return mock_user
 
+
 @pytest.fixture
-def app_admin(admin_user):
+def app_admin(app: AppType, admin_user: User):
     """
-    Provide a TestClient with an admin authenticated user.
+    Provide a FastAPI app with an admin authenticated user.
     Used in unit tests for routes that require an authenticated admin user.
     """
     app.dependency_overrides[get_client_user] = lambda: admin_user

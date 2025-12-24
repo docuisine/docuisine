@@ -1,16 +1,16 @@
 from unittest.mock import MagicMock
 
 from fastapi import status
+from fastapi.applications import AppType
 from fastapi.testclient import TestClient
 
 from docuisine.db.models import Store
 from docuisine.dependencies.services import get_store_service
-from docuisine.main import app
 from docuisine.utils import errors
 
 
 class TestPublic:
-    def test_get_stores(self):
+    def test_get_stores(self, app: AppType):
         """Test getting all stores."""
 
         def mock_store_service():
@@ -36,7 +36,7 @@ class TestPublic:
         assert data[2]["name"] == "Organic Market"
         assert "id" in data[0] and "id" in data[1]
 
-    def test_get_store_by_id(self):
+    def test_get_store_by_id(self, app: AppType):
         """Test getting a store by ID."""
 
         def mock_store_service():
@@ -68,7 +68,7 @@ class TestPublic:
         assert data["website"] == "https://supermarket.com"
         assert data["description"] == "Large supermarket"
 
-    def test_get_store_not_found(self):
+    def test_get_store_not_found(self, app: AppType):
         """Test getting a non-existent store returns 404."""
 
         def mock_store_service():

@@ -1,16 +1,16 @@
 from unittest.mock import MagicMock
 
 from fastapi import status
+from fastapi.applications import AppType
 from fastapi.testclient import TestClient
 
 from docuisine.db.models import Recipe
 from docuisine.dependencies.services import get_recipe_service
-from docuisine.main import app
 from docuisine.utils import errors
 
 
 class TestPublic:
-    def test_get_recipes(self):
+    def test_get_recipes(self, app: AppType):
         """Test getting all recipes."""
 
         def mock_recipe_service():
@@ -41,7 +41,7 @@ class TestPublic:
         assert data[2]["servings"] == 4
         assert "id" in data[0] and "id" in data[1]
 
-    def test_get_recipes_by_user(self):
+    def test_get_recipes_by_user(self, app: AppType):
         """Test getting recipes for a specific user."""
 
         def mock_recipe_service():
@@ -64,7 +64,7 @@ class TestPublic:
         assert data[0]["name"] == "Pasta Carbonara"
         assert data[1]["name"] == "Chicken Curry"
 
-    def test_get_recipe_by_id(self):
+    def test_get_recipe_by_id(self, app: AppType):
         """Test getting a recipe by ID."""
 
         def mock_recipe_service():
@@ -94,7 +94,7 @@ class TestPublic:
         assert data["non_blocking_time_sec"] == 8400
         assert data["servings"] == 6
 
-    def test_get_recipe_not_found(self):
+    def test_get_recipe_not_found(self, app: AppType):
         """Test getting a non-existent recipe returns 404."""
 
         def mock_recipe_service():

@@ -1,16 +1,16 @@
 from unittest.mock import MagicMock
 
 from fastapi import status
+from fastapi.applications import AppType
 from fastapi.testclient import TestClient
 
 from docuisine.db.models import Category
 from docuisine.dependencies.services import get_category_service
-from docuisine.main import app
 from docuisine.utils import errors
 
 
 class TestPublic:
-    def test_get_categories(self):
+    def test_get_categories(self, app: AppType):
         """Test getting all categories."""
 
         def mock_category_service():
@@ -37,7 +37,7 @@ class TestPublic:
         assert data[2]["description"] is None
         assert all("id" in category for category in data)
 
-    def test_get_category_by_id(self):
+    def test_get_category_by_id(self, app: AppType):
         """Test getting a category by ID."""
 
         def mock_category_service():
@@ -57,7 +57,7 @@ class TestPublic:
         assert data["name"] == "Italian"
         assert data["description"] == "Italian cuisine"
 
-    def test_get_category_not_found(self):
+    def test_get_category_not_found(self, app: AppType):
         """Test getting a non-existent category returns 404."""
 
         def mock_category_service():

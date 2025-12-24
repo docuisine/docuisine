@@ -1,18 +1,16 @@
 from unittest.mock import MagicMock
 
 from fastapi import status
+from fastapi.applications import AppType
 from fastapi.testclient import TestClient
 
 from docuisine.db.models import User
 from docuisine.dependencies.services import get_user_service
-from docuisine.main import app
 from docuisine.utils import errors
 
 
 class TestPublic:
-
-
-    def test_get_users(self):
+    def test_get_users(self, app: AppType):
         ## Setup
         def mock_user_service():
             mock = MagicMock()
@@ -42,8 +40,7 @@ class TestPublic:
         assert all("password" not in user for user in data)  # Ensure passwords are not exposed
         assert all("email" in user for user in data)  # Ensure email field is present
 
-
-    def test_get_user_not_found(self):
+    def test_get_user_not_found(self, app: AppType):
         def mock_user_service():
             mock = MagicMock()
             mock.get_user.side_effect = errors.UserNotFoundError(user_id=999)
@@ -57,8 +54,7 @@ class TestPublic:
         data = response.json()
         assert data["detail"] == "User with ID 999 not found."
 
-
-    def test_create_user_conflict(self):
+    def test_create_user_conflict(self, app: AppType):
         ## Setup
         def mock_user_service():
             mock = MagicMock()
@@ -78,8 +74,7 @@ class TestPublic:
         data = response.json()
         assert data["detail"] == "User with username 'user1' already exists."
 
-
-    def test_create_user_success(self):
+    def test_create_user_success(self, app: AppType):
         ## Setup
         def mock_user_service():
             mock = MagicMock()
@@ -104,8 +99,7 @@ class TestPublic:
         assert data["email"] is None
         assert "password" not in data  # Ensure password is not exposed
 
-
-    def test_create_user_with_email_success(self):
+    def test_create_user_with_email_success(self, app: AppType):
         ## Setup
         def mock_user_service():
             mock = MagicMock()
@@ -131,17 +125,18 @@ class TestPublic:
         assert data["email"] == "newuser@example.com"
         assert "password" not in data  # Ensure password is not exposed
 
-class TestRegularUser:
 
+class TestRegularUser:
     def test_delete_user(self, app_regular_user: MagicMock):
         ## Setup
         def mock_user_service():
             mock = MagicMock()
             mock.delete_user.return_value = None
             return mock
+
         app_regular_user.dependency_overrides[get_user_service] = mock_user_service
         client = TestClient(app_regular_user)
-        
+
         ## Test
         response = client.delete("/users/1")
         assert response.status_code == status.HTTP_200_OK, response.text
@@ -164,7 +159,6 @@ class TestRegularUser:
         data = response.json()
         assert data["detail"] == "User with ID 1 not found."
 
-
     def test_update_user_password_not_found(self, app_regular_user: MagicMock):
         ## Setup
         def mock_user_service():
@@ -185,7 +179,6 @@ class TestRegularUser:
         assert response.status_code == status.HTTP_404_NOT_FOUND, response.text
         data = response.json()
         assert data["detail"] == "User with ID 1 not found."
-
 
     def test_update_user_password_success(self, app_regular_user: MagicMock):
         ## Setup
@@ -212,7 +205,6 @@ class TestRegularUser:
         assert data["id"] == 1
         assert "password" not in data  # Ensure password is not exposed
 
-
     def test_update_user_password_invalid(self, app_regular_user: MagicMock):
         ## Setup
         client = TestClient(app_regular_user)
@@ -227,8 +219,6 @@ class TestRegularUser:
         assert response.status_code == status.HTTP_422_UNPROCESSABLE_CONTENT
         data = response.json()
         assert data["detail"][0]["msg"] == "String should have at least 8 characters"
-
-
 
     def test_update_user_email_not_found(self, app_regular_user: MagicMock):
         ## Setup
@@ -246,7 +236,6 @@ class TestRegularUser:
         assert response.status_code == status.HTTP_404_NOT_FOUND, response.text
         data = response.json()
         assert data["detail"] == "User with ID 1 not found."
-
 
     def test_update_user_email_conflict(self, app_regular_user: MagicMock):
         ## Setup
@@ -266,9 +255,9 @@ class TestRegularUser:
         assert response.status_code == status.HTTP_409_CONFLICT, response.text
         data = response.json()
         assert (
-            data["detail"] == "Email 'newemail@example.com' is already associated with another user."
+            data["detail"]
+            == "Email 'newemail@example.com' is already associated with another user."
         )
-
 
     def test_update_user_email_success(self, app_regular_user: MagicMock):
         ## Setup
@@ -292,4 +281,3 @@ class TestRegularUser:
         assert data["id"] == 1
         assert data["email"] == "newemail@example.com"
         assert "password" not in data  # Ensure password is not exposed
-

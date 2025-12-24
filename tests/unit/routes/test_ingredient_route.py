@@ -1,16 +1,16 @@
 from unittest.mock import MagicMock
 
 from fastapi import status
+from fastapi.applications import AppType
 from fastapi.testclient import TestClient
 
 from docuisine.db.models import Ingredient
 from docuisine.dependencies.services import get_ingredient_service
-from docuisine.main import app
 from docuisine.utils import errors
 
 
 class TestPublic:
-    def test_get_ingredients(self):
+    def test_get_ingredients(self, app: AppType):
         """Test getting all ingredients."""
 
         def mock_ingredient_service():
@@ -37,7 +37,7 @@ class TestPublic:
         assert data[2]["description"] is None
         assert all("id" in ingredient for ingredient in data)
 
-    def test_get_ingredient_by_id(self):
+    def test_get_ingredient_by_id(self, app: AppType):
         """Test getting an ingredient by ID."""
 
         def mock_ingredient_service():
@@ -58,7 +58,7 @@ class TestPublic:
         assert data["description"] == "Unsalted butter"
         assert data["recipe_id"] is None
 
-    def test_get_ingredient_not_found(self):
+    def test_get_ingredient_not_found(self, app: AppType):
         """Test getting a non-existent ingredient returns 404."""
 
         def mock_ingredient_service():
