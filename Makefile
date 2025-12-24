@@ -43,7 +43,7 @@ prod:
 ## Run mkdocs local server
 .PHONY: docs
 docs:
-	uv run mkdocs serve -f docs/mkdocs.yml -a localhost:7002
+	uv run zensical serve -f docs/mkdocs.yml -a localhost:7002
 
 ## Run unit and integration tests with pytest
 .PHONY: test
