@@ -2,34 +2,40 @@ from fastapi import APIRouter, HTTPException, status
 
 from docuisine.db.models import Ingredient
 from docuisine.dependencies import AuthenticatedUser, Ingredient_Service
+from docuisine.schemas import ingredient as ingredient_schemas
 from docuisine.schemas.common import Detail
 from docuisine.schemas.enums import Role
-from docuisine.schemas.ingredient import IngredientCreate, IngredientOut, IngredientUpdate
 from docuisine.utils import errors
 
 router = APIRouter(prefix="/ingredients", tags=["Ingredients"])
 
 
-@router.get("/", status_code=status.HTTP_200_OK, response_model=list[IngredientOut])
-async def get_ingredients(ingredient_service: Ingredient_Service) -> list[IngredientOut]:
+@router.get(
+    "/", status_code=status.HTTP_200_OK, response_model=list[ingredient_schemas.IngredientOut]
+)
+async def get_ingredients(
+    ingredient_service: Ingredient_Service,
+) -> list[ingredient_schemas.IngredientOut]:
     """
     Get all ingredients.
 
     Access Level: Public
     """
     ingredients: list[Ingredient] = ingredient_service.get_all_ingredients()
-    return [IngredientOut.model_validate(ingredient) for ingredient in ingredients]
+    return [
+        ingredient_schemas.IngredientOut.model_validate(ingredient) for ingredient in ingredients
+    ]
 
 
 @router.get(
     "/{ingredient_id}",
     status_code=status.HTTP_200_OK,
-    response_model=IngredientOut,
+    response_model=ingredient_schemas.IngredientOut,
     responses={status.HTTP_404_NOT_FOUND: {"model": Detail}},
 )
 async def get_ingredient(
     ingredient_id: int, ingredient_service: Ingredient_Service
-) -> IngredientOut:
+) -> ingredient_schemas.IngredientOut:
     """
     Get an ingredient by ID.
 
@@ -37,7 +43,7 @@ async def get_ingredient(
     """
     try:
         ingredient: Ingredient = ingredient_service.get_ingredient(ingredient_id=ingredient_id)
-        return IngredientOut.model_validate(ingredient)
+        return ingredient_schemas.IngredientOut.model_validate(ingredient)
     except errors.IngredientNotFoundError as e:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -48,14 +54,14 @@ async def get_ingredient(
 @router.post(
     "/",
     status_code=status.HTTP_201_CREATED,
-    response_model=IngredientOut,
+    response_model=ingredient_schemas.IngredientOut,
     responses={status.HTTP_409_CONFLICT: {"model": Detail}},
 )
 async def create_ingredient(
-    ingredient: IngredientCreate,
+    ingredient: ingredient_schemas.IngredientCreate,
     ingredient_service: Ingredient_Service,
     authenticated_user: AuthenticatedUser,
-) -> IngredientOut:
+) -> ingredient_schemas.IngredientOut:
     """
     Create a new ingredient.
 
@@ -69,7 +75,7 @@ async def create_ingredient(
             description=ingredient.description,
             recipe_id=ingredient.recipe_id,
         )
-        return IngredientOut.model_validate(new_ingredient)
+        return ingredient_schemas.IngredientOut.model_validate(new_ingredient)
     except errors.IngredientExistsError as e:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
@@ -80,7 +86,7 @@ async def create_ingredient(
 @router.put(
     "/{ingredient_id}",
     status_code=status.HTTP_200_OK,
-    response_model=IngredientOut,
+    response_model=ingredient_schemas.IngredientOut,
     responses={
         status.HTTP_404_NOT_FOUND: {"model": Detail},
         status.HTTP_409_CONFLICT: {"model": Detail},
@@ -88,10 +94,10 @@ async def create_ingredient(
 )
 async def update_ingredient(
     ingredient_id: int,
-    ingredient: IngredientUpdate,
+    ingredient: ingredient_schemas.IngredientUpdate,
     ingredient_service: Ingredient_Service,
     authenticated_user: AuthenticatedUser,
-) -> IngredientOut:
+) -> ingredient_schemas.IngredientOut:
     """
     Update an ingredient by ID.
 
@@ -106,7 +112,7 @@ async def update_ingredient(
             description=ingredient.description,
             recipe_id=ingredient.recipe_id,
         )
-        return IngredientOut.model_validate(updated_ingredient)
+        return ingredient_schemas.IngredientOut.model_validate(updated_ingredient)
     except errors.IngredientNotFoundError as e:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,

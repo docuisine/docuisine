@@ -4,38 +4,33 @@ from fastapi import APIRouter, Form, HTTPException, status
 
 from docuisine.db.models import User
 from docuisine.dependencies import AuthenticatedUser, Image_Service, User_Service
+from docuisine.schemas import user as user_schemas
 from docuisine.schemas.annotations import ImageUpload
 from docuisine.schemas.common import Detail
 from docuisine.schemas.enums import Role
-from docuisine.schemas.user import (
-    UserCreate,
-    UserOut,
-    UserUpdateEmail,
-    UserUpdatePassword,
-)
 from docuisine.utils import errors
 
 router = APIRouter(prefix="/users", tags=["Users"])
 
 
-@router.get("/", status_code=status.HTTP_200_OK, response_model=list[UserOut])
-async def get_users(user_service: User_Service) -> list[UserOut]:
+@router.get("/", status_code=status.HTTP_200_OK, response_model=list[user_schemas.UserOut])
+async def get_users(user_service: User_Service) -> list[user_schemas.UserOut]:
     """
     Get all users.
 
     Access Level: Public
     """
     users: list[User] = user_service.get_all_users()
-    return [UserOut.model_validate(user) for user in users]
+    return [user_schemas.UserOut.model_validate(user) for user in users]
 
 
 @router.get(
     "/{user_id}",
     status_code=status.HTTP_200_OK,
-    response_model=UserOut,
+    response_model=user_schemas.UserOut,
     responses={status.HTTP_404_NOT_FOUND: {"model": Detail}},
 )
-async def get_user(user_id: int, user_service: User_Service) -> UserOut:
+async def get_user(user_id: int, user_service: User_Service) -> user_schemas.UserOut:
     """
     Get a user by ID.
 
@@ -43,7 +38,7 @@ async def get_user(user_id: int, user_service: User_Service) -> UserOut:
     """
     try:
         user: User = user_service.get_user(user_id=user_id)
-        return UserOut.model_validate(user)
+        return user_schemas.UserOut.model_validate(user)
     except errors.UserNotFoundError as e:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -54,10 +49,12 @@ async def get_user(user_id: int, user_service: User_Service) -> UserOut:
 @router.post(
     "/",
     status_code=status.HTTP_201_CREATED,
-    response_model=UserOut,
+    response_model=user_schemas.UserOut,
     responses={status.HTTP_409_CONFLICT: {"model": Detail}},
 )
-async def create_user(user: UserCreate, user_service: User_Service) -> UserOut:
+async def create_user(
+    user: user_schemas.UserCreate, user_service: User_Service
+) -> user_schemas.UserOut:
     """
     Create a new user.
 
@@ -65,7 +62,7 @@ async def create_user(user: UserCreate, user_service: User_Service) -> UserOut:
     """
     try:
         new_user: User = user_service.create_user(user.username, user.password, user.email)
-        return UserOut.model_validate(new_user)
+        return user_schemas.UserOut.model_validate(new_user)
     except errors.UserExistsError as e:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
@@ -104,7 +101,7 @@ async def delete_user(
 @router.put(
     "/email",
     status_code=status.HTTP_200_OK,
-    response_model=UserOut,
+    response_model=user_schemas.UserOut,
     responses={
         status.HTTP_400_BAD_REQUEST: {"model": Detail},
         status.HTTP_404_NOT_FOUND: {"model": Detail},
@@ -112,8 +109,10 @@ async def delete_user(
     },
 )
 async def update_user_email(
-    user: UserUpdateEmail, user_service: User_Service, authenticated_user: AuthenticatedUser
-) -> UserOut:
+    user: user_schemas.UserUpdateEmail,
+    user_service: User_Service,
+    authenticated_user: AuthenticatedUser,
+) -> user_schemas.UserOut:
     """
     Update user email.
 
@@ -125,7 +124,7 @@ async def update_user_email(
         raise errors.ForbiddenAccessError
     try:
         updated_user: User = user_service.update_user_email(user_id=user.id, new_email=user.email)
-        return UserOut.model_validate(updated_user)
+        return user_schemas.UserOut.model_validate(updated_user)
     except errors.UserNotFoundError as e:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -141,14 +140,16 @@ async def update_user_email(
 @router.put(
     "/password",
     status_code=status.HTTP_200_OK,
-    response_model=UserOut,
+    response_model=user_schemas.UserOut,
     responses={
         status.HTTP_404_NOT_FOUND: {"model": Detail},
     },
 )
 async def update_user_password(
-    user: UserUpdatePassword, user_service: User_Service, authenticated_user: AuthenticatedUser
-) -> UserOut:
+    user: user_schemas.UserUpdatePassword,
+    user_service: User_Service,
+    authenticated_user: AuthenticatedUser,
+) -> user_schemas.UserOut:
     """
     Update user password.
 
@@ -162,7 +163,7 @@ async def update_user_password(
         updated_user: User = user_service.update_user_password(
             user_id=user.id, old_password=user.old_password, new_password=user.new_password
         )
-        return UserOut.model_validate(updated_user)
+        return user_schemas.UserOut.model_validate(updated_user)
     except errors.UserNotFoundError as e:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -178,7 +179,7 @@ async def update_user_password(
 @router.put(
     "/img",
     status_code=status.HTTP_200_OK,
-    response_model=UserOut,
+    response_model=user_schemas.UserOut,
 )
 async def update_user_img(
     user_id: Annotated[int, Form()],
@@ -186,7 +187,7 @@ async def update_user_img(
     authenticated_user: AuthenticatedUser,
     fileb: ImageUpload,
     image_service: Image_Service,
-) -> UserOut:
+) -> user_schemas.UserOut:
     """
     Update the current user's profile.
 
