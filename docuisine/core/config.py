@@ -77,5 +77,12 @@ class Environment:
         bucket_name = os.getenv("S3_BUCKET_NAME", "docuisine-images")
         return bucket_name
 
+    @property
+    def S3_REGION(self) -> str:
+        region = os.getenv("S3_REGION", "apac")
+        if region is None:
+            raise EnvironmentError("S3_REGION environment variable is not set.")
+        return region
+
 
 env = Environment()

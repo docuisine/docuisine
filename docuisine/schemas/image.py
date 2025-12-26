@@ -15,12 +15,15 @@ class S3Config(BaseModel):
         The secret key for S3 authentication.
     bucket_name : str
         The name of the S3 bucket to use. Default is "docuisine-images".
+    region : str
+        The region where the S3 bucket is located. Default is "apac" (Asia Pacific).
     """
 
     endpoint_url: str
     access_key: str
     secret_key: str
     bucket_name: str = "docuisine-images"
+    region: str = "apac"
 
 
 class ImageSet(BaseModel):

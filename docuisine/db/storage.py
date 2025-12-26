@@ -8,6 +8,8 @@ s3_config = S3Config(
     endpoint_url=env.S3_ENDPOINT_URL,
     access_key=env.S3_ACCESS_KEY,
     secret_key=env.S3_SECRET_KEY,
+    bucket_name=env.S3_BUCKET_NAME,
+    region=env.S3_REGION,
 )
 
 s3_storage: client.BaseClient = boto3.client(
@@ -15,6 +17,7 @@ s3_storage: client.BaseClient = boto3.client(
     endpoint_url=s3_config.endpoint_url,
     aws_access_key_id=s3_config.access_key,
     aws_secret_access_key=s3_config.secret_key,
+    region_name=s3_config.region,
 )
 
 # Make this information available everywhere
