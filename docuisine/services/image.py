@@ -133,7 +133,7 @@ class ImageService:
         """
         return {fmt.value.lower() for fmt in ImageFormat}
 
-    def _generate_image_preview(self, image: bytes, size: tuple[int, int] = (128, 128)) -> bytes:
+    def _generate_image_preview(self, image: bytes, size: tuple[int, int] = (256, 256)) -> bytes:
         """
         Generate a preview of the image with the specified size.
 
@@ -142,7 +142,7 @@ class ImageService:
         image_name : str
             The name of the image in the S3 bucket.
         size : tuple[int, int]
-            The desired size (width, height) of the preview. Default is (128, 128).
+            The desired size (width, height) of the preview. Default is (256, 256).
 
         Returns
         -------
