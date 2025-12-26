@@ -67,4 +67,4 @@ S3_BUCKET_NAME = "docuisine-test"
 
 # Vercel deployment settings
 [project.scripts]
-app = "docuisine.app:app"
+app = "docuisine.main:app"
