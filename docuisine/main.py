@@ -48,15 +48,12 @@ async def on_startup(app: FastAPI):
             await engine.dispose()
 
 
-origins = ["http://localhost:5173", "https://docuisine-react.vercel.app/"]
-
-
 app = FastAPI(lifespan=on_startup)
 
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
