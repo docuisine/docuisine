@@ -6,11 +6,10 @@ import pytest
 
 from docuisine.db.models import User
 from docuisine.dependencies.auth import get_client_user
-from docuisine.dependencies.services import get_user_service
 from docuisine.main import app as fastapi_app
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture(scope="function")
 def app():
     """
     Provide the FastAPI app for testing.
@@ -28,16 +27,6 @@ def mock_user_service():
     """
     mock = MagicMock()
     return mock
-
-
-@pytest.fixture(scope="module")
-def client(app: AppType, mock_user_service):
-    """
-    Provide a simple TestClient with mocked dependencies.
-    Used in units test for routes by mocking the services with a test client.
-    """
-    app.dependency_overrides[get_user_service] = lambda: mock_user_service
-    yield TestClient(app)
 
 
 @pytest.fixture
@@ -112,7 +101,8 @@ def public_client(app: AppType):
     Provide a TestClient without any authenticated user.
     Used in unit tests for public routes that do not require authentication.
     """
-    yield TestClient(app)
+    app.dependency_overrides[get_client_user] = lambda: None
+    return TestClient(app)
 
 
 @pytest.fixture
@@ -121,7 +111,7 @@ def admin_client(app_admin: AppType):
     Provide a TestClient with an admin authenticated user.
     Used in unit tests for routes that require an authenticated admin user.
     """
-    yield TestClient(app_admin)
+    return TestClient(app_admin)
 
 
 @pytest.fixture
@@ -130,4 +120,21 @@ def user_client(app_regular_user: AppType):
     Provide a TestClient with a regular authenticated user.
     Used in unit tests for routes that require an authenticated regular user.
     """
-    yield TestClient(app_regular_user)
+    return TestClient(app_regular_user)
+
+
+@pytest.fixture
+def clients(
+    public_client: TestClient,
+    user_client: TestClient,
+    admin_client: TestClient,
+) -> dict[str, TestClient]:
+    """
+    Provide a dictionary of TestClients for different user roles.
+    Used in unit tests for routes that require different levels of authentication.
+    """
+    return {
+        "public": public_client,
+        "user": user_client,
+        "admin": admin_client,
+    }
