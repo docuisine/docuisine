@@ -1,4 +1,6 @@
-from fastapi import APIRouter, HTTPException, status
+from typing import Optional
+
+from fastapi import APIRouter, Form, HTTPException, status
 
 from docuisine.db.models import Category
 from docuisine.dependencies import AuthenticatedUser, Category_Service, Image_Service
@@ -53,11 +55,16 @@ async def get_category(
     responses={status.HTTP_409_CONFLICT: {"model": Detail}},
 )
 async def create_category(
-    name: CategoryName,
-    image: ImageUpload,
     category_service: Category_Service,
     authenticated_user: AuthenticatedUser,
     image_service: Image_Service,
+    name: CategoryName,
+    image: Optional[ImageUpload] = None,
+    description: Optional[str] = Form(
+        None,
+        description="The category description",
+        examples=["Sweet dishes and treats"],
+    ),
 ) -> category_schemas.CategoryOut:
     """
     Create a new category.
@@ -66,14 +73,15 @@ async def create_category(
     """
     if authenticated_user.role != Role.ADMIN:
         raise errors.ForbiddenAccessError
-
-    image_set = image_service.upload_image(await image.read())
+    if image is not None:
+        image_set = image_service.upload_image(await image.read())
 
     try:
         new_category: Category = category_service.create_category(
             name=name,
-            img=image_set.original,
-            preview_img=image_set.preview,
+            description=description,
+            img=image_set.original if image is not None else None,
+            preview_img=image_set.preview if image is not None else None,
         )
         return category_schemas.CategoryOut.model_validate(new_category)
     except errors.CategoryExistsError as e:
