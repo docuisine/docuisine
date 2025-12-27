@@ -7,7 +7,6 @@ from docuisine.dependencies import AuthenticatedUser, Category_Service, Image_Se
 from docuisine.schemas import category as category_schemas
 from docuisine.schemas.annotations import CategoryName, ImageUpload
 from docuisine.schemas.common import Detail
-from docuisine.schemas.enums import Role
 from docuisine.utils import errors
 from docuisine.utils.validation import validate_role
 
@@ -72,8 +71,7 @@ async def create_category(
 
     Access Level: Admin
     """
-    if authenticated_user.role != Role.ADMIN:
-        raise errors.ForbiddenAccessError
+    validate_role(authenticated_user.role, "a")
     if image is not None:
         image_set = image_service.upload_image(await image.read())
 
@@ -112,7 +110,7 @@ async def update_category(
 
     Access Level: Admin
     """
-    validate_role(authenticated_user.role, [Role.ADMIN])
+    validate_role(authenticated_user.role, "a")
     try:
         updated_category: Category = category_service.update_category(
             category_id=category.id, name=category.name, description=category.description
@@ -144,8 +142,7 @@ async def delete_category(
 
     Access Level: Admin
     """
-    if authenticated_user.role != Role.ADMIN:
-        raise errors.ForbiddenAccessError
+    validate_role(authenticated_user.role, "a")
     try:
         category_service.delete_category(category_id=category_id)
         return Detail(detail=f"Category with ID {category_id} has been deleted.")
