@@ -9,6 +9,7 @@ from docuisine.schemas.annotations import CategoryName, ImageUpload
 from docuisine.schemas.common import Detail
 from docuisine.schemas.enums import Role
 from docuisine.utils import errors
+from docuisine.utils.validation import validate_role
 
 router = APIRouter(prefix="/categories", tags=["Categories"])
 
@@ -92,7 +93,7 @@ async def create_category(
 
 
 @router.put(
-    "/{category_id}",
+    "/",
     status_code=status.HTTP_200_OK,
     response_model=category_schemas.CategoryOut,
     responses={
@@ -102,7 +103,6 @@ async def create_category(
     },
 )
 async def update_category(
-    category_id: int,
     category: category_schemas.CategoryUpdate,
     category_service: Category_Service,
     authenticated_user: AuthenticatedUser,
@@ -112,11 +112,10 @@ async def update_category(
 
     Access Level: Admin
     """
-    if authenticated_user.role != Role.ADMIN:
-        raise errors.ForbiddenAccessError
+    validate_role(authenticated_user.role, [Role.ADMIN])
     try:
         updated_category: Category = category_service.update_category(
-            category_id=category_id, name=category.name, description=category.description
+            category_id=category.id, name=category.name, description=category.description
         )
         return category_schemas.CategoryOut.model_validate(updated_category)
     except errors.CategoryNotFoundError as e:

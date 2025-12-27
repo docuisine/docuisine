@@ -1,5 +1,8 @@
 import re
 
+from docuisine.schemas.enums import Role
+from docuisine.utils import errors
+
 
 def has_two_dots(version: str) -> str:
     """
@@ -143,3 +146,39 @@ def validate_password(password: str) -> str:
         "Password must contain at least one special character.",
     )
     return password
+
+
+def validate_role(role: str, allowed_roles: list[Role] = [Role.ADMIN]) -> None:
+    """
+    Validate that the role is within the allowed roles.
+
+    Parameters
+    ----------
+    role : str
+        The role string to validate.
+    allowed_roles : list[Role], optional
+        The list of allowed roles, by default [Role.ADMIN].
+
+    Raises
+    ------
+    ValueError
+        If the role is not within the allowed roles.
+    """
+    try:
+        role_enum = Role(role)
+
+        match role_enum:
+            case Role.PUBLIC:
+                if Role.PUBLIC not in allowed_roles:
+                    raise errors.UnauthorizedError
+            case Role.USER:
+                if Role.USER not in allowed_roles:
+                    raise errors.ForbiddenAccessError
+            case Role.ADMIN:
+                if Role.ADMIN not in allowed_roles:
+                    raise errors.ForbiddenAccessError
+            case _:
+                raise errors.UnauthorizedError
+
+    except ValueError:
+        raise errors.UnauthorizedError
