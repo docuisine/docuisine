@@ -2,12 +2,13 @@ from unittest.mock import MagicMock
 
 from fastapi import status
 from fastapi.testclient import TestClient
-import params as p
 import pytest
 
 from docuisine.db.models import Ingredient
 from docuisine.dependencies.services import get_ingredient_service
 from docuisine.utils import errors
+
+from . import params as p
 
 
 @pytest.mark.parametrize(
