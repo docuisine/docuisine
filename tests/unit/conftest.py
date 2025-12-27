@@ -7,6 +7,7 @@ import pytest
 from docuisine.db.models import User
 from docuisine.dependencies.auth import get_client_user
 from docuisine.main import app as fastapi_app
+from docuisine.schemas.enums import Role
 
 
 @pytest.fixture(scope="function")
@@ -50,14 +51,19 @@ def regular_user():
     """
     Provide a regular user instance for testing.
     Used in unit tests for services and routes that require a regular user.
+
+    NOTES
+    -----
+    Do not use mock user with MagicMock. 
+    This will break identity access checks in routes
     """
-    mock_user = MagicMock(spec=User)
-    mock_user.id = 1
-    mock_user.username = "dev-user"
-    mock_user.password = "hashed::DevPassword1P!"
-    mock_user.email = "dev-user@docuisine.org"
-    mock_user.role = "user"
-    return mock_user
+    return User(
+        id=1,
+        username="dev-user",
+        password="hashed::DevPassword1P!",
+        email="dev-user@docuisine.org",
+        role=Role.USER,
+    )
 
 
 @pytest.fixture
@@ -75,14 +81,19 @@ def admin_user():
     """
     Provide an admin user instance for testing.
     Used in unit tests for services and routes that require an admin user.
+
+    NOTES
+    -----
+    Do not use mock user with MagicMock. 
+    This will break identity access checks in routes
     """
-    mock_user = MagicMock(spec=User)
-    mock_user.id = 2
-    mock_user.username = "dev-admin"
-    mock_user.password = "hashed::DevPassword2P!"
-    mock_user.email = "dev-admin@docuisine.org"
-    mock_user.role = "admin"
-    return mock_user
+    return User(
+        id=2,
+        username="dev-admin",
+        password="hashed::DevPassword2P!",
+        email="dev-admin@docuisine.org",
+        role=Role.ADMIN,
+    )
 
 
 @pytest.fixture
