@@ -16,8 +16,7 @@ def app():
     Provide the FastAPI app for testing.
     Used in units test for routes by mocking the services with a test client.
     """
-    yield fastapi_app
-    fastapi_app.dependency_overrides.clear()
+    return fastapi_app
 
 
 @pytest.fixture(scope="module")
@@ -54,7 +53,7 @@ def regular_user():
 
     NOTES
     -----
-    Do not use mock user with MagicMock. 
+    Do not use mock user with MagicMock.
     This will break identity access checks in routes
     """
     return User(
@@ -84,7 +83,7 @@ def admin_user():
 
     NOTES
     -----
-    Do not use mock user with MagicMock. 
+    Do not use mock user with MagicMock.
     This will break identity access checks in routes
     """
     return User(
@@ -107,13 +106,42 @@ def app_admin(app: AppType, admin_user: User):
 
 
 @pytest.fixture
-def public_client(app: AppType):
+def public_user():
+    """
+    Provide a public (unauthenticated) pseudo user instance for testing.
+    Used in unit tests for services and routes that require no authenticated user.
+
+    NOTES
+    -----
+    Do not use mock user with MagicMock.
+    This will break identity access checks in routes
+    """
+    return User(
+        id=3,
+        username="dev-public",
+        password="hashed::DevPassword3P!",
+        email="dev-public@docuisine.org",
+        role=Role.PUBLIC,
+    )
+
+@pytest.fixture
+def app_public(app: AppType, public_user: User):
+    """
+    Provide a FastAPI app with a public (unauthenticated) pseudo user.
+    Used in unit tests for routes that require no authenticated user.
+    """
+    app.dependency_overrides[get_client_user] = lambda: public_user
+    return app
+
+
+@pytest.fixture
+def public_client(app_public: AppType):
     """
     Provide a TestClient without any authenticated user.
     Used in unit tests for public routes that do not require authentication.
     """
-    app.dependency_overrides[get_client_user] = lambda: None
-    return TestClient(app)
+    app_public.dependency_overrides[get_client_user] = lambda: public_user
+    return TestClient(app_public)
 
 
 @pytest.fixture
