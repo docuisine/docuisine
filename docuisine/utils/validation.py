@@ -160,8 +160,8 @@ def validate_role(
     ----------
     role : str
         The role string to validate.
-    allowed_roles : list[Role], Literal["all", "a", "au"], optional
-        The list of allowed roles, by default [Role.ADMIN].
+    allowed_roles : Iterable[Role], Literal["all", "a", "au"], optional
+        The iterable of allowed roles, by default "a" (Admin-only).
         "all" allows all roles. "a" allows only Admin role.
         "au" allows Admin and User roles.
 
