@@ -82,6 +82,7 @@ POST_RESPONSE_IMAGE_UPLOAD = {
 }
 
 POST_PARAMETERS = [
+    # scenario, role, expected_status, expected_response
     ("unauthorized", Role.PUBLIC, status.HTTP_401_UNAUTHORIZED, UNAUTHORIZED_ACCESS_RESPONSE),
     ("unauthorized", Role.USER, status.HTTP_403_FORBIDDEN, FORBIDDEN_ACCESS_RESPONSE),
     ("success", Role.ADMIN, status.HTTP_201_CREATED, POST_RESPONSE_1),

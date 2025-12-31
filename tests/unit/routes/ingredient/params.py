@@ -17,6 +17,7 @@ GET_INGREDIENT_NOT_FOUND_RESPONSE = {"detail": "Ingredient with ID 999 not found
 
 # Parametrization for GET tests
 GET_PARAMETERS = [
+    # scenario, client_name, expected_status, expected_response
     ("get_all", "public", status.HTTP_200_OK, GET_INGREDIENTS_RESPONSE),
     ("get_all", "user", status.HTTP_200_OK, GET_INGREDIENTS_RESPONSE),
     ("get_all", "admin", status.HTTP_200_OK, GET_INGREDIENTS_RESPONSE),
@@ -93,6 +94,7 @@ PUT_PARAMETERS = [
 
 # Define DELETE test scenarios
 DELETE_PARAMETERS = [
+    # scenario, client_name, ingredient_id, expected_status, expected_response
     (
         "delete_success",
         "admin",
