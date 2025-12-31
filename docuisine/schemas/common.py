@@ -42,5 +42,9 @@ class Entity(BaseModel):
         URL or path to the preview image.
     """
 
-    img: Optional[str] = Field(None, description="URL or path to the main image", examples=["image.jpg"])
-    preview_img: Optional[str] = Field(None, description="URL or path to the preview image", examples=["preview_image.jpg"])
+    img: Optional[str] = Field(
+        None, description="URL or path to the main image", examples=["image.jpg"]
+    )
+    preview_img: Optional[str] = Field(
+        None, description="URL or path to the preview image", examples=["preview_image.jpg"]
+    )
