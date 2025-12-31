@@ -9,7 +9,7 @@ from docuisine.utils.validation import validate_password, validate_version
 CommitHash = Annotated[str, Len(7, 7)]
 Username = Annotated[str, MinLen(3)]
 Password = Annotated[
-    str, Len(min_length=8, max_length=128), AfterValidator(validate_password)
+    str, Len(min_length=8, max_length=128), AfterValidator(validate_password)   
 ]  # Unhashed password
 Version = Annotated[str, MinLen(5), AfterValidator(validate_version)]
 ImageUpload = Annotated[UploadFile, File()]

@@ -1,3 +1,4 @@
+from typing import Callable
 from unittest.mock import MagicMock
 
 from fastapi import status
@@ -6,6 +7,7 @@ import pytest
 
 from docuisine.db.models import Ingredient
 from docuisine.dependencies.services import get_ingredient_service
+from docuisine.schemas import Role
 from docuisine.utils import errors
 
 from . import params as p
@@ -18,10 +20,10 @@ class TestGET:
     def test_get_ingredient(
         self,
         scenario: str,
-        client_name: str,
+        client_name: Role,
         expected_status: int,
         expected_response: dict,
-        clients: dict[str, TestClient],
+        setup_client: Callable[[Role], TestClient],
     ):
         """Test GET routes for all scenarios (all ingredients, by ID, not found)."""
 
@@ -37,7 +39,7 @@ class TestGET:
                 mock.get_ingredient.side_effect = errors.IngredientNotFoundError(ingredient_id=999)
             return mock
 
-        client = clients[client_name]
+        client = setup_client(client_name)
         client.app.dependency_overrides[get_ingredient_service] = mock_ingredient_service  # type: ignore
 
         # Make the request
@@ -60,10 +62,10 @@ class TestPOST:
     )
     def test_create_ingredient(
         self,
-        client_name: str,
+        client_name: Role,
         expected_status: int,
         post_response: dict,
-        clients: dict[str, TestClient],
+        setup_client: Callable[[Role], TestClient],
     ):
         """Test creating a new ingredient."""
 
@@ -77,7 +79,7 @@ class TestPOST:
                     mock.create_ingredient.side_effect = errors.IngredientExistsError(name="Eggs")
             return mock
 
-        client = clients[client_name]
+        client = setup_client(client_name)
         client.app.dependency_overrides[get_ingredient_service] = (  # type: ignore
             mock_ingredient_service
         )
@@ -97,11 +99,11 @@ class TestPUT:
     def test_update_ingredient(
         self,
         scenario: str,
-        client_name: str,
+        client_name: Role,
         input_data: dict,
         expected_status: int,
         expected_response: dict,
-        clients: dict[str, TestClient],
+        setup_client: Callable[[Role], TestClient],
     ):
         """Test updating ingredients with various scenarios."""
 
@@ -117,7 +119,7 @@ class TestPUT:
                 mock.update_ingredient.side_effect = errors.IngredientExistsError(name="Existing")
             return mock
 
-        client = clients[client_name]
+        client = setup_client(client_name)
         client.app.dependency_overrides[get_ingredient_service] = mock_ingredient_service  # type: ignore
 
         url = "/ingredients/1" if scenario not in ["not_found", "conflict"] else "/ingredients/999"
@@ -133,11 +135,11 @@ class TestDELETE:
     def test_delete_ingredient(
         self,
         scenario: str,
-        client_name: str,
+        client_name: Role,
         ingredient_id: int,
         expected_status: int,
         expected_response: dict,
-        clients: dict[str, TestClient],
+        setup_client: Callable[[Role], TestClient],
     ):
         """Test deleting ingredients with various scenarios."""
 
@@ -151,7 +153,7 @@ class TestDELETE:
                 )
             return mock
 
-        client = clients[client_name]
+        client = setup_client(client_name)
         client.app.dependency_overrides[get_ingredient_service] = mock_ingredient_service  # type: ignore
 
         response = client.delete(f"/ingredients/{ingredient_id}")
