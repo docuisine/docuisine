@@ -1,6 +1,5 @@
 import datetime
 from typing import Optional, Union
-from urllib.parse import urljoin
 
 import jwt
 from sqlalchemy.exc import IntegrityError
@@ -18,7 +17,6 @@ class UserService:
         self,
         db_session: Session,
         jwt_config: Optional[JWTConfig] = None,
-        image_host: Optional[str] = None,
     ):
         """
         Initialize the UserService with a database session and optional JWT configuration.
@@ -29,12 +27,9 @@ class UserService:
             The SQLAlchemy database session for database operations.
         jwt_config : Optional[JWTConfig], optional
             The JWT configuration for token generation and validation, by default None.
-        image_host : Optional[str], optional
-            The base URL for the image hosting service, by default None.
         """
         self.db_session: Session = db_session
         self.jwt_config = jwt_config
-        self.image_host = image_host
 
     def create_user(self, username: str, password: str, email: Optional[str] = None) -> User:
         """
@@ -426,9 +421,4 @@ class UserService:
         user.preview_img = preview_img
         self.db_session.commit()
         user_out = UserOut.model_validate(user)
-        if self.image_host:
-            if user_out.img:
-                user_out.img = urljoin(self.image_host, user_out.img)
-            if user_out.preview_img:
-                user_out.preview_img = urljoin(self.image_host, user_out.preview_img)
         return user_out
