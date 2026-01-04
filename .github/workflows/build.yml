@@ -43,7 +43,6 @@ jobs:
         with:
           context: .
           push: true
-          no-cache: true
           build-args: |
             COMMIT_HASH=${{ steps.commit.outputs.hash }}
             VERSION=${{ steps.version.outputs.version }}
