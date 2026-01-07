@@ -2,7 +2,7 @@ services:
   db:
     hostname: ${POSTGRES_HOST:-localhost}
     image: postgres:18.1
-    container_name: docuisine-postgres
+    container_name: docuisine-postgres-dev
     restart: always
     ports:
       - "${POSTGRES_PORT:-5432}:5432"
@@ -31,7 +31,7 @@ services:
       start_period: 30s
   minio:
     image: minio/minio:latest
-    container_name: docuisine-minio
+    container_name: docuisine-minio-dev
     ports:
       - "${MINIO_S3_PORT:-9000}:9000" # S3 API
       - "${MINIO_CONSOLE_PORT:-9001}:9001" # Web Console
