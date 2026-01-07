@@ -6,6 +6,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from docuisine import routes
+from docuisine.core.config import env
 from docuisine.db.database import engine
 from docuisine.db.models.base import Base
 from docuisine.db.storage import s3_config, s3_storage
@@ -18,7 +19,7 @@ policy = {
             "Effect": "Allow",
             "Principal": "*",
             "Action": ["s3:GetObject"],
-            "Resource": ["arn:aws:s3:::docuisine-images/*"],
+            "Resource": [f"arn:aws:s3:::{s3_config.bucket_name}/*"],
         }
     ],
 }
@@ -50,6 +51,7 @@ async def on_startup(app: FastAPI):
             raise RuntimeError(
                 "Database engine is not initialized. "
                 "This is likely because the provided DATABASE_URL is wrong."
+                f" Provided DATABASE_URL: {env.DATABASE_URL}"
             )
         else:
             await engine.dispose()
