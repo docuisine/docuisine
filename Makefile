@@ -16,6 +16,7 @@ PYTHON_INTERPRETER = python
 requirements:
 	@uv sync
 	@cp scripts/dev/.env.example scripts/dev/.env
+	@bash scripts/dev/init-images.sh
 
 
 ## Run development server

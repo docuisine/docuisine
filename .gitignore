@@ -1,6 +1,7 @@
 # Data
 /data/
 init-images/
+init-images.zip
 
 # Mac OS-specific storage files
 .DS_Store
