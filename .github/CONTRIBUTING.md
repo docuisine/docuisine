@@ -5,6 +5,11 @@
 
 ```bash
 make requirements       #  Install dependencies
+
+# Setup the development environment (Linux only). What this does:
+# - Synchronizes Python dependencies
+# - Setup dev environment variables
+# - Downloads an asset pack of images (mock data)
 ```
 
 Start the development server and start building!.
