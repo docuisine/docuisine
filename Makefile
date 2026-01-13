@@ -91,6 +91,14 @@ minor:
 	@git add uv.lock
 	@git commit -m "🏷️ release: minor version $$(uv version --short)"
 
+## Bump project version with major update
+.PHONY: major
+major:
+	@uv version --bump major
+	@git add pyproject.toml
+	@git add uv.lock
+	@git commit -m "🏷️ release: major version $$(uv version --short)"
+
 
 ## Set up Python interpreter environment
 .PHONY: create_environment
