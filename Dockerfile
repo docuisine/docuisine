@@ -16,7 +16,7 @@ COPY README.md .
 COPY LICENSE .
 COPY requirements.txt .
 
-RUN echo "import urllib.request; print(urllib.request.urlopen('http://localhost:7000/health/').read())" > health_check.py
+RUN echo "import urllib.request; print(urllib.request.urlopen('http://localhost:7000/health/').read())" > healthcheck.py
 RUN uv venv
 RUN uv pip install --no-cache-dir -r requirements.txt
 
