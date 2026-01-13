@@ -12,22 +12,22 @@ Reference: https://github.com/wgtechlabs/clean-commit
 
 ```text
 <emoji> <type>: <description>
-<emoji> <type>(<scope>): <description>
+<emoji> <type> (<scope>): <description>
 ```
 
 ## The 9 Types
 
-| Emoji | Type | What it covers |
-|:-----:|------|----------------|
-| 📦 | `new` | Adding new features, files, or capabilities |
-| 🔧 | `update` | Changing existing code, refactoring, improvements |
-| 🗑️ | `remove` | Removing code, files, features, or dependencies |
-| 🔒 | `security` | Security fixes, patches, vulnerability resolutions |
-| ⚙️ | `setup` | Project configs, CI/CD, tooling, build systems |
-| ☕ | `chore` | Maintenance tasks, dependency updates, housekeeping |
-| 🧪 | `test` | Adding, updating, or fixing tests |
-| 📖 | `docs` | Documentation changes and updates |
-| 🏷️ | `release` | Version releases and release preparation |
+| Emoji | Type       | What it covers                                      |
+| :---: | ---------- | --------------------------------------------------- |
+|  📦   | `new`      | Adding new features, files, or capabilities         |
+|  🔧   | `update`   | Changing existing code, refactoring, improvements   |
+|  🗑️   | `remove`   | Removing code, files, features, or dependencies     |
+|  🔒   | `security` | Security fixes, patches, vulnerability resolutions  |
+|  ⚙️   | `setup`    | Project configs, CI/CD, tooling, build systems      |
+|  ☕   | `chore`    | Maintenance tasks, dependency updates, housekeeping |
+|  🧪   | `test`     | Adding, updating, or fixing tests                   |
+|  📖   | `docs`     | Documentation changes and updates                   |
+|  🏷️   | `release`  | Version releases and release preparation            |
 
 ## Rules
 
@@ -39,8 +39,8 @@ Reference: https://github.com/wgtechlabs/clean-commit
 ## Examples
 
 - `📦 new: user authentication system`
-- `🔧 update(api): improve error handling`
-- `🗑️ remove(deps): unused lodash dependency`
+- `🔧 update (api): improve error handling`
+- `🗑️ remove (deps): unused lodash dependency`
 - `🔒 security: patch XSS vulnerability`
 - `⚙️ setup: add eslint configuration`
 - `☕ chore: update npm dependencies`
