@@ -25,21 +25,21 @@ async def get_categories(category_service: Category_Service) -> list[category_sc
 
 
 @router.get(
-    "/{category_id}",
+    "/{name}",
     status_code=status.HTTP_200_OK,
     response_model=category_schemas.CategoryOut,
     responses={status.HTTP_404_NOT_FOUND: {"model": Detail}},
 )
-async def get_category(
-    category_id: int, category_service: Category_Service
+async def get_cuisine_by_name(
+    name: str, category_service: Category_Service
 ) -> category_schemas.CategoryOut:
     """
-    Get a category by ID.
+    Get a cuisine by name.
 
     Access Level: Public
     """
     try:
-        category: Category = category_service.get_category(category_id=category_id)
+        category: Category = category_service.get_category(name=name)
         return category_schemas.CategoryOut.model_validate(category)
     except errors.CategoryNotFoundError as e:
         raise HTTPException(

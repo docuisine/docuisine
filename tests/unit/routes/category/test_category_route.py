@@ -17,7 +17,7 @@ from . import params as p
     "scenario, client_name, expected_status, expected_response", p.GET_PARAMETERS
 )
 class TestGET:
-    def test_get_categories(
+    def test_get_cuisine(
         self,
         scenario: str,
         client_name: Role,
@@ -25,7 +25,7 @@ class TestGET:
         expected_response: dict,
         create_client: Callable[[Role], TestClient],
     ):
-        """Test getting categories."""
+        """Test getting cuisines."""
 
         def mock_category_service():
             mock = MagicMock()
@@ -34,8 +34,8 @@ class TestGET:
                     mock.get_all_categories.return_value = [
                         Category(**cat) for cat in p.GET_ALL_CATEGORIES_RESPONSE
                     ]
-                case "get_by_id":
-                    mock.get_category.return_value = Category(**p.GET_BY_ID_RESPONSE)
+                case "get_by_name":
+                    mock.get_category.return_value = Category(**p.GET_BY_NAME_RESPONSE)
                 case "get_not_found":
                     mock.get_category.side_effect = errors.CategoryNotFoundError(category_id=999)
             return mock
@@ -46,8 +46,8 @@ class TestGET:
         match scenario:
             case "get_all":
                 response = client.get("/categories/")
-            case "get_by_id":
-                response = client.get("/categories/1")
+            case "get_by_name":
+                response = client.get("/categories/Dessert")
             case "get_not_found":
                 response = client.get("/categories/999")
         assert response.status_code == expected_status, response.text

@@ -31,7 +31,7 @@ GET_ALL_CATEGORIES_RESPONSE = [
     },
 ]
 
-GET_BY_ID_RESPONSE = {
+GET_BY_NAME_RESPONSE = {
     "id": 1,
     "name": "Dessert",
     "description": "Sweet treats",
@@ -47,9 +47,9 @@ GET_PARAMETERS = [
     ("get_all", Role.PUBLIC, status.HTTP_200_OK, GET_ALL_CATEGORIES_RESPONSE),
     ("get_all", Role.USER, status.HTTP_200_OK, GET_ALL_CATEGORIES_RESPONSE),
     ("get_all", Role.ADMIN, status.HTTP_200_OK, GET_ALL_CATEGORIES_RESPONSE),
-    ("get_by_id", Role.PUBLIC, status.HTTP_200_OK, GET_BY_ID_RESPONSE),
-    ("get_by_id", Role.USER, status.HTTP_200_OK, GET_BY_ID_RESPONSE),
-    ("get_by_id", Role.ADMIN, status.HTTP_200_OK, GET_BY_ID_RESPONSE),
+    ("get_by_name", Role.PUBLIC, status.HTTP_200_OK, GET_BY_NAME_RESPONSE),
+    ("get_by_name", Role.USER, status.HTTP_200_OK, GET_BY_NAME_RESPONSE),
+    ("get_by_name", Role.ADMIN, status.HTTP_200_OK, GET_BY_NAME_RESPONSE),
     ("get_not_found", Role.PUBLIC, status.HTTP_404_NOT_FOUND, GET_NOT_FOUND_RESPONSE),
     ("get_not_found", Role.USER, status.HTTP_404_NOT_FOUND, GET_NOT_FOUND_RESPONSE),
     ("get_not_found", Role.ADMIN, status.HTTP_404_NOT_FOUND, GET_NOT_FOUND_RESPONSE),
@@ -146,7 +146,7 @@ PUT_PARAMETERS = [
         Role.ADMIN,
         status.HTTP_409_CONFLICT,
         {"detail": "Category with name 'Dessert' already exists."},
-    )
+    ),
 ]
 
 # ---------------- DELETE PARAMETERS ----------------
