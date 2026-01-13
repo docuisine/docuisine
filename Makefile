@@ -81,7 +81,7 @@ patch:
 	@uv version --bump patch
 	@git add pyproject.toml
 	@git add uv.lock
-	@git commit -m "🏷️ release: patch version $$(uv version --short)"
+	@git commit -m "🏷️ release(patch): $$(uv version --short)"
 
 ## Bump project version with minor update
 .PHONY: minor
@@ -89,7 +89,7 @@ minor:
 	@uv version --bump minor
 	@git add pyproject.toml
 	@git add uv.lock
-	@git commit -m "🏷️ release: minor version $$(uv version --short)"
+	@git commit -m "🏷️ release(minor): $$(uv version --short)"
 
 ## Bump project version with major update
 .PHONY: major
@@ -97,7 +97,7 @@ major:
 	@uv version --bump major
 	@git add pyproject.toml
 	@git add uv.lock
-	@git commit -m "🏷️ release: major version $$(uv version --short)"
+	@git commit -m "🏷️ release(major): $$(uv version --short)"
 
 
 ## Set up Python interpreter environment
