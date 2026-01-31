@@ -2,10 +2,11 @@ name: Release
 
 on:
   push:
-    branches:
-      - master
     tags:
       - "*.*.*"
+
+permissions:
+  contents: write
 
 jobs:
   build:
@@ -19,3 +20,6 @@ jobs:
           generate_release_notes: true
           draft: false
           prerelease: false
+          tag_name: ${{ github.ref_name }}
+          name: ${{ github.ref_name }}
+
