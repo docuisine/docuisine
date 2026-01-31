@@ -18,6 +18,16 @@ class Environment:
         return URL
 
     @property
+    def DB_USERNAME(self) -> str:
+        username = self.DATABASE_URL.split("@")[0].split("//")[1].split(":")[0]
+        return username
+
+    @property
+    def DB_PASSWORD(self) -> str:
+        password = self.DATABASE_URL.split("@")[0].split("//")[1].split(":")[1]
+        return password
+
+    @property
     def COMMIT_HASH(self) -> Optional[str]:
         return os.getenv("COMMIT_HASH", None)
 
