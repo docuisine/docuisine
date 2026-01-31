@@ -104,7 +104,9 @@ major:
 	@git commit -m "🏷️ release (major): $$(uv version --short)"
 	@git tag $$(uv version --short)
 
-.PHONY: tag
+
+## Push committed release tag to origin to trigger GitHub release
+.PHONY: release
 tag:
 	@git push origin $$(uv version --short)
 
