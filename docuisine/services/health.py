@@ -6,16 +6,15 @@ import httpx
 
 from docuisine.core.config import env
 
-cache = TTLCache(maxsize=100, ttl=300)
-
 
 class HealthService:
-    _cache = TTLCache(maxsize=100, ttl=300)
+    _frontendCache = TTLCache(maxsize=100, ttl=300)
+    _backendCache = TTLCache(maxsize=100, ttl=300)
 
     def __init__(self):
         pass
 
-    @cachedmethod(attrgetter("_cache"))
+    @cachedmethod(attrgetter("_frontendCache"))
     def getFrontendLatestVersion(self) -> Optional[str]:
         """
         Retrieve the latest version of the frontend application.
@@ -28,7 +27,7 @@ class HealthService:
         resp = httpx.get("https://api.github.com/repos/docuisine/docuisine-react/releases/latest")
         return resp.json().get("tag_name")
 
-    @cachedmethod(attrgetter("_cache"))
+    @cachedmethod(attrgetter("_backendCache"))
     def getBackendLatestVersion(self) -> Optional[str]:
         """
         Retrieve the latest version of the backend application.
