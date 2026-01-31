@@ -75,3 +75,32 @@ class HealthService:
                 used_defaults.append(key)
 
         return used_defaults
+
+    def getDatabaseURL(self) -> str:
+        """
+        Retrieve the database URL from the environment configuration.
+
+        Returns
+        -------
+        str
+            The database URL.
+        """
+        return env.DATABASE_URL
+
+    def getDatabaseType(self) -> str:
+        """
+        Retrieve the type of the database from the database URL.
+
+        Returns
+        -------
+        str
+            The type of the database (e.g., 'postgresql', 'mysql').
+        """
+        if "postgresql" in env.DATABASE_URL:
+            return "postgresql"
+        elif "mysql" in env.DATABASE_URL:
+            return "mysql"
+        elif "sqlite" in env.DATABASE_URL:
+            return "sqlite"
+        else:
+            return "unknown"

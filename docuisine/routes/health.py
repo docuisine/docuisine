@@ -38,4 +38,6 @@ def configuration(user: AuthenticatedUser):
         backendVersion=env.VERSION,
         backendLatestVersion=service.getBackendLatestVersion(),
         defaultSecretsUsed=service.get_default_secrets_used(),
+        databaseURL=env.DATABASE_URL,
+        databaseType=service.getDatabaseType(),
     )

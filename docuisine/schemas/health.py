@@ -43,3 +43,13 @@ class Configuration(BaseModel):
         examples=[["DB_USERNAME", "DB_PASSWORD"], []],
         description="A list of default secrets being used in the application.",
     )
+    databaseURL: Optional[str] = Field(
+        ...,
+        examples=["postgresql://user:password@localhost:5432/dbname"],
+        description="The database connection URL.",
+    )
+    databaseType: Optional[str] = Field(
+        ...,
+        examples=["postgresql", "mysql"],
+        description="The type of database being used.",
+    )
