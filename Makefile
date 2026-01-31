@@ -78,7 +78,7 @@ clean:
 ## Bump project version with patch update
 .PHONY: patch
 patch:
-	@git tag "v$$(uv version --short)"
+	@git tag $$(uv version --short)
 	@uv version --bump patch
 	@git add pyproject.toml
 	@git add uv.lock
@@ -87,7 +87,7 @@ patch:
 ## Bump project version with minor update
 .PHONY: minor
 minor:
-	@git tag "v$$(uv version --short)"
+	@git tag $$(uv version --short)
 	@uv version --bump minor
 	@git add pyproject.toml
 	@git add uv.lock
@@ -96,7 +96,7 @@ minor:
 ## Bump project version with major update
 .PHONY: major
 major:
-	@git tag "v$$(uv version --short)"
+	@git tag $$(uv version --short)
 	@uv version --bump major
 	@git add pyproject.toml
 	@git add uv.lock
