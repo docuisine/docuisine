@@ -16,7 +16,7 @@ class HealthService:
         pass
 
     @cachedmethod(attrgetter("_cache"))
-    async def getFrontendLatestVersion(self) -> Optional[str]:
+    def getFrontendLatestVersion(self) -> Optional[str]:
         """
         Retrieve the latest version of the frontend application.
 
@@ -25,14 +25,11 @@ class HealthService:
         Optional[str]
             The latest version string of the frontend application.
         """
-        async with httpx.AsyncClient() as client:
-            resp = await client.get(
-                "https://api.github.com/repos/docuisine/docuisine-react/releases/latest"
-            )
-            return resp.json().get("tag_name")
+        resp = httpx.get("https://api.github.com/repos/docuisine/docuisine-react/releases/latest")
+        return resp.json().get("tag_name")
 
     @cachedmethod(attrgetter("_cache"))
-    async def getBackendLatestVersion(self) -> Optional[str]:
+    def getBackendLatestVersion(self) -> Optional[str]:
         """
         Retrieve the latest version of the backend application.
 
@@ -41,11 +38,8 @@ class HealthService:
         Optional[str]
             The version string of the backend application.
         """
-        async with httpx.AsyncClient() as client:
-            resp = await client.get(
-                "https://api.github.com/repos/docuisine/docuisine/releases/latest"
-            )
-            return resp.json().get("tag_name")
+        resp = httpx.get("https://api.github.com/repos/docuisine/docuisine/releases/latest")
+        return resp.json().get("tag_name")
 
     @property
     def default_secrets(self):

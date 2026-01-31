@@ -10,7 +10,7 @@ router = APIRouter(prefix="/health", tags=["Health"])
 
 
 @router.get("/", response_model=health_schemas.HealthCheck)
-def health_check():
+async def health_check():
     """
     Health check endpoint.
 
@@ -24,7 +24,7 @@ def health_check():
 
 
 @router.get("/configuration", response_model=health_schemas.Configuration)
-def configuration(user: AuthenticatedUser):
+async def configuration(user: AuthenticatedUser):
     """
     Retrieve application configuration details.
 
