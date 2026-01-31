@@ -1,15 +1,22 @@
+from operator import attrgetter
 from typing import Optional
 
+from cachetools import TTLCache, cachedmethod
 import httpx
 
 from docuisine.core.config import env
 
+cache = TTLCache(maxsize=100, ttl=300)
+
 
 class HealthService:
+    _cache = TTLCache(maxsize=100, ttl=300)
+
     def __init__(self):
         pass
 
-    def getFrontendLatestVersion(self) -> Optional[str]:
+    @cachedmethod(attrgetter("_cache"))
+    async def getFrontendLatestVersion(self) -> Optional[str]:
         """
         Retrieve the latest version of the frontend application.
 
@@ -18,13 +25,14 @@ class HealthService:
         Optional[str]
             The latest version string of the frontend application.
         """
-        return (
-            httpx.get("https://api.github.com/repos/docuisine/docuisine-react/releases/latest")
-            .json()
-            .get("tag_name", None)
-        )
+        async with httpx.AsyncClient() as client:
+            resp = await client.get(
+                "https://api.github.com/repos/docuisine/docuisine-react/releases/latest"
+            )
+            return resp.json().get("tag_name")
 
-    def getBackendLatestVersion(self) -> Optional[str]:
+    @cachedmethod(attrgetter("_cache"))
+    async def getBackendLatestVersion(self) -> Optional[str]:
         """
         Retrieve the latest version of the backend application.
 
@@ -33,11 +41,11 @@ class HealthService:
         Optional[str]
             The version string of the backend application.
         """
-        return (
-            httpx.get("https://api.github.com/repos/docuisine/docuisine/releases/latest")
-            .json()
-            .get("tag_name", None)
-        )
+        async with httpx.AsyncClient() as client:
+            resp = await client.get(
+                "https://api.github.com/repos/docuisine/docuisine/releases/latest"
+            )
+            return resp.json().get("tag_name")
 
     @property
     def default_secrets(self):
