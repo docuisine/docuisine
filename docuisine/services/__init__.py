@@ -1,4 +1,5 @@
 from .category import CategoryService
+from .health import HealthService
 from .image import ImageService
 from .ingredient import IngredientService
 from .recipe import RecipeService
@@ -12,4 +13,5 @@ __all__ = [
     "IngredientService",
     "StoreService",
     "RecipeService",
+    "HealthService",
 ]
