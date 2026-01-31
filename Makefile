@@ -83,8 +83,7 @@ patch:
 	@git add uv.lock
 	@git commit -m "🏷️ release (patch): $$(uv version --short)"
 	@git tag $$(uv version --short)
-	@git push origin master
-	@git push origin --tags
+	@git push origin $$(uv version --short)
 
 ## Bump project version with minor update
 .PHONY: minor
@@ -94,8 +93,7 @@ minor:
 	@git add uv.lock
 	@git commit -m "🏷️ release (minor): $$(uv version --short)"
 	@git tag $$(uv version --short)
-	@git push origin master
-	@git push origin --tags
+	@git push origin $$(uv version --short)
 
 ## Bump project version with major update
 .PHONY: major
@@ -105,8 +103,7 @@ major:
 	@git add uv.lock
 	@git commit -m "🏷️ release (major): $$(uv version --short)"
 	@git tag $$(uv version --short)
-	@git push origin master
-	@git push origin --tags
+	@git push origin $$(uv version --short)
 
 
 ## Set up Python interpreter environment
