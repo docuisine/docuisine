@@ -6,7 +6,7 @@ from pydantic import AfterValidator
 
 from docuisine.utils.validation import validate_password, validate_version
 
-CommitHash = Annotated[str, Len(7, 7)]
+CommitHash = str
 Username = Annotated[str, MinLen(3)]
 Password = Annotated[
     str, Len(min_length=8, max_length=128), AfterValidator(validate_password)
