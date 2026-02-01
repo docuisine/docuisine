@@ -25,7 +25,7 @@ class HealthService:
         -------
         Optional[str]
             The latest version string of the specified repository.
-        
+
         Example
         -------
         >>> HealthService.getLatestVersion("docuisine/docuisine")
