@@ -1,43 +1,29 @@
-from operator import attrgetter
 from typing import Optional
 
-from cachetools import TTLCache, cachedmethod
 import httpx
 
 from docuisine.core.config import env
 
 
 class HealthService:
-    _frontendCache = TTLCache(maxsize=100, ttl=300)
-    _backendCache = TTLCache(maxsize=100, ttl=300)
-
     def __init__(self):
         pass
 
-    @cachedmethod(attrgetter("_frontendCache"))
-    def getFrontendLatestVersion(self) -> Optional[str]:
+    def getLatestVersion(self, repo: str) -> Optional[str]:
         """
-        Retrieve the latest version of the frontend application.
+        Retrieve the latest version of a given repository.
+
+        Parameters
+        ----------
+        repo : str
+            The repository name in the format 'owner/repo'.
 
         Returns
         -------
         Optional[str]
-            The latest version string of the frontend application.
+            The latest version string of the specified repository.
         """
-        resp = httpx.get("https://api.github.com/repos/docuisine/docuisine-react/releases/latest")
-        return resp.json().get("tag_name")
-
-    @cachedmethod(attrgetter("_backendCache"))
-    def getBackendLatestVersion(self) -> Optional[str]:
-        """
-        Retrieve the latest version of the backend application.
-
-        Returns
-        -------
-        Optional[str]
-            The version string of the backend application.
-        """
-        resp = httpx.get("https://api.github.com/repos/docuisine/docuisine/releases/latest")
+        resp = httpx.get(f"https://api.github.com/repos/{repo}/releases/latest")
         return resp.json().get("tag_name")
 
     def getLatestCommitHash(self, repo: str) -> Optional[str]:

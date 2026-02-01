@@ -32,14 +32,16 @@ async def configuration(user: AuthenticatedUser):
     """
     validate_role(user.role, "a")
     service = HealthService()
+    FRONTEND_REPO = "docuisine/docuisine-react"
+    BACKEND_REPO = "docuisine/docuisine"
 
     return health_schemas.Configuration(
-        frontendLatestVersion=service.getFrontendLatestVersion(),
-        frontendLatestCommitHash=service.getLatestCommitHash("docuisine/docuisine-react"),
+        frontendLatestVersion=service.getLatestVersion(FRONTEND_REPO),
+        frontendLatestCommitHash=service.getLatestCommitHash(FRONTEND_REPO),
         backendVersion=env.VERSION,
-        backendLatestVersion=service.getBackendLatestVersion(),
+        backendLatestVersion=service.getLatestVersion(BACKEND_REPO),
         backendCommitHash=env.COMMIT_HASH,
-        backendLatestCommitHash=service.getLatestCommitHash("docuisine/docuisine"),
+        backendLatestCommitHash=service.getLatestCommitHash(BACKEND_REPO),
         backendDeployment=env.DEPLOYMENT,
         defaultSecretsUsed=service.get_default_secrets_used(),
         databaseURL=env.DATABASE_URL,
