@@ -29,6 +29,9 @@ class Environment:
 
     @property
     def COMMIT_HASH(self) -> Optional[str]:
+        if self.DEPLOYMENT == "vercel":
+            return os.getenv("VERCEL_GIT_COMMIT_SHA", None)
+
         return os.getenv("COMMIT_HASH", None)
 
     @property
