@@ -10,6 +10,7 @@ ARG VERSION
 ENV COMMIT_HASH=${COMMIT_HASH}
 ENV VERSION=${VERSION}
 ENV MODE=production
+ENV DEPLOYMENT=docker
 
 COPY docuisine/ ./docuisine/
 COPY README.md .
