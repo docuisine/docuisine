@@ -40,6 +40,23 @@ class HealthService:
         resp = httpx.get("https://api.github.com/repos/docuisine/docuisine/releases/latest")
         return resp.json().get("tag_name")
 
+    def getLatestCommitHash(self, repo: str) -> Optional[str]:
+        """
+        Retrieve the latest commit hash of a given repository.
+
+        Parameters
+        ----------
+        repo : str
+            The repository name in the format 'owner/repo'.
+
+        Returns
+        -------
+        Optional[str]
+            The latest commit hash string of the specified repository.
+        """
+        resp = httpx.get(f"https://api.github.com/repos/{repo}/commits/master")
+        return resp.json().get("sha")
+
     @property
     def default_secrets(self):
         """

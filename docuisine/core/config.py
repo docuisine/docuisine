@@ -1,5 +1,5 @@
 import os
-from typing import Optional
+from typing import Literal, Optional
 
 from dotenv import load_dotenv
 
@@ -93,6 +93,18 @@ class Environment:
         if region is None:
             raise EnvironmentError("S3_REGION environment variable is not set.")
         return region
+
+    @property
+    def DEPLOYMENT(self) -> Literal["docker", "vercel"]:
+        """Deployment environment (e.g., docker or vercel (serverless))."""
+        deployment = os.getenv("DEPLOYMENT", "docker")
+
+        if deployment in ["docker", "vercel"]:
+            return deployment  # type: ignore
+
+        raise EnvironmentError(
+            "DEPLOYMENT environment variable must be either 'docker' or 'vercel'."
+        )
 
 
 env = Environment()

@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Literal, Optional
 
 from pydantic import BaseModel, Field
 
@@ -28,6 +28,11 @@ class Configuration(BaseModel):
         examples=["1.0.0", "2.5.3"],
         description="The latest version of the frontend application.",
     )
+    frontendLatestCommitHash: Optional[str] = Field(
+        ...,
+        examples=["h8i9j0k", "l1m2n3o"],
+        description="The Git commit hash of the latest build in the frontend.",
+    )
     backendVersion: Optional[str] = Field(
         ...,
         examples=["1.0.0", "2.5.3"],
@@ -37,6 +42,21 @@ class Configuration(BaseModel):
         ...,
         examples=["1.0.0", "2.5.3"],
         description="The latest version of the backend application.",
+    )
+    backendCommitHash: Optional[str] = Field(
+        ...,
+        examples=["a1b2c3d", "4e5f6g7"],
+        description="The Git commit hash of the current build in the backend.",
+    )
+    backendLatestCommitHash: Optional[str] = Field(
+        ...,
+        examples=["h8i9j0k", "l1m2n3o"],
+        description="The Git commit hash of the latest build in the backend.",
+    )
+    backendDeployment: Optional[Literal["docker", "vercel"]] = Field(
+        ...,
+        examples=["docker", "vercel"],
+        description="The environment in which the backend application is running.",
     )
     defaultSecretsUsed: Optional[list[str]] = Field(
         ...,

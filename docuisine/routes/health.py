@@ -35,8 +35,12 @@ async def configuration(user: AuthenticatedUser):
 
     return health_schemas.Configuration(
         frontendLatestVersion=service.getFrontendLatestVersion(),
+        frontendLatestCommitHash=service.getLatestCommitHash("docuisine/docuisine-react"),
         backendVersion=env.VERSION,
         backendLatestVersion=service.getBackendLatestVersion(),
+        backendCommitHash=env.COMMIT_HASH,
+        backendLatestCommitHash=service.getLatestCommitHash("docuisine/docuisine"),
+        backendDeployment=env.DEPLOYMENT,
         defaultSecretsUsed=service.get_default_secrets_used(),
         databaseURL=env.DATABASE_URL,
         databaseType=service.getDatabaseType(),
