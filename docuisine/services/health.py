@@ -1,5 +1,6 @@
 from typing import Optional
 
+import cachetools.func
 import httpx
 
 from docuisine.core.config import env
@@ -9,7 +10,9 @@ class HealthService:
     def __init__(self):
         pass
 
-    def getLatestVersion(self, repo: str) -> Optional[str]:
+    @staticmethod
+    @cachetools.func.ttl_cache(maxsize=10, ttl=300)
+    def getLatestVersion(repo: str) -> Optional[str]:
         """
         Retrieve the latest version of a given repository.
 
@@ -22,11 +25,18 @@ class HealthService:
         -------
         Optional[str]
             The latest version string of the specified repository.
+        
+        Example
+        -------
+        >>> HealthService.getLatestVersion("docuisine/docuisine")
+        "2.5.3"
         """
         resp = httpx.get(f"https://api.github.com/repos/{repo}/releases/latest")
         return resp.json().get("tag_name")
 
-    def getLatestCommitHash(self, repo: str) -> Optional[str]:
+    @staticmethod
+    @cachetools.func.ttl_cache(maxsize=10, ttl=300)
+    def getLatestCommitHash(repo: str) -> Optional[str]:
         """
         Retrieve the latest commit hash of a given repository.
 
@@ -39,6 +49,11 @@ class HealthService:
         -------
         Optional[str]
             The latest commit hash string of the specified repository.
+
+        Example
+        -------
+        >>> HealthService.getLatestCommitHash("docuisine/docuisine")
+        "dfc8b734be62edfe78273aeb8a95b234aafdd987"
         """
         resp = httpx.get(f"https://api.github.com/repos/{repo}/commits/master")
         return resp.json().get("sha")
