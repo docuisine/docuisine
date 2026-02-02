@@ -208,3 +208,32 @@ async def update_user_img(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=e.message,
         )
+
+
+@router.put(
+    "/toggle-role/{user_id}",
+    status_code=status.HTTP_200_OK,
+)
+async def toggle_user_role(
+    user_id: int,
+    user_service: User_Service,
+    authenticated_user: AuthenticatedUser,
+) -> user_schemas.UserOut:
+    """
+    Toggle the current user's role between admin and user.
+
+    Access Level: Admin
+    """
+    validate_role(authenticated_user.role, "a")
+
+    new_role = Role.USER if authenticated_user.role == Role.ADMIN else Role.ADMIN
+
+    try:
+        updated_user = user_service.update_user_role(user_id=user_id, new_role=new_role)
+    except errors.UserNotFoundError as e:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=e.message,
+        )
+
+    return updated_user

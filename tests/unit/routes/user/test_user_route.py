@@ -122,6 +122,10 @@ class TestPUT:
                 mock.update_user_email.side_effect = errors.DuplicateEmailError(
                     email="newemail@example.com"
                 )
+            elif scenario == "toggle_role_success_user_to_admin":
+                mock.update_user_role.return_value = User(**expected_response)
+            elif scenario == "toggle_role_success_admin_to_user":
+                mock.update_user_role.return_value = User(**expected_response)
             return mock
 
         client = create_client(client_name)
@@ -132,6 +136,8 @@ class TestPUT:
             response = client.put("/users/password", json=input_data)
         elif "email" in scenario:
             response = client.put("/users/email", json=input_data)
+        elif "role" in scenario:
+            response = client.put(f"/users/toggle-role/{input_data['id']}")
 
         assert response.status_code == expected_status, response.text
         assert response.json() == expected_response
