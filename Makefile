@@ -107,7 +107,7 @@ major:
 
 ## Push committed release tag to origin to trigger GitHub release
 .PHONY: release
-relase:
+release:
 	@git push origin $$(uv version --short)
 
 
