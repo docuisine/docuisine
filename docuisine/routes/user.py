@@ -226,10 +226,8 @@ async def toggle_user_role(
     """
     validate_role(authenticated_user.role, "a")
 
-    new_role = Role.USER if authenticated_user.role == Role.ADMIN else Role.ADMIN
-
     try:
-        updated_user = user_service.update_user_role(user_id=user_id, new_role=new_role)
+        updated_user = user_service.toggle_user_role(user_id=user_id)
     except errors.UserNotFoundError as e:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,

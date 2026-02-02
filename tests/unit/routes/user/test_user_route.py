@@ -123,9 +123,9 @@ class TestPUT:
                     email="newemail@example.com"
                 )
             elif scenario == "toggle_role_success_user_to_admin":
-                mock.update_user_role.return_value = User(**expected_response)
+                mock.toggle_user_role.return_value = User(**expected_response)
             elif scenario == "toggle_role_success_admin_to_user":
-                mock.update_user_role.return_value = User(**expected_response)
+                mock.toggle_user_role.return_value = User(**expected_response)
             return mock
 
         client = create_client(client_name)

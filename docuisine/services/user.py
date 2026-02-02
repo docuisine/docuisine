@@ -424,16 +424,14 @@ class UserService:
         user_out = UserOut.model_validate(user)
         return user_out
 
-    def update_user_role(self, user_id: int, new_role: Union[Role, str]) -> UserOut:
+    def toggle_user_role(self, user_id: int) -> UserOut:
         """
-        Update the role of an existing user.
+        Toggle the role of an existing user between 'admin' and 'user'.
 
         Parameters
         ----------
         user_id : int
-            The unique ID of the user whose role is to be updated.
-        new_role : Union[Role, str]
-            The new role to set for the user.
+            The unique ID of the user whose role is to be toggled.
 
         Returns
         -------
@@ -452,11 +450,12 @@ class UserService:
         user = self._get_user_by_id(user_id)
         if user is None:
             raise errors.UserNotFoundError(user_id=user_id)
-        
-        if isinstance(new_role, str):
-            new_role = Role(new_role)
 
-        user.role = new_role.value
+        if user.role == Role.ADMIN.value:
+            user.role = Role.USER.value
+        else:
+            user.role = Role.ADMIN.value
+
         self.db_session.commit()
         user_out = UserOut.model_validate(user)
         return user_out

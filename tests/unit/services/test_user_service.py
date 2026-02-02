@@ -371,7 +371,7 @@ def test_update_user_role_success(db_session: MagicMock):
     db_session.first.return_value = user
 
     service = UserService(db_session)
-    updated_user = service.update_user_role(user_id=1, new_role=Role.ADMIN)
+    updated_user = service.toggle_user_role(user_id=1)
 
     assert updated_user.role == Role.ADMIN
     db_session.commit.assert_called_once()
@@ -383,4 +383,4 @@ def test_update_user_role_user_not_found(db_session: MagicMock):
     service = UserService(db_session)
 
     with pytest.raises(errors.UserNotFoundError):
-        service.update_user_role(user_id=999, new_role="a")
+        service.toggle_user_role(user_id=999)
