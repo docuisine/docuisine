@@ -6,7 +6,7 @@ from sqlalchemy.exc import IntegrityError
 
 from docuisine.db.models import User
 from docuisine.schemas.auth import JWTConfig
-from docuisine.schemas.enums import JWTAlgorithm
+from docuisine.schemas.enums import JWTAlgorithm, Role
 from docuisine.services import UserService
 from docuisine.utils import errors
 
@@ -363,3 +363,24 @@ def test_authorize_user_invalid_token(db_session: MagicMock, monkeypatch):
 
     with pytest.raises(errors.InvalidCredentialsError):
         service.authorize_user("invalidtoken")
+
+
+def test_update_user_role_success(db_session: MagicMock):
+    """Test that updating a user's role works correctly."""
+    user = User(id=1, username="alice", password="pw", role=Role.USER)
+    db_session.first.return_value = user
+
+    service = UserService(db_session)
+    updated_user = service.update_user_role(user_id=1, new_role=Role.ADMIN)
+
+    assert updated_user.role == Role.ADMIN
+    db_session.commit.assert_called_once()
+
+
+def test_update_user_role_user_not_found(db_session: MagicMock):
+    """Test that updating a user's role for a non-existent user raises UserNotFoundError."""
+    db_session.first.return_value = None
+    service = UserService(db_session)
+
+    with pytest.raises(errors.UserNotFoundError):
+        service.update_user_role(user_id=999, new_role="a")

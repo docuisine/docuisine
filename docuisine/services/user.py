@@ -7,6 +7,7 @@ from sqlalchemy.orm import Session
 
 from docuisine.db.models import User
 from docuisine.schemas.auth import JWTConfig
+from docuisine.schemas.enums import Role
 from docuisine.schemas.user import UserOut
 from docuisine.utils import errors
 from docuisine.utils.hashing import hash_in_sha256
@@ -419,6 +420,43 @@ class UserService:
             raise errors.UserNotFoundError(user_id=user_id)
         user.img = img
         user.preview_img = preview_img
+        self.db_session.commit()
+        user_out = UserOut.model_validate(user)
+        return user_out
+
+    def update_user_role(self, user_id: int, new_role: Union[Role, str]) -> UserOut:
+        """
+        Update the role of an existing user.
+
+        Parameters
+        ----------
+        user_id : int
+            The unique ID of the user whose role is to be updated.
+        new_role : Union[Role, str]
+            The new role to set for the user.
+
+        Returns
+        -------
+        User
+            The updated `User` instance.
+
+        Raises
+        ------
+        UserNotFoundError
+            If no user is found with the given ID.
+
+        Notes
+        -----
+        - This method commits the transaction immediately.
+        """
+        user = self._get_user_by_id(user_id)
+        if user is None:
+            raise errors.UserNotFoundError(user_id=user_id)
+        
+        if isinstance(new_role, str):
+            new_role = Role(new_role)
+
+        user.role = new_role
         self.db_session.commit()
         user_out = UserOut.model_validate(user)
         return user_out
