@@ -456,7 +456,7 @@ class UserService:
         if isinstance(new_role, str):
             new_role = Role(new_role)
 
-        user.role = new_role
+        user.role = new_role.value
         self.db_session.commit()
         user_out = UserOut.model_validate(user)
         return user_out
