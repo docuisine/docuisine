@@ -32,7 +32,9 @@ class UserService:
         self.db_session: Session = db_session
         self.jwt_config = jwt_config
 
-    def create_user(self, username: str, password: str, email: Optional[str] = None, role: Role = Role.USER) -> User:
+    def create_user(
+        self, username: str, password: str, email: Optional[str] = None, role: Role = Role.USER
+    ) -> User:
         """
         Create a new user in the database with an encrypted password.
 
@@ -63,7 +65,9 @@ class UserService:
         - This method commits the transaction immediately.
         """
         encrypted_password = hash_in_sha256(password)
-        new_user = User(username=username, password=encrypted_password, email=email, role=role.value)
+        new_user = User(
+            username=username, password=encrypted_password, email=email, role=role.value
+        )
         try:
             self.db_session.add(new_user)
             self.db_session.commit()
