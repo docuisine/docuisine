@@ -13,6 +13,7 @@ from docuisine.core.config import env
 from docuisine.db.database import engine
 from docuisine.db.models.base import Base
 from docuisine.db.storage import s3_config, s3_storage
+from docuisine.utils.logs import setup_logging
 
 ## Define S3 bucket policy to allow public read access to objects
 policy = {
@@ -36,13 +37,13 @@ async def on_startup(app: FastAPI):
     Notes
     -----
     This startup event runs when the application starts
-    It does two things:
+    It does three things:
     1. Creates all database tables based on the defined models
     2. Ensures the S3 bucket for image storage exists with the correct policy
+    3. Sets up logging configuration
     """
     try:
-        logger.remove()  # Remove default logger to avoid duplicate logs
-        logger.add(env.LOG_FILE_PATH, level=env.LOG_LEVEL)
+        setup_logging()
         logger.info("Starting Docuisine application...")
         Base.metadata.create_all(bind=engine)
         try:

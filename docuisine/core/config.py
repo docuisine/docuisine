@@ -1,6 +1,5 @@
 import os
-import sys
-from typing import Literal, Optional, TextIO
+from typing import Literal, Optional
 
 from dotenv import load_dotenv
 from loguru import logger
@@ -124,9 +123,24 @@ class Environment:
         return log_level
 
     @property
-    def LOG_FILE_PATH(self) -> str | TextIO:
-        log_file_path = os.getenv("LOG_FILE_PATH", sys.stdout)
+    def LOG_FILE_PATH(self) -> str | None:
+        log_file_path = os.getenv("LOG_FILE_PATH", default=None)
         return log_file_path
+
+    @property
+    def MAX_LOG_LINES(self) -> int:
+        max_log_lines_str = os.getenv("MAX_LOG_LINES", "1000")
+        try:
+            max_log_lines = int(max_log_lines_str)
+            if max_log_lines <= 0:
+                raise ValueError
+            return max_log_lines
+        except ValueError:
+            err_msg = (
+                f"Invalid MAX_LOG_LINES '{max_log_lines_str}'. It must be a positive integer."
+            )
+            logger.critical(err_msg)
+            raise EnvironmentError(err_msg)
 
 
 env = Environment()

@@ -5,6 +5,7 @@ import httpx
 from loguru import logger
 
 from docuisine.core.config import env
+from docuisine.utils.logs import LOG_BUFFER
 
 
 class HealthService:
@@ -149,11 +150,15 @@ class HealthService:
             raise ValueError(
                 f"Invalid log level '{level}'. Allowed levels are: {', '.join(allowed_levels)}"
             )
+        logs = None
 
-        with open(env.LOG_FILE_PATH, "r") as log_file:
-            logs = log_file.readlines()
+        if env.LOG_FILE_PATH is None:
+            logs = LOG_BUFFER.copy()
+        else:
+            with open(env.LOG_FILE_PATH, "r") as log_file:
+                logs = log_file.readlines()
 
-        filtered_logs = [log for log in logs if f"{level.upper()}" in log]
+        filtered_logs = [log.replace("\n", "") for log in logs if f"{level.upper()}" in log]
         logger.info(f"Retrieved {len(filtered_logs)} log entries for level={level.lower()}")
 
         return filtered_logs
