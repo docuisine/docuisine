@@ -2,6 +2,7 @@ from typing import Annotated
 
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from loguru import logger
 
 from docuisine.db.models import User
 from docuisine.utils import errors
@@ -19,6 +20,7 @@ async def get_client_user(token: AuthToken, user_service: User_Service):
     try:
         user = user_service.authorize_user(token=token)
     except errors.InvalidCredentialsError as e:
+        logger.warning("Unauthorized request due to invalid credentials")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail=f"Could not validate credentials: {e}",

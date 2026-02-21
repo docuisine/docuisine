@@ -1,5 +1,6 @@
 from typing import Optional
 
+from loguru import logger
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
@@ -63,8 +64,10 @@ class RecipeService:
         try:
             self.db_session.add(new_recipe)
             self.db_session.commit()
+            logger.info(f"Created recipe name={name} user_id={user_id}")
         except IntegrityError:
             self.db_session.rollback()
+            logger.warning(f"Recipe creation failed due to duplicate name={name}")
             raise RecipeExistsError(name)
         return new_recipe
 
@@ -103,6 +106,7 @@ class RecipeService:
             raise ValueError("Either recipe ID or name must be provided.")
 
         if result is None:
+            logger.warning(f"Recipe lookup failed recipe_id={recipe_id} name={name}")
             raise (
                 RecipeNotFoundError(recipe_id=recipe_id)
                 if recipe_id is not None
@@ -175,6 +179,7 @@ class RecipeService:
         """
         recipe = self._get_recipe_by_id(recipe_id)
         if recipe is None:
+            logger.warning(f"Update recipe failed; recipe_id={recipe_id} not found")
             raise RecipeNotFoundError(recipe_id=recipe_id)
 
         if name is not None:
@@ -192,8 +197,12 @@ class RecipeService:
 
         try:
             self.db_session.commit()
+            logger.info(f"Updated recipe recipe_id={recipe_id}")
         except IntegrityError:
             self.db_session.rollback()
+            logger.warning(
+                f"Update recipe failed due to duplicate name={name if name is not None else recipe.name}"
+            )
             raise RecipeExistsError(name if name is not None else recipe.name)
 
         return recipe
@@ -214,9 +223,11 @@ class RecipeService:
         """
         recipe = self._get_recipe_by_id(recipe_id)
         if recipe is None:
+            logger.warning(f"Delete recipe failed; recipe_id={recipe_id} not found")
             raise RecipeNotFoundError(recipe_id=recipe_id)
         self.db_session.delete(recipe)
         self.db_session.commit()
+        logger.info(f"Deleted recipe recipe_id={recipe_id}")
 
     def _get_recipe_by_id(self, recipe_id: int) -> Optional[Recipe]:
         """

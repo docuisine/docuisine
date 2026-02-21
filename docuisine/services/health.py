@@ -2,6 +2,7 @@ from typing import Optional
 
 import cachetools.func
 import httpx
+from loguru import logger
 
 from docuisine.core.config import env
 
@@ -31,6 +32,7 @@ class HealthService:
         >>> HealthService.getLatestVersion("docuisine/docuisine")
         "2.5.3"
         """
+        logger.debug(f"Fetching latest release version for repo={repo}")
         resp = httpx.get(f"https://api.github.com/repos/{repo}/releases/latest")
         return resp.json().get("tag_name")
 
@@ -55,6 +57,7 @@ class HealthService:
         >>> HealthService.getLatestCommitHash("docuisine/docuisine")
         "dfc8b734be62edfe78273aeb8a95b234aafdd987"
         """
+        logger.debug(f"Fetching latest commit hash for repo={repo}")
         resp = httpx.get(f"https://api.github.com/repos/{repo}/commits/master")
         return resp.json().get("sha")
 
@@ -123,3 +126,34 @@ class HealthService:
             return "sqlite"
         else:
             return "unknown"
+
+    def get_logs(self, level: str = "info") -> list[str]:
+        """
+        Retrieve application logs filtered by log level.
+
+        Parameters
+        ----------
+        level : str, optional
+            The log level to filter by (default is "info").
+
+        Returns
+        -------
+        list[str]
+            A list of log entries matching the specified log level.
+        """
+        # Placeholder implementation - replace with actual log retrieval logic
+        allowed_levels = ["trace", "debug", "info", "warning", "error", "critical"]
+
+        if level.lower() not in allowed_levels:
+            logger.warning(f"Rejected log retrieval due to invalid level={level}")
+            raise ValueError(
+                f"Invalid log level '{level}'. Allowed levels are: {', '.join(allowed_levels)}"
+            )
+
+        with open(env.LOG_FILE_PATH, "r") as log_file:
+            logs = log_file.readlines()
+
+        filtered_logs = [log for log in logs if f"{level.upper()}" in log]
+        logger.info(f"Retrieved {len(filtered_logs)} log entries for level={level.lower()}")
+
+        return filtered_logs

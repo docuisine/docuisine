@@ -1,9 +1,12 @@
 from contextlib import asynccontextmanager
 import json
+import time
 
 from botocore.exceptions import ClientError
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from loguru import logger
+from starlette.responses import Response
 
 from docuisine import routes
 from docuisine.core.config import env
@@ -38,10 +41,17 @@ async def on_startup(app: FastAPI):
     2. Ensures the S3 bucket for image storage exists with the correct policy
     """
     try:
+        logger.add(env.LOG_FILE_PATH, rotation="10 MB", retention="7 days", level=env.LOG_LEVEL)
+        logger.info("Starting Docuisine application...")
         Base.metadata.create_all(bind=engine)
         try:
+            logger.info(f"Checking if S3 bucket '{s3_config.bucket_name}' exists...")
             s3_storage.head_bucket(Bucket=s3_config.bucket_name)
+            logger.info(f"S3 bucket '{s3_config.bucket_name}' already exists.")
         except ClientError:
+            logger.warning(
+                f"S3 bucket '{s3_config.bucket_name}' does not exist. Creating bucket..."
+            )
             s3_storage.create_bucket(Bucket=s3_config.bucket_name)
             s3_storage.put_bucket_policy(Bucket=s3_config.bucket_name, Policy=json.dumps(policy))
         yield
@@ -58,6 +68,23 @@ async def on_startup(app: FastAPI):
 
 
 app = FastAPI(lifespan=on_startup)
+
+
+@app.middleware("http")
+async def log_requests(request: Request, call_next) -> Response:
+    start = time.perf_counter()
+    try:
+        response = await call_next(request)
+    except Exception:
+        duration_ms = (time.perf_counter() - start) * 1000
+        logger.exception(f"{request.method} {request.url.path} failed after {duration_ms:.2f}ms")
+        raise
+
+    duration_ms = (time.perf_counter() - start) * 1000
+    logger.info(
+        f"{request.method} {request.url.path} -> {response.status_code} ({duration_ms:.2f}ms)"
+    )
+    return response
 
 
 app.add_middleware(
