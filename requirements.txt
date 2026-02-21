@@ -8,3 +8,4 @@ pyjwt>=2.10.1
 python-dotenv>=1.2.1
 sqlalchemy>=2.0.45
 cachetools>=6.2.6
+loguru>=0.7.3
