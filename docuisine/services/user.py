@@ -2,6 +2,7 @@ import datetime
 from typing import Optional, Union
 
 import jwt
+from loguru import logger
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
@@ -71,8 +72,10 @@ class UserService:
         try:
             self.db_session.add(new_user)
             self.db_session.commit()
+            logger.info(f"Created user username={username}")
         except IntegrityError:
             self.db_session.rollback()
+            logger.warning(f"User creation failed due to duplicate username={username}")
             raise errors.UserExistsError(username)
         return new_user
 
@@ -111,6 +114,7 @@ class UserService:
             raise ValueError("Either user ID or username must be provided.")
 
         if result is None:
+            logger.warning(f"User lookup failed user_id={user_id} username={username}")
             raise (
                 errors.UserNotFoundError(user_id=user_id)
                 if user_id is not None
@@ -150,9 +154,11 @@ class UserService:
         """
         user = self._get_user_by_id(user_id)
         if user is None:
+            logger.warning(f"Delete user failed; user_id={user_id} not found")
             raise errors.UserNotFoundError(user_id=user_id)
         self.db_session.delete(user)
         self.db_session.commit()
+        logger.info(f"Deleted user user_id={user_id}")
 
     def _get_user_by_id(self, user_id: int) -> Optional[User]:
         """
@@ -224,12 +230,15 @@ class UserService:
         """
         user = self._get_user_by_id(user_id)
         if user is None:
+            logger.warning(f"Update email failed; user_id={user_id} not found")
             raise errors.UserNotFoundError(user_id=user_id)
         user.email = new_email
         try:
             self.db_session.commit()
+            logger.info(f"Updated email for user_id={user_id}")
         except IntegrityError:
             self.db_session.rollback()
+            logger.warning(f"Update email failed due to duplicate email={new_email}")
             raise errors.DuplicateEmailError(new_email)
         return user
 
@@ -261,12 +270,15 @@ class UserService:
         """
         user = self._get_user_by_id(user_id)
         if user is None:
+            logger.warning(f"Update password failed; user_id={user_id} not found")
             raise errors.UserNotFoundError(user_id=user_id)
         if not self._verify_password(old_password, user.password):
+            logger.warning(f"Update password failed due to invalid old password user_id={user_id}")
             raise errors.InvalidPasswordError("Old password does not match.")
         encrypted_password = hash_in_sha256(new_password)
         user.password = encrypted_password
         self.db_session.commit()
+        logger.info(f"Updated password for user_id={user_id}")
         return user
 
     def authenticate_user(
@@ -304,7 +316,9 @@ class UserService:
         """
         user = self.get_user(user_id=id, username=username)
         if not self._verify_password(password, user.password):
+            logger.warning(f"Authentication failed for user username={user.username}")
             raise errors.InvalidPasswordError
+        logger.info(f"Authenticated user username={user.username}")
         return user
 
     def _verify_password(self, plain_password: str, hashed_password: str) -> bool:
@@ -358,6 +372,7 @@ class UserService:
         token = jwt.encode(
             data, self.jwt_config.secret_key, algorithm=self.jwt_config.algorithm.value
         )
+        logger.info(f"Created access token for username={user.username}")
         return token
 
     def authorize_user(self, token: str) -> User:
@@ -393,7 +408,9 @@ class UserService:
                 raise errors.InvalidCredentialsError
             user = self.get_user(username=username)
         except (jwt.InvalidTokenError, errors.UserNotFoundError) as e:
+            logger.warning("Token authorization failed")
             raise errors.InvalidCredentialsError from e
+        logger.info(f"Authorized user username={user.username}")
         return user
 
     def update_user_img(self, user_id: int, img: str, preview_img: str) -> UserOut:
@@ -425,10 +442,12 @@ class UserService:
         """
         user = self._get_user_by_id(user_id)
         if user is None:
+            logger.warning(f"Update user image failed; user_id={user_id} not found")
             raise errors.UserNotFoundError(user_id=user_id)
         user.img = img
         user.preview_img = preview_img
         self.db_session.commit()
+        logger.info(f"Updated profile image for user_id={user_id}")
         user_out = UserOut.model_validate(user)
         return user_out
 
@@ -457,6 +476,7 @@ class UserService:
         """
         user = self._get_user_by_id(user_id)
         if user is None:
+            logger.warning(f"Toggle role failed; user_id={user_id} not found")
             raise errors.UserNotFoundError(user_id=user_id)
 
         if user.role == Role.ADMIN.value:
@@ -465,5 +485,6 @@ class UserService:
             user.role = Role.ADMIN.value
 
         self.db_session.commit()
+        logger.info(f"Toggled role for user_id={user_id} new_role={user.role}")
         user_out = UserOut.model_validate(user)
         return user_out

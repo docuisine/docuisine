@@ -1,5 +1,6 @@
 from typing import Optional
 
+from loguru import logger
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
@@ -63,8 +64,10 @@ class StoreService:
         try:
             self.db_session.add(new_store)
             self.db_session.commit()
+            logger.info(f"Created store name={name}")
         except IntegrityError:
             self.db_session.rollback()
+            logger.warning(f"Store creation failed due to duplicate name={name}")
             raise StoreExistsError(name)
         return new_store
 
@@ -103,6 +106,7 @@ class StoreService:
             raise ValueError("Either store ID or name must be provided.")
 
         if result is None:
+            logger.warning(f"Store lookup failed store_id={store_id} name={name}")
             raise (
                 StoreNotFoundError(store_id=store_id)
                 if store_id is not None
@@ -169,6 +173,7 @@ class StoreService:
         """
         store = self._get_store_by_id(store_id)
         if store is None:
+            logger.warning(f"Update store failed; store_id={store_id} not found")
             raise StoreNotFoundError(store_id=store_id)
 
         if name is not None:
@@ -188,8 +193,12 @@ class StoreService:
 
         try:
             self.db_session.commit()
+            logger.info(f"Updated store store_id={store_id}")
         except IntegrityError:
             self.db_session.rollback()
+            logger.warning(
+                f"Update store failed due to duplicate name={name if name is not None else store.name}"
+            )
             raise StoreExistsError(name if name is not None else store.name)
 
         return store
@@ -210,9 +219,11 @@ class StoreService:
         """
         store = self._get_store_by_id(store_id)
         if store is None:
+            logger.warning(f"Delete store failed; store_id={store_id} not found")
             raise StoreNotFoundError(store_id=store_id)
         self.db_session.delete(store)
         self.db_session.commit()
+        logger.info(f"Deleted store store_id={store_id}")
 
     def _get_store_by_id(self, store_id: int) -> Optional[Store]:
         """

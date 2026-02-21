@@ -1,5 +1,6 @@
 from typing import Optional
 
+from loguru import logger
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
@@ -43,8 +44,10 @@ class IngredientService:
         try:
             self.db_session.add(new_ingredient)
             self.db_session.commit()
+            logger.info(f"Created ingredient name={name}")
         except IntegrityError:
             self.db_session.rollback()
+            logger.warning(f"Ingredient creation failed due to duplicate name={name}")
             raise IngredientExistsError(name)
         return new_ingredient
 
@@ -85,6 +88,7 @@ class IngredientService:
             raise ValueError("Either ingredient ID or name must be provided.")
 
         if result is None:
+            logger.warning(f"Ingredient lookup failed ingredient_id={ingredient_id} name={name}")
             raise (
                 IngredientNotFoundError(ingredient_id=ingredient_id)
                 if ingredient_id is not None
@@ -139,6 +143,7 @@ class IngredientService:
         """
         ingredient = self._get_ingredient_by_id(ingredient_id)
         if ingredient is None:
+            logger.warning(f"Update ingredient failed; ingredient_id={ingredient_id} not found")
             raise IngredientNotFoundError(ingredient_id=ingredient_id)
 
         if name is not None:
@@ -150,9 +155,13 @@ class IngredientService:
 
         try:
             self.db_session.commit()
+            logger.info(f"Updated ingredient ingredient_id={ingredient_id}")
         except IntegrityError:
             self.db_session.rollback()
             # Use provided name, otherwise current name
+            logger.warning(
+                f"Update ingredient failed due to duplicate name={name if name is not None else ingredient.name}"
+            )
             raise IngredientExistsError(name if name is not None else ingredient.name)
 
         return ingredient
@@ -168,9 +177,11 @@ class IngredientService:
         """
         ingredient = self._get_ingredient_by_id(ingredient_id)
         if ingredient is None:
+            logger.warning(f"Delete ingredient failed; ingredient_id={ingredient_id} not found")
             raise IngredientNotFoundError(ingredient_id=ingredient_id)
         self.db_session.delete(ingredient)
         self.db_session.commit()
+        logger.info(f"Deleted ingredient ingredient_id={ingredient_id}")
 
     def _get_ingredient_by_id(self, ingredient_id: int) -> Optional[Ingredient]:
         """

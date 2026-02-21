@@ -1,5 +1,6 @@
 from typing import Optional
 
+from loguru import logger
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
@@ -52,8 +53,10 @@ class CategoryService:
         try:
             self.db_session.add(new_category)
             self.db_session.commit()
+            logger.info(f"Created category name={name}")
         except IntegrityError:
             self.db_session.rollback()
+            logger.warning(f"Category creation failed due to duplicate name={name}")
             raise CategoryExistsError(name)
         return new_category
 
@@ -94,6 +97,7 @@ class CategoryService:
             raise ValueError("Either category ID or name must be provided.")
 
         if result is None:
+            logger.warning(f"Category lookup failed category_id={category_id} name={name}")
             raise (
                 CategoryNotFoundError(category_id=category_id)
                 if category_id is not None
@@ -150,6 +154,7 @@ class CategoryService:
         """
         category = self._get_category_by_id(category_id)
         if category is None:
+            logger.warning(f"Update category failed; category_id={category_id} not found")
             raise CategoryNotFoundError(category_id=category_id)
 
         if name is not None:
@@ -159,8 +164,12 @@ class CategoryService:
 
         try:
             self.db_session.commit()
+            logger.info(f"Updated category category_id={category_id}")
         except IntegrityError:
             self.db_session.rollback()
+            logger.warning(
+                f"Update category failed due to duplicate name={name if name is not None else category.name}"
+            )
             raise CategoryExistsError(name if name is not None else category.name)
 
         return category
@@ -185,9 +194,11 @@ class CategoryService:
         """
         category = self._get_category_by_id(category_id)
         if category is None:
+            logger.warning(f"Delete category failed; category_id={category_id} not found")
             raise CategoryNotFoundError(category_id=category_id)
         self.db_session.delete(category)
         self.db_session.commit()
+        logger.info(f"Deleted category category_id={category_id}")
 
     def _get_category_by_id(self, category_id: int) -> Optional[Category]:
         """

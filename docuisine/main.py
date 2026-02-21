@@ -1,10 +1,12 @@
 from contextlib import asynccontextmanager
 import json
+import time
 
 from botocore.exceptions import ClientError
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from loguru import logger
+from starlette.responses import Response
 
 from docuisine import routes
 from docuisine.core.config import env
@@ -66,6 +68,23 @@ async def on_startup(app: FastAPI):
 
 
 app = FastAPI(lifespan=on_startup)
+
+
+@app.middleware("http")
+async def log_requests(request: Request, call_next) -> Response:
+    start = time.perf_counter()
+    try:
+        response = await call_next(request)
+    except Exception:
+        duration_ms = (time.perf_counter() - start) * 1000
+        logger.exception(f"{request.method} {request.url.path} failed after {duration_ms:.2f}ms")
+        raise
+
+    duration_ms = (time.perf_counter() - start) * 1000
+    logger.info(
+        f"{request.method} {request.url.path} -> {response.status_code} ({duration_ms:.2f}ms)"
+    )
+    return response
 
 
 app.add_middleware(

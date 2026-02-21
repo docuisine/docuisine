@@ -3,6 +3,7 @@ from hashlib import md5
 from io import BytesIO
 
 from botocore import client
+from loguru import logger
 from PIL import Image, ImageFile
 
 from docuisine.schemas.enums import ImageFormat
@@ -65,6 +66,9 @@ class ImageService:
             Fileobj=preview_buffer,
             ExtraArgs={"ContentType": f"image/{format}"},
         )
+        logger.info(
+            f"Uploaded image set original={original_image_name} preview={preview_image_name}"
+        )
         return ImageSet(original=original_image_name, preview=preview_image_name)
 
     @staticmethod
@@ -124,6 +128,7 @@ class ImageService:
             If the image format is not supported.
         """
         if format.lower() not in self._supported_formats:
+            logger.warning(f"Unsupported image format received format={format.lower()}")
             raise UnsupportedImageFormatError(format=format.lower())
 
     @cached_property
