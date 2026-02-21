@@ -4,6 +4,7 @@ import json
 from botocore.exceptions import ClientError
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from loguru import logger
 
 from docuisine import routes
 from docuisine.core.config import env
@@ -38,10 +39,17 @@ async def on_startup(app: FastAPI):
     2. Ensures the S3 bucket for image storage exists with the correct policy
     """
     try:
+        logger.add(env.LOG_FILE_PATH, rotation="10 MB", retention="7 days", level=env.LOG_LEVEL)
+        logger.info("Starting Docuisine application...")
         Base.metadata.create_all(bind=engine)
         try:
+            logger.info(f"Checking if S3 bucket '{s3_config.bucket_name}' exists...")
             s3_storage.head_bucket(Bucket=s3_config.bucket_name)
+            logger.info(f"S3 bucket '{s3_config.bucket_name}' already exists.")
         except ClientError:
+            logger.warning(
+                f"S3 bucket '{s3_config.bucket_name}' does not exist. Creating bucket..."
+            )
             s3_storage.create_bucket(Bucket=s3_config.bucket_name)
             s3_storage.put_bucket_policy(Bucket=s3_config.bucket_name, Policy=json.dumps(policy))
         yield

@@ -47,3 +47,19 @@ async def configuration(user: AuthenticatedUser):
         databaseURL=env.DATABASE_URL,
         databaseType=service.getDatabaseType(),
     )
+
+
+@router.get("/logs", response_model=list[str])
+async def get_logs(
+    user: AuthenticatedUser,
+    level: str = "info",
+):
+    """
+    Retrieve application logs.
+
+    Access Level: Admin
+    """
+    validate_role(user.role, "a")
+    service = HealthService()
+    logs = service.get_logs(level=level)
+    return logs

@@ -123,3 +123,30 @@ class HealthService:
             return "sqlite"
         else:
             return "unknown"
+
+    def get_logs(self, level: str = "info") -> list[str]:
+        """
+        Retrieve application logs filtered by log level.
+
+        Parameters
+        ----------
+        level : str, optional
+            The log level to filter by (default is "info").
+
+        Returns
+        -------
+        list[str]
+            A list of log entries matching the specified log level.
+        """
+        # Placeholder implementation - replace with actual log retrieval logic
+        allowed_levels = ["trace", "debug", "info", "warning", "error", "critical"]
+
+        if level.lower() not in allowed_levels:
+            raise ValueError(f"Invalid log level '{level}'. Allowed levels are: {', '.join(allowed_levels)}")
+
+        with open(env.LOG_FILE_PATH, "r") as log_file:
+            logs = log_file.readlines()
+
+        filtered_logs = [log for log in logs if f"{level.upper()}" in log]
+
+        return filtered_logs

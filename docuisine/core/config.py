@@ -2,6 +2,7 @@ import os
 from typing import Literal, Optional
 
 from dotenv import load_dotenv
+from loguru import logger
 
 
 class Environment:
@@ -108,6 +109,23 @@ class Environment:
         raise EnvironmentError(
             "DEPLOYMENT environment variable must be either 'docker' or 'vercel'."
         )
+
+    @property
+    def LOG_LEVEL(self) -> str:
+        log_level = os.getenv("LOG_LEVEL", "INFO").upper()
+        valid_levels = ["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
+        if log_level not in valid_levels:
+            err_msg = (
+                f"Invalid LOG_LEVEL '{log_level}'. Valid options are: {', '.join(valid_levels)}."
+            )
+            logger.critical(err_msg)
+            raise EnvironmentError(err_msg)
+        return log_level
+
+    @property
+    def LOG_FILE_PATH(self) -> str:
+        log_file_path = os.getenv("LOG_FILE_PATH", "docuisine.log")
+        return log_file_path
 
 
 env = Environment()
