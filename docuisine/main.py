@@ -41,7 +41,8 @@ async def on_startup(app: FastAPI):
     2. Ensures the S3 bucket for image storage exists with the correct policy
     """
     try:
-        logger.add(env.LOG_FILE_PATH, rotation="10 MB", retention="7 days", level=env.LOG_LEVEL)
+        logger.remove()  # Remove default logger to avoid duplicate logs
+        logger.add(env.LOG_FILE_PATH, level=env.LOG_LEVEL)
         logger.info("Starting Docuisine application...")
         Base.metadata.create_all(bind=engine)
         try:

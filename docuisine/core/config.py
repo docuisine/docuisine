@@ -1,5 +1,6 @@
 import os
-from typing import Literal, Optional
+import sys
+from typing import Literal, Optional, TextIO
 
 from dotenv import load_dotenv
 from loguru import logger
@@ -123,8 +124,8 @@ class Environment:
         return log_level
 
     @property
-    def LOG_FILE_PATH(self) -> str:
-        log_file_path = os.getenv("LOG_FILE_PATH", "docuisine.log")
+    def LOG_FILE_PATH(self) -> str | TextIO:
+        log_file_path = os.getenv("LOG_FILE_PATH", sys.stdout)
         return log_file_path
 
 
