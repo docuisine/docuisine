@@ -48,7 +48,7 @@ class Recipe(Base, Entity):
     categories = relationship("Category", secondary="recipe_categories", back_populates="recipes")
     product = relationship(
         "Ingredient",
-        back_populates="recipe",
+        back_populates="recipes",
     )
 
     __table_args__ = (
