@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, status
 
 from docuisine.db.models import Recipe
-from docuisine.dependencies import AuthenticatedUser, Recipe_Service
+from docuisine.dependencies import AuthenticatedUser, Recipe_Service, Ingredient_Service
 from docuisine.schemas import recipe as recipe_schemas
 from docuisine.schemas.common import Detail
 from docuisine.schemas.enums import Role
@@ -67,6 +67,7 @@ async def get_recipe(recipe_id: int, recipe_service: Recipe_Service) -> recipe_s
 async def create_recipe(
     recipe: recipe_schemas.RecipeCreate,
     recipe_service: Recipe_Service,
+    ingredient_service: Ingredient_Service,
     authenticated_user: AuthenticatedUser,
 ) -> recipe_schemas.RecipeOut:
     """

@@ -41,6 +41,7 @@ class RecipeService:
             Number of servings. Default is None.
         description : Optional[str]
             Description of the recipe. Default is None.
+        ingredients :
 
         Returns
         -------
