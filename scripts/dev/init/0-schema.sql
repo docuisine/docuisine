@@ -46,8 +46,9 @@ CREATE TABLE ingredients (
 CREATE TABLE recipe_ingredients (
     recipe_id INTEGER NOT NULL REFERENCES recipes(id) ON DELETE CASCADE,
     ingredient_id INTEGER NOT NULL REFERENCES ingredients(id) ON DELETE CASCADE,
-    amount_grams REAL CHECK (amount_grams >= 0),
-    amount_readable TEXT NOT NULL,
+    unit TEXT NOT NULL,
+    quantity REAL CHECK (quantity >= 0),
+    notes TEXT,
 
     PRIMARY KEY (recipe_id, ingredient_id)
 ) INHERITS (default_table);

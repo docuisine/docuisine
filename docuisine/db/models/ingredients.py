@@ -1,9 +1,12 @@
-from typing import Optional
+from typing import TYPE_CHECKING, List, Optional
 
-from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from .base import Base, Entity
+
+if TYPE_CHECKING:
+    from .recipes import RecipeIngredient
+    from .stores import Store
 
 
 class Ingredient(Base, Entity):
@@ -18,10 +21,6 @@ class Ingredient(Base, Entity):
         Name of the ingredient.
     description : Optional[str]
         Description of the ingredient.
-    recipe_id : Optional[int]
-        The recipe to make this ingredient from, if applicable. May be ``None``.
-    recipe : Optional[Recipe]
-        The recipe to make this ingredient from, if applicable. May be ``None``.
     recipes : List[Recipe]
         Recipes that use this ingredient.
     stores : List[Store]
@@ -33,8 +32,8 @@ class Ingredient(Base, Entity):
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(unique=True, nullable=False)
     description: Mapped[Optional[str]] = mapped_column(nullable=True)
-    recipe_id: Mapped[Optional[int]] = mapped_column(ForeignKey("recipes.id"), nullable=True)
 
-    recipe = relationship("Recipe", back_populates="product")
-    recipes = relationship("Recipe", secondary="recipe_ingredients", back_populates="ingredients")
-    stores = relationship("Store", secondary="shelves", back_populates="ingredients")
+    recipes: Mapped[List["RecipeIngredient"]] = relationship(back_populates="ingredients")
+    stores: Mapped[List["Store"]] = relationship(
+        "Store", secondary="shelves", back_populates="ingredients"
+    )

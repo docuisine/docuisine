@@ -78,19 +78,20 @@ VALUES
 INSERT INTO recipe_ingredients (
     recipe_id,
     ingredient_id,
-    amount_grams,
-    amount_readable
+    unit,
+    quantity,
+    notes
 )
 VALUES
-    (1, 1, 5, '1 tsp salt'),
-    (1, 2, 20, '2 tbsp sugar'),
-    (1, 3, 200, '2 cups flour'),
-    (1, 4, 30, '2 tbsp butter'),
-    (1, 5, 100, '2 eggs'),
+    (1, 1, 'tsp', 1, NULL),
+    (1, 2, 'tbsp', 2, NULL),
+    (1, 3, 'cups', 2, NULL),
+    (1, 4, 'tbsp', 2, NULL),
+    (1, 5, 'count', 2, NULL),
 
-    (2, 1, 2, 'A pinch of salt'),
-    (2, 4, 15, '1 tbsp butter'),
-    (2, 5, 150, '3 eggs');
+    (2, 1, 'tbsp', 2, 'A pinch of salt'),
+    (2, 4, 'tbsp', 15, '1 tbsp butter'),
+    (2, 5, 'count', 3, '3 eggs');
 
 -- =====================
 -- RECIPE CATEGORIES
