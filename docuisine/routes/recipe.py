@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, status
 
 from docuisine.db.models import Recipe
-from docuisine.dependencies import AuthenticatedUser, Recipe_Service, Ingredient_Service
+from docuisine.dependencies import AuthenticatedUser, Recipe_Service
 from docuisine.schemas import recipe as recipe_schemas
 from docuisine.schemas.common import Detail
 from docuisine.schemas.enums import Role
@@ -67,7 +67,6 @@ async def get_recipe(recipe_id: int, recipe_service: Recipe_Service) -> recipe_s
 async def create_recipe(
     recipe: recipe_schemas.RecipeCreate,
     recipe_service: Recipe_Service,
-    ingredient_service: Ingredient_Service,
     authenticated_user: AuthenticatedUser,
 ) -> recipe_schemas.RecipeOut:
     """
@@ -80,13 +79,39 @@ async def create_recipe(
         new_recipe: Recipe = recipe_service.create_recipe(
             user_id=authenticated_user.id,
             name=recipe.name,
+            ingredients=recipe.ingredients,
+            steps=recipe.steps,
             cook_time_sec=recipe.cook_time_sec,
             prep_time_sec=recipe.prep_time_sec,
             non_blocking_time_sec=recipe.non_blocking_time_sec,
             servings=recipe.servings,
             description=recipe.description,
         )
-        return recipe_schemas.RecipeOut.model_validate(new_recipe)
+        return recipe_schemas.RecipeOut(
+            id=new_recipe.id,
+            user_id=new_recipe.user_id,
+            name=new_recipe.name,
+            cook_time_sec=new_recipe.cook_time_sec,
+            prep_time_sec=new_recipe.prep_time_sec,
+            non_blocking_time_sec=new_recipe.non_blocking_time_sec,
+            servings=new_recipe.servings,
+            description=new_recipe.description,
+            ingredients=[
+                recipe_schemas.RecipeIngredient(
+                    ingredient_id=ri.ingredient_id,
+                    quantity=ri.quantity,
+                    unit=ri.unit,
+                    notes=ri.notes,
+                )
+                for ri in new_recipe.ingredients
+            ],
+            steps=[
+                recipe_schemas.RecipeStep(
+                    step_number=step.step_number, description=step.description
+                )
+                for step in new_recipe.steps
+            ],
+        )
     except errors.RecipeExistsError as e:
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=e.message)
 

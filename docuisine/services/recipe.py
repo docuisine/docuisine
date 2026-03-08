@@ -1,10 +1,11 @@
-from typing import Optional
+from typing import List, Optional
 
 from loguru import logger
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
-from docuisine.db.models import Recipe
+from docuisine.db.models import Recipe, RecipeIngredient, RecipeStep
+from docuisine.schemas import recipe as recipe_schemas
 from docuisine.utils.errors.recipe import RecipeExistsError, RecipeNotFoundError
 
 
@@ -16,6 +17,8 @@ class RecipeService:
         self,
         user_id: int,
         name: str,
+        ingredients: List[recipe_schemas.RecipeIngredient],
+        steps: List[recipe_schemas.RecipeStep],
         cook_time_sec: Optional[int] = None,
         prep_time_sec: Optional[int] = None,
         non_blocking_time_sec: Optional[int] = None,
@@ -31,6 +34,10 @@ class RecipeService:
             The ID of the user creating the recipe.
         name : str
             The name of the recipe.
+        ingredients : List[RecipeIngredientCreate]
+            List of ingredients for the recipe. Default is None.
+        steps : List[RecipeStepCreate]
+            List of steps for the recipe. Default is None.
         cook_time_sec : Optional[int]
             Cooking time in seconds. Default is None.
         prep_time_sec : Optional[int]
@@ -41,7 +48,6 @@ class RecipeService:
             Number of servings. Default is None.
         description : Optional[str]
             Description of the recipe. Default is None.
-        ingredients :
 
         Returns
         -------
@@ -61,6 +67,21 @@ class RecipeService:
             non_blocking_time_sec=non_blocking_time_sec,
             servings=servings,
             description=description,
+            ingredients=[
+                RecipeIngredient(
+                    ingredient_id=ing.ingredient_id,
+                    quantity=ing.quantity,
+                    unit=ing.unit,
+                    notes=ing.notes,
+                )
+                for ing in ingredients
+            ]
+            if ingredients
+            else [],
+            steps=[
+                RecipeStep(step_number=step.step_number, description=step.description)
+                for step in steps
+            ],
         )
         try:
             self.db_session.add(new_recipe)

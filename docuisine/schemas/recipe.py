@@ -3,15 +3,26 @@ from typing import Optional
 from pydantic import BaseModel, ConfigDict, Field
 
 
-class _RecipeIngredient(BaseModel):
+class RecipeIngredient(BaseModel):
     ingredient_id: int = Field(..., description="ID of the ingredient", examples=[1])
-    quantity: Optional[float] = Field(None, description="Quantity of the ingredient", examples=[2.5])
-    unit: Optional[str] = Field(None, description="Unit of measurement for the ingredient", examples=["cups"])
-    notes: Optional[str] = Field(None, description="Additional notes about the ingredient", examples=["sifted"])
+    quantity: Optional[float] = Field(
+        None, description="Quantity of the ingredient", examples=[2.5]
+    )
+    unit: Optional[str] = Field(
+        None, description="Unit of measurement for the ingredient", examples=["cups"]
+    )
+    notes: Optional[str] = Field(
+        None, description="Additional notes about the ingredient", examples=["sifted"]
+    )
 
-class _RecipeStep(BaseModel):
+
+class RecipeStep(BaseModel):
     step_number: int = Field(..., description="Step number in the recipe", examples=[1])
-    instruction: str = Field(..., description="Instruction for the step", examples=["Preheat the oven to 350°F."])
+    description: str = Field(
+        ...,
+        description="Instruction or description for the step",
+        examples=["Preheat the oven to 350°F."],
+    )
 
 
 class RecipeCreate(BaseModel):
@@ -29,11 +40,12 @@ class RecipeCreate(BaseModel):
     description: Optional[str] = Field(
         None, description="Recipe description", examples=["Delicious chocolate cake"]
     )
-    ingredients: Optional[list[_RecipeIngredient]] = Field(
-        None, description="List of ingredients for the recipe"
+    ingredients: list[RecipeIngredient] = Field(
+        ..., description="List of ingredients for the recipe"
     )
-    steps: Optional[list[_RecipeStep]] = Field(
-        None, description="List of steps for preparing the recipe"
+    steps: list[RecipeStep] = Field(
+        ...,
+        description="List of steps for preparing the recipe",
     )
 
 
@@ -55,5 +67,9 @@ class RecipeOut(BaseModel):
     non_blocking_time_sec: Optional[int] = Field(None, description="Non-blocking time in seconds")
     servings: Optional[int] = Field(None, description="Number of servings")
     description: Optional[str] = Field(None, description="Recipe description")
+    ingredients: list[RecipeIngredient] = Field(
+        ..., description="List of ingredients for the recipe"
+    )
+    steps: list[RecipeStep] = Field(..., description="List of steps for preparing the recipe")
 
     model_config = ConfigDict(from_attributes=True)
