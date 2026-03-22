@@ -1,7 +1,7 @@
 from typing import Optional
 
 from pydantic import BaseModel, ConfigDict, Field
-
+from .base import Default
 
 class RecipeIngredient(BaseModel):
     ingredient_id: int = Field(..., description="ID of the ingredient", examples=[1])
@@ -62,7 +62,7 @@ class RecipeUpdate(BaseModel):
     description: Optional[str] = Field(None, description="Recipe description")
 
 
-class RecipeOut(BaseModel):
+class RecipeOut(Default):
     id: int = Field(..., description="Recipe's unique identifier", examples=[1])
     user_id: int = Field(..., description="ID of the user who created the recipe", examples=[1])
     name: str = Field(..., description="Recipe name", examples=["Chocolate Cake"])

@@ -16,6 +16,8 @@ GET_ALL_RECIPES_RESPONSE = [
         "servings": None,
         "ingredients": [],
         "steps": [],
+        "created_at": "2024-01-01T12:00:00Z",
+        "updated_at": "2024-01-01T12:00:00Z",
     },
     {
         "id": 2,
@@ -28,6 +30,9 @@ GET_ALL_RECIPES_RESPONSE = [
         "servings": None,
         "ingredients": [],
         "steps": [],
+        "created_at": "2024-01-01T12:00:00Z",
+        "updated_at": "2024-01-01T12:00:00Z",
+
     },
     {
         "id": 3,
@@ -40,6 +45,8 @@ GET_ALL_RECIPES_RESPONSE = [
         "servings": 4,
         "ingredients": [],
         "steps": [],
+        "created_at": "2024-01-01T12:00:00Z",
+        "updated_at": "2024-01-01T12:00:00Z",
 
     },
 ]
@@ -55,6 +62,8 @@ GET_RECIPE_BY_ID_RESPONSE = {
     "servings": 6,
     "ingredients": [],
     "steps": [],
+    "created_at": "2024-01-01T12:00:00Z",
+    "updated_at": "2024-01-01T12:00:00Z",
 }
 
 GET_RECIPE_NOT_FOUND_RESPONSE = {"detail": "Recipe with ID 999 not found."}
@@ -86,6 +95,8 @@ POST_RESPONSE_1 = {
     "servings": 8,
     "ingredients": [],
     "steps": [],
+    "created_at": "2024-01-01T12:00:00Z",
+    "updated_at": "2024-01-01T12:00:00Z",
 }
 
 POST_RESPONSE_2 = {
@@ -99,6 +110,8 @@ POST_RESPONSE_2 = {
     "servings": None,
     "ingredients": [],
     "steps": [],
+    "created_at": "2024-01-01T12:00:00Z",
+    "updated_at": "2024-01-01T12:00:00Z",
 }
 POST_RESPONSE_CONFLICT = {"detail": "Recipe with name 'Existing Recipe' already exists."}
 
@@ -125,6 +138,8 @@ PUT_RESPONSE_FULL = {
     "servings": 4,
     "ingredients": [],
     "steps": [],
+    "created_at": "2024-01-01T12:00:00Z",
+    "updated_at": "2024-01-01T12:00:00Z",
 }
 PUT_RESPONSE_PARTIAL = {
     "id": 1,
@@ -137,6 +152,8 @@ PUT_RESPONSE_PARTIAL = {
     "servings": 10,
     "ingredients": [],
     "steps": [],
+    "created_at": "2024-01-01T12:00:00Z",
+    "updated_at": "2024-01-01T12:00:00Z",
 }
 PUT_RESPONSE_NOT_FOUND = {"detail": "Recipe with ID 999 not found."}
 PUT_RESPONSE_CONFLICT = {"detail": "Recipe with name 'Existing Recipe' already exists."}
