@@ -15,6 +15,8 @@ class RecipeIngredient(BaseModel):
         None, description="Additional notes about the ingredient", examples=["sifted"]
     )
 
+    model_config = ConfigDict(from_attributes=True)
+
 
 class RecipeStep(BaseModel):
     step_number: int = Field(..., description="Step number in the recipe", examples=[1])
@@ -23,6 +25,8 @@ class RecipeStep(BaseModel):
         description="Instruction or description for the step",
         examples=["Preheat the oven to 350°F."],
     )
+
+    model_config = ConfigDict(from_attributes=True)
 
 
 class RecipeCreate(BaseModel):

@@ -87,31 +87,7 @@ async def create_recipe(
             servings=recipe.servings,
             description=recipe.description,
         )
-        return recipe_schemas.RecipeOut(
-            id=new_recipe.id,
-            user_id=new_recipe.user_id,
-            name=new_recipe.name,
-            cook_time_sec=new_recipe.cook_time_sec,
-            prep_time_sec=new_recipe.prep_time_sec,
-            non_blocking_time_sec=new_recipe.non_blocking_time_sec,
-            servings=new_recipe.servings,
-            description=new_recipe.description,
-            ingredients=[
-                recipe_schemas.RecipeIngredient(
-                    ingredient_id=ri.ingredient_id,
-                    quantity=ri.quantity,
-                    unit=ri.unit,
-                    notes=ri.notes,
-                )
-                for ri in new_recipe.ingredients
-            ],
-            steps=[
-                recipe_schemas.RecipeStep(
-                    step_number=step.step_number, description=step.description
-                )
-                for step in new_recipe.steps
-            ],
-        )
+        return recipe_schemas.RecipeOut.model_validate(new_recipe)
     except errors.RecipeExistsError as e:
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=e.message)
 
