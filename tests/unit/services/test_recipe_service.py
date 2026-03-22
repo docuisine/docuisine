@@ -4,6 +4,7 @@ import pytest
 from sqlalchemy.exc import IntegrityError
 
 from docuisine.db.models import Recipe
+from docuisine.schemas import recipe as recipe_schemas
 from docuisine.services import RecipeService
 from docuisine.utils.errors import RecipeExistsError, RecipeNotFoundError
 
@@ -19,6 +20,32 @@ def test_create_recipe(db_session: MagicMock):
         non_blocking_time_sec=600,
         servings=8,
         description="Delicious chocolate cake",
+        ingredients=[
+            recipe_schemas.RecipeIngredient(
+                ingredient_id=1, quantity=200, unit="grams", notes="sifted"
+            )
+        ],
+        steps=[
+            recipe_schemas.RecipeStep(
+                step_number=1, description="Preheat the oven to 350°F (175°C)."
+            ),
+            recipe_schemas.RecipeStep(
+                step_number=2, description="Mix the  dry ingredients together."
+            ),
+            recipe_schemas.RecipeStep(
+                step_number=3, description="Add the wet ingredients and mix until smooth."
+            ),
+            recipe_schemas.RecipeStep(
+                step_number=4, description="Pour the batter into a greased cake pan."
+            ),
+            recipe_schemas.RecipeStep(
+                step_number=5,
+                description="Bake for 30-35 minutes or until a toothpick comes out clean.",
+            ),
+            recipe_schemas.RecipeStep(
+                step_number=6, description="Let the cake cool before serving."
+            ),
+        ],
     )
 
     assert recipe.user_id == 1
@@ -35,10 +62,14 @@ def test_create_recipe(db_session: MagicMock):
 def test_create_recipe_minimal_fields(db_session: MagicMock):
     """Test creating a recipe with only required fields."""
     service = RecipeService(db_session)
-    recipe: Recipe = service.create_recipe(user_id=1, name="Simple Recipe")
+    recipe: Recipe = service.create_recipe(
+        user_id=1, name="Simple Recipe", ingredients=[], steps=[]
+    )
 
     assert recipe.user_id == 1
     assert recipe.name == "Simple Recipe"
+    assert recipe.ingredients == []
+    assert recipe.steps == []
     assert recipe.cook_time_sec is None
     assert recipe.prep_time_sec is None
     assert recipe.non_blocking_time_sec is None
@@ -58,7 +89,7 @@ def test_create_recipe_duplicate_name_raises_error(db_session: MagicMock):
     )
 
     with pytest.raises(RecipeExistsError) as exc_info:
-        service.create_recipe(user_id=1, name="Duplicate Recipe")
+        service.create_recipe(user_id=1, name="Duplicate Recipe", ingredients=[], steps=[])
 
     assert "Duplicate Recipe" in str(exc_info.value)
     db_session.add.assert_called_once()

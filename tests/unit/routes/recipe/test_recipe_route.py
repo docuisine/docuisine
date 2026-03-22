@@ -88,6 +88,8 @@ class TestPOST:
             "prep_time_sec": 1800,
             "cook_time_sec": 2700,
             "servings": 8,
+            "ingredients": [],
+            "steps": [],
         }
         response = client.post("/recipes/", json=recipe_data)
         assert response.status_code == expected_status, response.text

@@ -14,6 +14,8 @@ GET_ALL_RECIPES_RESPONSE = [
         "cook_time_sec": None,
         "non_blocking_time_sec": None,
         "servings": None,
+        "ingredients": [],
+        "steps": [],
     },
     {
         "id": 2,
@@ -24,6 +26,8 @@ GET_ALL_RECIPES_RESPONSE = [
         "cook_time_sec": 1800,
         "non_blocking_time_sec": None,
         "servings": None,
+        "ingredients": [],
+        "steps": [],
     },
     {
         "id": 3,
@@ -34,6 +38,9 @@ GET_ALL_RECIPES_RESPONSE = [
         "cook_time_sec": None,
         "non_blocking_time_sec": None,
         "servings": 4,
+        "ingredients": [],
+        "steps": [],
+
     },
 ]
 
@@ -46,6 +53,8 @@ GET_RECIPE_BY_ID_RESPONSE = {
     "cook_time_sec": 7200,
     "non_blocking_time_sec": 8400,
     "servings": 6,
+    "ingredients": [],
+    "steps": [],
 }
 
 GET_RECIPE_NOT_FOUND_RESPONSE = {"detail": "Recipe with ID 999 not found."}
@@ -75,6 +84,8 @@ POST_RESPONSE_1 = {
     "cook_time_sec": 2700,
     "non_blocking_time_sec": None,
     "servings": 8,
+    "ingredients": [],
+    "steps": [],
 }
 
 POST_RESPONSE_2 = {
@@ -86,6 +97,8 @@ POST_RESPONSE_2 = {
     "cook_time_sec": None,
     "non_blocking_time_sec": None,
     "servings": None,
+    "ingredients": [],
+    "steps": [],
 }
 POST_RESPONSE_CONFLICT = {"detail": "Recipe with name 'Existing Recipe' already exists."}
 
@@ -110,6 +123,8 @@ PUT_RESPONSE_FULL = {
     "cook_time_sec": 2400,
     "non_blocking_time_sec": 3900,
     "servings": 4,
+    "ingredients": [],
+    "steps": [],
 }
 PUT_RESPONSE_PARTIAL = {
     "id": 1,
@@ -120,6 +135,8 @@ PUT_RESPONSE_PARTIAL = {
     "cook_time_sec": None,
     "non_blocking_time_sec": None,
     "servings": 10,
+    "ingredients": [],
+    "steps": [],
 }
 PUT_RESPONSE_NOT_FOUND = {"detail": "Recipe with ID 999 not found."}
 PUT_RESPONSE_CONFLICT = {"detail": "Recipe with name 'Existing Recipe' already exists."}
