@@ -1,7 +1,12 @@
+from typing import TYPE_CHECKING, List, Optional
+
 from sqlalchemy import CheckConstraint, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from .base import Base, Entity
+from .base import Base, Default, Entity
+
+if TYPE_CHECKING:
+    from .ingredients import Ingredient
 
 
 class Recipe(Base, Entity):
@@ -27,6 +32,16 @@ class Recipe(Base, Entity):
         One serving is fit for one person.
     description : str
         Description of the recipe.
+    product : Optional[Ingredient]
+        The ingredient produced by this recipe, if any.
+    creator : User
+        The user who created the recipe.
+    steps : List[RecipeStep]
+        List of steps to prepare the recipe.
+    ingredients : List[RecipeIngredient]
+        List of ingredients used in the recipe.
+    categories : List[Category]
+        List of categories the recipe belongs to.
     """
 
     __tablename__ = "recipes"
@@ -40,16 +55,11 @@ class Recipe(Base, Entity):
     servings: Mapped[int] = mapped_column(nullable=True)
     description: Mapped[str] = mapped_column(nullable=True)
 
+    product: Mapped[Optional["Ingredient"]] = relationship(back_populates="recipe")
     creator = relationship("User", back_populates="recipes")
-    steps = relationship("RecipeStep", back_populates="recipe", cascade="all, delete-orphan")
-    ingredients = relationship(
-        "Ingredient", secondary="recipe_ingredients", back_populates="recipes"
-    )
+    steps: Mapped[List["RecipeStep"]] = relationship()
+    ingredients: Mapped[List["RecipeIngredient"]] = relationship(back_populates="recipes")
     categories = relationship("Category", secondary="recipe_categories", back_populates="recipes")
-    product = relationship(
-        "Ingredient",
-        back_populates="recipes",
-    )
 
     __table_args__ = (
         CheckConstraint("cook_time_sec >= 0", name="cook_time_non_negative"),
@@ -59,7 +69,7 @@ class Recipe(Base, Entity):
     )
 
 
-class RecipeStep(Base, Entity):
+class RecipeStep(Base, Default):
     """
     RecipeStep model representing a step in a recipe.
 
@@ -71,20 +81,20 @@ class RecipeStep(Base, Entity):
         The order number of the step in the recipe.
     description : str
         Description of the step.
+    recipe : Recipe
+        The associated recipe for this step.
     """
 
     __tablename__ = "recipe_steps"
 
     recipe_id: Mapped[int] = mapped_column(ForeignKey("recipes.id"), primary_key=True)
-    step_number: Mapped[int] = mapped_column(nullable=False, primary_key=True)
+    step_number: Mapped[int] = mapped_column(primary_key=True)
     description: Mapped[str] = mapped_column(nullable=False)
-
-    recipe = relationship("Recipe", back_populates="steps")
 
     __table_args__ = (CheckConstraint("step_number >= 1", name="step_number_positive"),)
 
 
-class RecipeIngredient(Base, Entity):
+class RecipeIngredient(Base, Default):
     """
     RecipeIngredient model representing an ingredient in a recipe.
 
@@ -94,20 +104,26 @@ class RecipeIngredient(Base, Entity):
         Foreign key to the associated recipe.
     ingredient_id : int
         Foreign key to the associated ingredient.
-    amount_grams : float
-        Amount of the ingredient in grams.
-    amount_readable : str
-        Human-readable amount of the ingredient.
+    unit : str
+        Unit of measurement for the ingredient (e.g., "grams", "cups").
+    quantity : float
+        Quantity of the ingredient.
+    notes : Optional[str]
+        Additional notes about the ingredient (e.g., "sifted", "chopped").
     """
 
     __tablename__ = "recipe_ingredients"
 
     recipe_id: Mapped[int] = mapped_column(ForeignKey("recipes.id"), primary_key=True)
     ingredient_id: Mapped[int] = mapped_column(ForeignKey("ingredients.id"), primary_key=True)
-    amount_grams: Mapped[int] = mapped_column(nullable=False)
-    amount_readable: Mapped[str] = mapped_column(nullable=False)
+    unit: Mapped[str] = mapped_column(nullable=False)
+    quantity: Mapped[float] = mapped_column(nullable=False)
+    notes: Mapped[Optional[str]] = mapped_column(nullable=True)
 
-    __table_args__ = (CheckConstraint("amount_grams >= 0", name="amount_grams_non_negative"),)
+    ingredients: Mapped["Ingredient"] = relationship(back_populates="recipes")
+    recipes: Mapped["Recipe"] = relationship(back_populates="ingredients")
+
+    __table_args__ = (CheckConstraint("quantity >= 0", name="quantity_non_negative"),)
 
 
 class RecipeCategory(Base, Entity):
