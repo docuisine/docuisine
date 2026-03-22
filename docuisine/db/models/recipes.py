@@ -32,6 +32,16 @@ class Recipe(Base, Entity):
         One serving is fit for one person.
     description : str
         Description of the recipe.
+    product : Optional[Ingredient]
+        The ingredient produced by this recipe, if any.
+    creator : User
+        The user who created the recipe.
+    steps : List[RecipeStep]
+        List of steps to prepare the recipe.
+    ingredients : List[RecipeIngredient]
+        List of ingredients used in the recipe.
+    categories : List[Category]
+        List of categories the recipe belongs to.
     """
 
     __tablename__ = "recipes"
@@ -45,6 +55,7 @@ class Recipe(Base, Entity):
     servings: Mapped[int] = mapped_column(nullable=True)
     description: Mapped[str] = mapped_column(nullable=True)
 
+    product: Mapped[Optional["Ingredient"]] = relationship(back_populates="recipe")
     creator = relationship("User", back_populates="recipes")
     steps: Mapped[List["RecipeStep"]] = relationship()
     ingredients: Mapped[List["RecipeIngredient"]] = relationship(back_populates="recipes")
