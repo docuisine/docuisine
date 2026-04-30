@@ -1,8 +1,39 @@
+from typing import Self
+
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import Session, sessionmaker
 
 from docuisine.core.config import env
 from docuisine.schemas.enums import Mode
+
+
+class Transaction:
+    """Used to orchestrate a 'single unit of work' between
+    multiple services `docuisine.services`
+
+    Usage
+    -----
+    ```
+    with Transaction(session=session) as transaction:
+        service1 = Service1(session=transaction.session)
+        service2 = Service2(session=transaction.session)
+        ...
+    ```
+    """
+
+    def __init__(self, session: Session):
+        self.session = session
+
+    def __enter__(self) -> Self:
+        return self
+
+    def __exit__(self) -> None:
+        try:
+            self.session.commit()
+        except Exception:
+            self.session.rollback()
+        finally:
+            self.session.close()
 
 
 def IS_PRODUCTION() -> bool:
