@@ -1,3 +1,5 @@
+import base64
+import binascii
 from functools import cached_property
 from hashlib import md5
 from io import BytesIO
@@ -8,7 +10,7 @@ from PIL import Image, ImageFile
 
 from docuisine.schemas.enums import ImageFormat
 from docuisine.schemas.image import ImageSet
-from docuisine.utils.errors import UnsupportedImageFormatError
+from docuisine.utils.errors import DecodingError, UnsupportedImageFormatError
 
 
 class ImageService:
@@ -70,6 +72,27 @@ class ImageService:
             f"Uploaded image set original={original_image_name} preview={preview_image_name}"
         )
         return ImageSet(original=original_image_name, preview=preview_image_name)
+
+    def upload_image_base64(self, image: str) -> ImageSet:
+        """
+        Upload a base64-encoded image to the S3 bucket.
+
+        Parameters
+        ----------
+        image : str
+            The base64-encoded image string.
+
+        Returns
+        -------
+        ImageSet
+            The set of uploaded images including original and preview.
+        """
+        try:
+            image_bytes: bytes = base64.b64decode(image)
+            return self.upload_image(image_bytes)
+        except binascii.Error:
+            raise DecodingError
+
 
     @staticmethod
     def _build_image_name(image_bytes: bytes, format: str) -> str:
