@@ -1,7 +1,9 @@
 from typing import Optional
 
 from pydantic import BaseModel, ConfigDict, Field
+
 from .base import Default
+
 
 class RecipeIngredient(BaseModel):
     ingredient_id: int = Field(..., description="ID of the ingredient", examples=[1])

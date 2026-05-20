@@ -93,7 +93,6 @@ class ImageService:
         except binascii.Error:
             raise DecodingError
 
-
     @staticmethod
     def _build_image_name(image_bytes: bytes, format: str) -> str:
         """
