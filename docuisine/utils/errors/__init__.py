@@ -5,7 +5,7 @@ from .auth import (
     UnauthorizedError,
 )
 from .category import CategoryExistsError, CategoryNotFoundError
-from .image import UnsupportedImageFormatError
+from .image import DecodingError, UnsupportedImageFormatError
 from .ingredient import IngredientExistsError, IngredientNotFoundError
 from .recipe import RecipeExistsError, RecipeNotFoundError
 from .store import StoreExistsError, StoreNotFoundError
@@ -22,6 +22,7 @@ __all__ = [
     "CategoryExistsError",
     "CategoryNotFoundError",
     "UnsupportedImageFormatError",
+    "DecodingError",
     "IngredientExistsError",
     "IngredientNotFoundError",
     "StoreExistsError",
