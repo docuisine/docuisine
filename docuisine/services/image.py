@@ -88,9 +88,9 @@ class ImageService:
             The set of uploaded images including original and preview.
         """
         try:
-            image_bytes: bytes = base64.b64decode(image)
+            image_bytes: bytes = base64.b64decode(image.strip(), validate=True)
             return self.upload_image(image_bytes)
-        except binascii.Error:
+        except (binascii.Error, ValueError):
             raise DecodingError
 
     @staticmethod
