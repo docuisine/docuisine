@@ -27,13 +27,20 @@ class Transaction:
     def __enter__(self) -> Self:
         return self
 
-    def __exit__(self) -> None:
+    def __exit__(self, exc_type, exc, tb) -> bool:
         try:
-            self.session.commit()
-        except Exception:
-            self.session.rollback()
+            if exc_type is None:
+                try:
+                    self.session.commit()
+                except Exception:
+                    self.session.rollback()
+                    raise
+            else:
+                self.session.rollback()
         finally:
             self.session.close()
+
+        return False
 
 
 def IS_PRODUCTION() -> bool:
