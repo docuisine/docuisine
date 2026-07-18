@@ -1,4 +1,5 @@
 from hashlib import md5
+from io import BytesIO
 from unittest.mock import MagicMock
 
 import pytest
@@ -23,8 +24,22 @@ def image_service(mock_s3_client: MagicMock, monkeypatch):
     return service
 
 
-def test_upload_image(image_service: ImageService, monkeypatch, mock_s3_client: MagicMock):
-    """Test uploading an image."""
+def test_upload_image_delegates_to_file_upload(image_service: ImageService, monkeypatch):
+    """Test the byte upload path delegates to the file-based implementation."""
+    expected = ImageSet(original="original.jpeg", preview="preview.jpeg")
+    upload_image_file = MagicMock(return_value=expected)
+    monkeypatch.setattr(image_service, "upload_image_file", upload_image_file)
+
+    image_bytes = b"fake-image-bytes"
+    image_set: ImageSet = image_service.upload_image(image_bytes)
+
+    assert image_set == expected
+    upload_image_file.assert_called_once()
+    assert upload_image_file.call_args.args[0].read() == image_bytes
+
+
+def test_upload_image_file(image_service: ImageService, monkeypatch, mock_s3_client: MagicMock):
+    """Test uploading an image from a file-like object."""
     mock_determine_format = MagicMock(return_value="jpeg")
     monkeypatch.setattr(
         "docuisine.services.image.ImageService._determine_format", mock_determine_format
@@ -33,21 +48,26 @@ def test_upload_image(image_service: ImageService, monkeypatch, mock_s3_client: 
         "docuisine.services.image.ImageService._validate_format", lambda self, format: None
     )
     monkeypatch.setattr(
-        "docuisine.services.image.ImageService._build_image_name",
-        lambda *args: "newimage.jpeg",
+        "docuisine.services.image.ImageService._build_image_name_from_file",
+        lambda *args: "original.jpeg",
     )
     monkeypatch.setattr(
-        "docuisine.services.image.ImageService._generate_image_preview",
+        "docuisine.services.image.ImageService._build_image_name",
+        lambda *args: "preview.jpeg",
+    )
+    monkeypatch.setattr(
+        "docuisine.services.image.ImageService._generate_image_preview_from_file",
         lambda self, image: b"preview-image-bytes",
     )
     mock_s3_client.meta.endpoint_url = "http://mock-s3-endpoint/"
     mock_s3_client.bucket_name = "docuisine-images"
 
-    image_bytes = b"fake-image-bytes"
-    image_set: ImageSet = image_service.upload_image(image_bytes)
-    assert image_set.original == "newimage.jpeg"
-    assert image_set.preview == "newimage.jpeg"
-    mock_s3_client.upload_fileobj.called_count == 2
+    image_file = BytesIO(b"fake-image-bytes")
+    image_set: ImageSet = image_service.upload_image_file(image_file)
+
+    assert image_set.original == "original.jpeg"
+    assert image_set.preview == "preview.jpeg"
+    assert mock_s3_client.upload_fileobj.call_count == 2
 
 
 def test_validate_format_unsupported(image_service: ImageService, monkeypatch):

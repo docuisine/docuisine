@@ -196,7 +196,8 @@ async def update_user_img(
         raise errors.ForbiddenAccessError
 
     try:
-        image_set = image_service.upload_image(await fileb.read())
+        await fileb.seek(0)
+        image_set = image_service.upload_image_file(fileb.file)
 
         updated_user = user_service.update_user_img(
             user_id=user_id, img=image_set.original, preview_img=image_set.preview

@@ -25,7 +25,8 @@ async def upload_image(
     Access Level: Admin
     """
     validate_role(authenticated_user.role, "a")
-    return image_service.upload_image(await image.read())
+    await image.seek(0)
+    return image_service.upload_image_file(image.file)
 
 
 @router.post(

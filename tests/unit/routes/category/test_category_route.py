@@ -81,7 +81,7 @@ class TestPOST:
                 )
             case "success_image_upload":
                 mock_category_service.create_category.return_value = Category(**expected_response)
-                mock_image_service.save_category_image.return_value = ImageSet(
+                mock_image_service.upload_image_file.return_value = ImageSet(
                     original="appetizer_full.jpg",
                     preview="appetizer_preview.jpg",
                 )

@@ -73,7 +73,8 @@ async def create_category(
     """
     validate_role(authenticated_user.role, "a")
     if image is not None:
-        image_set = image_service.upload_image(await image.read())
+        await image.seek(0)
+        image_set = image_service.upload_image_file(image.file)
 
     try:
         new_category: Category = category_service.create_category(

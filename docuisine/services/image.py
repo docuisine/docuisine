@@ -3,6 +3,7 @@ import binascii
 from functools import cached_property
 from hashlib import md5
 from io import BytesIO
+from typing import BinaryIO
 
 from botocore import client
 from loguru import logger
@@ -42,23 +43,32 @@ class ImageService:
         ImageSet
             The set of uploaded images including original and preview.
         """
-        buffer = BytesIO(image)
-        buffer.seek(0)
+        return self.upload_image_file(BytesIO(image))
 
-        format = self._determine_format(buffer)
+    def upload_image_file(self, image_file: BinaryIO) -> ImageSet:
+        """
+        Upload an image from a seekable file-like object to the S3 bucket.
+
+        This avoids forcing multipart uploads to be fully read into memory before
+        they are hashed, previewed, and streamed to S3.
+        """
+        self._rewind(image_file)
+
+        format = self._determine_format(image_file)
         self._validate_format(format)
-        original_image_name = self._build_image_name(image, format)
+        original_image_name = self._build_image_name_from_file(image_file, format)
 
-        preview_image = self._generate_image_preview(image)
+        preview_image = self._generate_image_preview_from_file(image_file)
         preview_buffer = BytesIO(preview_image)
         preview_buffer.seek(0)
 
         preview_image_name = self._build_image_name(preview_image, format)
 
+        self._rewind(image_file)
         self.s3.upload_fileobj(
             Bucket=self.s3.bucket_name,
             Key=original_image_name,
-            Fileobj=buffer,
+            Fileobj=image_file,
             ExtraArgs={"ContentType": f"image/{format}"},
         )
 
@@ -113,7 +123,19 @@ class ImageService:
         return f"{image_hash}.{format}"
 
     @staticmethod
-    def _determine_format(image: BytesIO) -> str:
+    def _build_image_name_from_file(image_file: BinaryIO, format: str) -> str:
+        """
+        Build a unique image name based on the MD5 hash of a file-like object.
+        """
+        image_hash = md5()
+        image_file.seek(0)
+        while chunk := image_file.read(1024 * 1024):
+            image_hash.update(chunk)
+        image_file.seek(0)
+        return f"{image_hash.hexdigest()}.{format}"
+
+    @staticmethod
+    def _determine_format(image: BinaryIO) -> str:
         """
         Determine the format of the given image bytes.
 
@@ -161,6 +183,12 @@ class ImageService:
         return {fmt.value.lower() for fmt in ImageFormat}
 
     def _generate_image_preview(self, image: bytes, size: tuple[int, int] = (256, 256)) -> bytes:
+        return self._generate_image_preview_from_file(BytesIO(image), size=size)
+
+    @staticmethod
+    def _generate_image_preview_from_file(
+        image_file: BinaryIO, size: tuple[int, int] = (256, 256)
+    ) -> bytes:
         """
         Generate a preview of the image with the specified size.
 
@@ -176,12 +204,14 @@ class ImageService:
         bytes
             The preview image data in bytes.
         """
-        buffer = BytesIO(image)
-        buffer.seek(0)
-
-        with Image.open(buffer) as img:
+        image_file.seek(0)
+        with Image.open(image_file) as img:
             img.thumbnail(size)
             preview_buffer = BytesIO()
             img.save(preview_buffer, format=img.format)
             preview_buffer.seek(0)
             return preview_buffer.read()
+
+    @staticmethod
+    def _rewind(image_file: BinaryIO) -> None:
+        image_file.seek(0)
